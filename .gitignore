@@ -1,0 +1,24 @@
+# Environment
+.env
+backend/.env
+.venv/
+venv/
+env/
+
+# Dependencies
+node_modules/
+frontend/node_modules/
+__pycache__/
+*.pyc
+
+# Data & Uploads
+uploads/
+backend/uploads/
+vectorstore/
+backend/vectorstore/
+
+# Build
+dist/
+frontend/dist/
+build/
+.DS_Store
