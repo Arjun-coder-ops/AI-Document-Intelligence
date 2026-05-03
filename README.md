@@ -1,10 +1,23 @@
-# 📚 DocSage — AI Document Intelligence (RAG Chatbot)
+<div align="center">
+  <h1>DocSage — AI Document Intelligence</h1>
+  <p><i>A production-ready Retrieval-Augmented Generation (RAG) chatbot for intelligent document analysis.</i></p>
+  
+  <p>
+    <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt="FastAPI" />
+    <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
+    <img src="https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white" alt="LangChain" />
+    <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white" alt="OpenAI" />
+    <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
+  </p>
+</div>
+
+<br />
 
 A production-ready Retrieval-Augmented Generation (RAG) chatbot that lets you upload PDFs and chat with them intelligently. Built with FastAPI, React, LangChain, OpenAI, and FAISS.
 
 ---
 
-## 🏗️ Project Structure
+## ⬢ Project Structure
 
 ```
 rag-chatbot/
@@ -55,7 +68,7 @@ rag-chatbot/
 
 ---
 
-## ⚙️ How the RAG Pipeline Works
+## ⬢ How the RAG Pipeline Works
 
 ```
 INGESTION (once per document)
@@ -100,7 +113,7 @@ Token-by-token SSE stream → React frontend
 
 ---
 
-## 🚀 Quick Start (Local Development)
+## ⬢ Quick Start (Local Development)
 
 ### Prerequisites
 - Python 3.11+
@@ -127,8 +140,8 @@ pip install -r ../requirements.txt
 uvicorn main:app --reload --port 8000
 ```
 
-Backend is now at: http://localhost:8000  
-API docs: http://localhost:8000/docs
+Backend is now at: `http://localhost:8000`  
+API docs: `http://localhost:8000/docs`
 
 ### 2. Set up frontend
 
@@ -139,11 +152,11 @@ npm install
 npm run dev
 ```
 
-Frontend is now at: http://localhost:5173
+Frontend is now at: `http://localhost:5173`
 
 ### 3. Use the app
 
-1. Open http://localhost:5173
+1. Open `http://localhost:5173`
 2. Drag and drop PDFs into the left sidebar
 3. Wait for indexing to complete (shown per-file)
 4. Type a question in the chat box
@@ -151,7 +164,7 @@ Frontend is now at: http://localhost:5173
 
 ---
 
-## 🐳 Docker Deployment
+## ⬢ Docker Deployment
 
 ### Single command (full stack)
 
@@ -163,9 +176,9 @@ export OPENAI_API_KEY=sk-your-key-here
 docker-compose up --build -d
 ```
 
-- Frontend: http://localhost:3000
-- Backend: http://localhost:8000
-- API docs: http://localhost:8000/docs
+- Frontend: `http://localhost:3000`
+- Backend: `http://localhost:8000`
+- API docs: `http://localhost:8000/docs`
 
 ### Backend only (if you run frontend separately)
 
@@ -180,7 +193,7 @@ docker run -p 8000:8000 \
 
 ---
 
-## 📡 API Reference
+## ⬢ API Reference
 
 ### `POST /upload`
 Upload one or more PDF files.
@@ -269,7 +282,7 @@ Health check endpoint.
 
 ---
 
-## 🔧 Configuration
+## ⬢ Configuration
 
 All settings via environment variables (or `.env` file):
 
@@ -288,27 +301,27 @@ All settings via environment variables (or `.env` file):
 
 ---
 
-## 🔥 Features
+## ⬢ Features
 
 | Feature | Details |
 |---|---|
-| Multi-PDF support | Upload and query across multiple documents simultaneously |
-| Streaming responses | Token-by-token SSE streaming |
-| Chat memory | Last 6 conversation turns sent to LLM |
-| Source attribution | Each answer shows which chunks were retrieved, from which file/page, with relevance scores |
-| Debug mode | Toggle in UI to see raw retrieved chunks alongside answers |
-| RAG comparison | Side-by-side: answer with vs without document context |
-| Persistent index | FAISS index saved to disk, survives server restarts |
-| Error handling | Invalid PDFs, empty queries, scanned documents, size limits |
-| Structured logging | Loguru — console + rotating file logs |
-| Docker-ready | Multi-stage Dockerfile, nginx for frontend, compose for full stack |
+| **Multi-PDF support** | Upload and query across multiple documents simultaneously |
+| **Streaming responses** | Token-by-token SSE streaming |
+| **Chat memory** | Last 6 conversation turns sent to LLM |
+| **Source attribution** | Each answer shows which chunks were retrieved, from which file/page, with relevance scores |
+| **Debug mode** | Toggle in UI to see raw retrieved chunks alongside answers |
+| **RAG comparison** | Side-by-side: answer with vs without document context |
+| **Persistent index** | FAISS index saved to disk, survives server restarts |
+| **Error handling** | Invalid PDFs, empty queries, scanned documents, size limits |
+| **Structured logging** | Loguru — console + rotating file logs |
+| **Docker-ready** | Multi-stage Dockerfile, nginx for frontend, compose for full stack |
 
 ---
 
-## 🧪 Evaluation / Debugging
+## ⬢ Evaluation / Debugging
 
 ### 1. Debug mode in UI
-Click the 🐛 bug icon in the chat input. Each response will include the raw retrieved chunks with their scores.
+Click the `[Debug]` bug icon in the chat input. Each response will include the raw retrieved chunks with their scores.
 
 ### 2. Compare endpoint
 Use the **Compare** button (top right) to see side-by-side:
@@ -327,11 +340,11 @@ docker-compose logs -f backend
 ```
 
 ### 4. Swagger UI
-Visit http://localhost:8000/docs and test endpoints directly, including the `/compare` evaluation endpoint.
+Visit `http://localhost:8000/docs` and test endpoints directly, including the `/compare` evaluation endpoint.
 
 ---
 
-## 🏭 Production Checklist
+## ⬢ Production Checklist
 
 - [ ] Set `OPENAI_API_KEY` via secrets manager (not plaintext .env)
 - [ ] Mount `/app/uploads` and `/app/vectorstore` as persistent volumes
@@ -344,15 +357,15 @@ Visit http://localhost:8000/docs and test endpoints directly, including the `/co
 
 ---
 
-## 🤝 Tech Stack
+## ⬢ Tech Stack
 
 | Layer | Technology |
 |---|---|
-| Frontend | React 18, Vite, Tailwind CSS |
-| Backend | FastAPI, Python 3.11, Uvicorn |
-| RAG Pipeline | LangChain 0.2 |
-| LLM & Embeddings | OpenAI (gpt-4o-mini, text-embedding-3-small) |
-| Vector Database | FAISS (local, persisted to disk) |
-| PDF Processing | pypdf |
-| Logging | Loguru |
-| Containerization | Docker, nginx, docker-compose |
+| **Frontend** | React 18, Vite, Tailwind CSS |
+| **Backend** | FastAPI, Python 3.11, Uvicorn |
+| **RAG Pipeline** | LangChain 0.2 |
+| **LLM & Embeddings** | OpenAI (gpt-4o-mini, text-embedding-3-small) |
+| **Vector Database** | FAISS (local, persisted to disk) |
+| **PDF Processing** | pypdf |
+| **Logging** | Loguru |
+| **Containerization** | Docker, nginx, docker-compose |

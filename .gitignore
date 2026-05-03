@@ -22,3 +22,6 @@ dist/
 frontend/dist/
 build/
 .DS_Store
+
+# Logs
+backend/logs/
