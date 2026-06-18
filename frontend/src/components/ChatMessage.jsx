@@ -15,6 +15,20 @@ export default function ChatMessage({ message }) {
   const hasSources = message.sources?.length > 0;
   const hasDebug = message.debugChunks?.length > 0;
 
+  // Group sources by document filename
+  const getGroupedSources = () => {
+    const grouped = {};
+    if (!message.sources) return [];
+    message.sources.forEach((src) => {
+      const docName = src.source;
+      if (!grouped[docName]) {
+        grouped[docName] = [];
+      }
+      grouped[docName].push(src);
+    });
+    return Object.entries(grouped); // Array of [docName, chunks]
+  };
+
   const formatTime = (date) =>
     new Date(date).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
 
@@ -132,13 +146,27 @@ export default function ChatMessage({ message }) {
               className="flex items-center gap-1.5 text-[11px] text-ink-400 hover:text-ink-200 transition-colors"
             >
               {showSources ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
-              <span className="font-medium">{message.sources.length} source{message.sources.length !== 1 ? "s" : ""} retrieved</span>
+              <span className="font-medium">{message.sources.length} chunk{message.sources.length !== 1 ? "s" : ""} retrieved</span>
             </button>
 
             {showSources && (
-              <div className="space-y-1.5">
-                {message.sources.map((src) => (
-                  <SourceCard key={src.id} source={src} index={src.id} />
+              <div className="space-y-2.5">
+                {getGroupedSources().map(([docName, chunks]) => (
+                  <div key={docName} className="rounded-lg border border-subtle bg-ink-900/40 p-2.5 space-y-2">
+                    {/* Document Header */}
+                    <div className="flex items-center gap-2 text-ink-300 font-semibold text-xs border-b border-subtle/30 pb-1.5">
+                      <span className="truncate flex-1" title={docName}>{docName}</span>
+                      <span className="text-ink-500 text-[10px] bg-ink-800 rounded-full px-2 py-0.5 shrink-0">
+                        {chunks.length} chunk{chunks.length !== 1 ? 's' : ''}
+                      </span>
+                    </div>
+                    {/* Chunks inside this document */}
+                    <div className="space-y-1.5">
+                      {chunks.map((chunk, idx) => (
+                        <SourceCard key={chunk.id} source={chunk} index={idx + 1} hideDocName={true} />
+                      ))}
+                    </div>
+                  </div>
                 ))}
               </div>
             )}

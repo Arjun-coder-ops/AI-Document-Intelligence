@@ -4,7 +4,7 @@ import { FileText, ChevronDown, ChevronUp, Hash, BarChart2 } from "lucide-react"
 /**
  * SourceCard — displays a single retrieved document chunk with metadata.
  */
-export default function SourceCard({ source, index }) {
+export default function SourceCard({ source, index, hideDocName }) {
   const [expanded, setExpanded] = useState(false);
 
   // Map relevance score to a visual bar (FAISS returns L2 distance; lower = better)
@@ -22,8 +22,10 @@ export default function SourceCard({ source, index }) {
           {index}
         </span>
         <FileText size={12} className="text-ink-400 shrink-0" />
-        <span className="flex-1 truncate text-ink-300 font-medium">{source.source}</span>
-        <span className="text-ink-500 shrink-0">p.{source.page}</span>
+        <span className="flex-1 truncate text-ink-300 font-medium">
+          {hideDocName ? `Page ${source.page} (Chunk ${source.chunk_id})` : source.source}
+        </span>
+        {!hideDocName && <span className="text-ink-500 shrink-0">p.{source.page}</span>}
 
         {/* Relevance bar */}
         <div className="flex items-center gap-1 shrink-0">
