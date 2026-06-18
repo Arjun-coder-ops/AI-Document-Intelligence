@@ -12,7 +12,19 @@ import { useDocuments } from "./hooks/useDocuments";
 import { healthCheck } from "./utils/api";
 
 export default function App() {
-  const { messages, isStreaming, error, sendMessage, stopStreaming, clearChat } = useChat();
+  const {
+    sessions,
+    activeSessionId,
+    createSession,
+    deleteSession,
+    selectSession,
+    messages,
+    isStreaming,
+    error,
+    sendMessage,
+    stopStreaming,
+    clearChat
+  } = useChat();
   const {
     documents, stats, uploading, uploadProgress, error: uploadError,
     loading: docsLoading, upload, remove, refresh
@@ -43,6 +55,21 @@ export default function App() {
     return () => clearInterval(interval);
   }, [refresh]);
 
+  const handleUpload = useCallback(
+    async (files) => {
+      try {
+        const result = await upload(files);
+        if (result && result.results && result.results.length > 0) {
+          const firstDoc = result.results[0].original_filename;
+          createSession(`Chat: ${firstDoc}`);
+        }
+      } catch (err) {
+        console.error("Upload failed:", err);
+      }
+    },
+    [upload, createSession]
+  );
+
   const handleSend = useCallback(
     (query, opts) => {
       if (backendStatus !== "online") return;
@@ -71,8 +98,13 @@ export default function App() {
         uploadProgress={uploadProgress}
         uploadError={uploadError}
         loading={docsLoading}
-        onUpload={upload}
+        onUpload={handleUpload}
         onDelete={remove}
+        sessions={sessions}
+        activeSessionId={activeSessionId}
+        onCreateChat={createSession}
+        onDeleteChat={deleteSession}
+        onSelectChat={selectSession}
       />
 
       {/* Main chat area */}

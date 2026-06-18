@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { BookOpen, ChevronLeft, ChevronRight, BarChart2, Layers } from "lucide-react";
+import { BookOpen, ChevronLeft, ChevronRight, BarChart2, Layers, MessageSquare, Plus, Trash2 } from "lucide-react";
 import UploadZone from "./UploadZone";
 import DocumentList from "./DocumentList";
 
 /**
- * Sidebar — collapsible panel with upload zone, document list, and stats.
+ * Sidebar — collapsible panel with upload zone, document list, chats, and stats.
  */
 export default function Sidebar({
   documents,
@@ -15,9 +15,14 @@ export default function Sidebar({
   loading,
   onUpload,
   onDelete,
+  sessions = [],
+  activeSessionId,
+  onCreateChat,
+  onDeleteChat,
+  onSelectChat,
 }) {
   const [collapsed, setCollapsed] = useState(false);
-  const [tab, setTab] = useState("docs"); // "docs" | "stats"
+  const [tab, setTab] = useState("chats"); // "chats" | "docs" | "stats"
 
   return (
     <aside
@@ -60,6 +65,7 @@ export default function Sidebar({
             {/* Tabs */}
             <div className="flex gap-1 p-0.5 bg-ink-800/60 rounded-lg">
               {[
+                { id: "chats", label: "Chats", icon: MessageSquare },
                 { id: "docs", label: "Library", icon: Layers },
                 { id: "stats", label: "Stats", icon: BarChart2 },
               ].map(({ id, label, icon: Icon }) => (
@@ -67,14 +73,14 @@ export default function Sidebar({
                   key={id}
                   onClick={() => setTab(id)}
                   className={`
-                    flex-1 flex items-center justify-center gap-1.5 py-1.5 rounded-md text-xs font-medium transition-all duration-200
+                    flex-1 flex items-center justify-center gap-1 py-1.5 rounded-md text-[11px] font-medium transition-all duration-200
                     ${tab === id
                       ? "bg-ink-700 text-parchment-100 shadow-sm"
                       : "text-ink-400 hover:text-ink-200"
                     }
                   `}
                 >
-                  <Icon size={11} />
+                  <Icon size={11} className="shrink-0" />
                   {label}
                 </button>
               ))}
@@ -83,6 +89,63 @@ export default function Sidebar({
 
           {/* Tab content */}
           <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4">
+            {tab === "chats" && (
+              <div className="space-y-4 animate-fade-in flex flex-col h-full">
+                {/* Create New Chat button */}
+                <button
+                  onClick={() => onCreateChat("New Chat")}
+                  className="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg bg-accent-500/10 hover:bg-accent-500/20 text-accent-400 font-medium text-xs border border-accent-500/25 transition-all duration-200"
+                >
+                  <Plus size={14} />
+                  New Chat
+                </button>
+
+                {/* Chats List */}
+                <div className="space-y-1">
+                  <p className="text-[10px] text-ink-500 font-semibold uppercase tracking-wider mb-2 px-0.5">
+                    Your Chats ({sessions.length})
+                  </p>
+                  <div className="space-y-1.5 max-h-[350px] overflow-y-auto pr-1 select-none">
+                    {sessions.map((session) => {
+                      const isActive = session.id === activeSessionId;
+                      return (
+                        <div
+                          key={session.id}
+                          className={`
+                            group flex items-center justify-between gap-2 px-3 py-2.5 rounded-lg border transition-all duration-200 cursor-pointer
+                            ${isActive
+                              ? "bg-ink-800/80 border-accent-500/30 text-parchment-100"
+                              : "bg-ink-900/40 border-subtle hover:bg-ink-800/40 text-ink-300"
+                            }
+                          `}
+                          onClick={() => onSelectChat(session.id)}
+                        >
+                          <div className="flex items-center gap-2 flex-1 min-w-0">
+                            <MessageSquare size={12} className={isActive ? "text-accent-400 shrink-0" : "text-ink-500 shrink-0"} />
+                            <span className="text-xs truncate font-medium">
+                              {session.title}
+                            </span>
+                          </div>
+                          <button
+                            onClick={(e) => {
+                               e.stopPropagation();
+                               if (confirm(`Delete conversation "${session.title}"?`)) {
+                                 onDeleteChat(session.id);
+                               }
+                            }}
+                            className="opacity-0 group-hover:opacity-100 p-1 rounded hover:bg-red-500/20 text-ink-500 hover:text-red-400 transition-all duration-150 shrink-0"
+                            title="Delete chat"
+                          >
+                            <Trash2 size={11} />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+            )}
+
             {tab === "docs" && (
               <>
                 <UploadZone

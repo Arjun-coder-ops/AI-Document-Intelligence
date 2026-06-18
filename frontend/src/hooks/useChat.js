@@ -1,66 +1,141 @@
-/**
- * useChat — manages conversation state, streaming, and history.
- * Encapsulates all chat logic so components stay clean.
- */
-import { useState, useCallback, useRef } from "react";
+import { useState, useCallback, useRef, useEffect } from "react";
 import { askQuestion } from "../utils/api";
 
+const SESSIONS_KEY = "docsage_chat_sessions";
+const ACTIVE_SESSION_ID_KEY = "docsage_active_session_id";
+
+const defaultSession = {
+  id: "default",
+  title: "General Chat",
+  messages: [],
+  timestamp: new Date().toISOString(),
+};
+
 export function useChat() {
-  const [messages, setMessages] = useState([]);
+  const [sessions, setSessions] = useState(() => {
+    try {
+      const stored = localStorage.getItem(SESSIONS_KEY);
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.error("Failed to load chat sessions:", e);
+    }
+    return [defaultSession];
+  });
+
+  const [activeSessionId, setActiveSessionId] = useState(() => {
+    try {
+      const stored = localStorage.getItem(ACTIVE_SESSION_ID_KEY);
+      if (stored) return stored;
+    } catch (e) {
+      console.error("Failed to load active session ID:", e);
+    }
+    return "default";
+  });
+
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState(null);
   const abortRef = useRef(null);
 
+  // Sync sessions to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+    } catch (e) {
+      console.error("Failed to save chat sessions:", e);
+    }
+  }, [sessions]);
+
+  // Sync activeSessionId to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem(ACTIVE_SESSION_ID_KEY, activeSessionId);
+    } catch (e) {
+      console.error("Failed to save active session ID:", e);
+    }
+  }, [activeSessionId]);
+
+  // Get active session messages
+  const activeSession = sessions.find((s) => s.id === activeSessionId) || sessions[0] || defaultSession;
+  const messages = activeSession.messages || [];
+
   /**
-   * Add a message to history.
+   * Create a new chat session.
    */
-  const addMessage = useCallback((role, content, extras = {}) => {
-    const msg = {
-      id: `${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      role,
-      content,
-      timestamp: new Date(),
-      ...extras,
+  const createSession = useCallback((title = "New Chat") => {
+    const newSession = {
+      id: `session-${Date.now()}-${Math.random().toString(36).slice(2)}`,
+      title,
+      messages: [],
+      timestamp: new Date().toISOString(),
     };
-    setMessages((prev) => [...prev, msg]);
-    return msg.id;
+    setSessions((prev) => [newSession, ...prev]);
+    setActiveSessionId(newSession.id);
+    return newSession.id;
   }, []);
 
   /**
-   * Update the content of the last assistant message (for streaming).
+   * Delete a chat session.
    */
-  const appendToLastMessage = useCallback((token) => {
-    setMessages((prev) => {
-      if (!prev.length) return prev;
-      const updated = [...prev];
-      const last = { ...updated[updated.length - 1] };
-      last.content += token;
-      updated[updated.length - 1] = last;
-      return updated;
-    });
+  const deleteSession = useCallback(
+    (id) => {
+      let nextActiveId = "default";
+      setSessions((prev) => {
+        const filtered = prev.filter((s) => s.id !== id);
+        if (filtered.length === 0) {
+          nextActiveId = "default";
+          return [defaultSession];
+        }
+        nextActiveId = filtered[0].id;
+        return filtered;
+      });
+
+      if (activeSessionId === id) {
+        setActiveSessionId(nextActiveId);
+      }
+    },
+    [activeSessionId]
+  );
+
+  /**
+   * Switch active session.
+   */
+  const selectSession = useCallback((id) => {
+    setActiveSessionId(id);
+    setError(null);
+    if (abortRef.current) {
+      abortRef.current.abort();
+      abortRef.current = null;
+    }
+    setIsStreaming(false);
   }, []);
 
   /**
-   * Patch any field on a message by id.
+   * Helper to update messages for the active session.
    */
-  const patchMessage = useCallback((id, patch) => {
-    setMessages((prev) =>
-      prev.map((m) => (m.id === id ? { ...m, ...patch } : m))
+  const updateActiveSessionMessages = useCallback((updater) => {
+    setSessions((prev) =>
+      prev.map((s) => {
+        if (s.id === activeSessionId) {
+          const newMessages = typeof updater === "function" ? updater(s.messages || []) : updater;
+          return { ...s, messages: newMessages, timestamp: new Date().toISOString() };
+        }
+        return s;
+      })
     );
-  }, []);
+  }, [activeSessionId]);
 
   /**
    * Build the chat history array for the API (last N turns).
    */
-  const buildHistory = useCallback(
-    (currentMessages, limit = 10) => {
-      return currentMessages
-        .filter((m) => m.role === "user" || m.role === "assistant")
-        .slice(-limit)
-        .map((m) => ({ role: m.role, content: m.content }));
-    },
-    []
-  );
+  const buildHistory = useCallback((currentMessages, limit = 10) => {
+    return currentMessages
+      .filter((m) => m.role === "user" || m.role === "assistant")
+      .slice(-limit)
+      .map((m) => ({ role: m.role, content: m.content }));
+  }, []);
 
   /**
    * Send a query through the RAG pipeline.
@@ -77,38 +152,45 @@ export function useChat() {
       }
       abortRef.current = new AbortController();
 
-      // Add user message
-      setMessages((prev) => {
-        const userMsg = {
-          id: `user-${Date.now()}`,
-          role: "user",
-          content: query.trim(),
-          timestamp: new Date(),
-        };
-        return [...prev, userMsg];
+      const userMsg = {
+        id: `user-${Date.now()}`,
+        role: "user",
+        content: query.trim(),
+        timestamp: new Date().toISOString(),
+      };
+
+      const assistantId = `assistant-${Date.now()}`;
+      const assistantMsg = {
+        id: assistantId,
+        role: "assistant",
+        content: "",
+        timestamp: new Date().toISOString(),
+        sources: [],
+        debugChunks: null,
+        isStreaming: true,
+      };
+
+      // Add user and placeholder assistant message to the active session
+      let historySnapshot = [];
+      setSessions((prev) => {
+        const active = prev.find((s) => s.id === activeSessionId) || prev[0] || defaultSession;
+        const currentMsgs = active.messages || [];
+        historySnapshot = buildHistory(
+          currentMsgs.filter((m) => m.role === "user" || m.role === "assistant")
+        );
+        return prev.map((s) => {
+          if (s.id === activeSessionId) {
+            return {
+              ...s,
+              messages: [...currentMsgs, userMsg, assistantMsg],
+              timestamp: new Date().toISOString(),
+            };
+          }
+          return s;
+        });
       });
 
-      // Add placeholder assistant message
-      const assistantId = `assistant-${Date.now()}`;
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: assistantId,
-          role: "assistant",
-          content: "",
-          timestamp: new Date(),
-          sources: [],
-          debugChunks: null,
-          isStreaming: true,
-        },
-      ]);
-
       setIsStreaming(true);
-
-      // Build history from current messages snapshot
-      const historySnapshot = buildHistory(
-        messages.filter((m) => m.role === "user" || m.role === "assistant")
-      );
 
       await askQuestion({
         query: query.trim(),
@@ -117,42 +199,32 @@ export function useChat() {
         signal: abortRef.current.signal,
 
         onSources: (sources) => {
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantId ? { ...m, sources } : m
-            )
+          updateActiveSessionMessages((prev) =>
+            prev.map((m) => (m.id === assistantId ? { ...m, sources } : m))
           );
         },
 
         onToken: (token) => {
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantId
-                ? { ...m, content: m.content + token }
-                : m
-            )
+          updateActiveSessionMessages((prev) =>
+            prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + token } : m))
           );
         },
 
         onDebug: (chunks) => {
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantId ? { ...m, debugChunks: chunks } : m
-            )
+          updateActiveSessionMessages((prev) =>
+            prev.map((m) => (m.id === assistantId ? { ...m, debugChunks: chunks } : m))
           );
         },
 
         onDone: () => {
-          setMessages((prev) =>
-            prev.map((m) =>
-              m.id === assistantId ? { ...m, isStreaming: false } : m
-            )
+          updateActiveSessionMessages((prev) =>
+            prev.map((m) => (m.id === assistantId ? { ...m, isStreaming: false } : m))
           );
           setIsStreaming(false);
         },
 
         onError: (err) => {
-          setMessages((prev) =>
+          updateActiveSessionMessages((prev) =>
             prev.map((m) =>
               m.id === assistantId
                 ? {
@@ -169,7 +241,7 @@ export function useChat() {
         },
       });
     },
-    [isStreaming, messages, buildHistory]
+    [isStreaming, activeSessionId, buildHistory, updateActiveSessionMessages]
   );
 
   /**
@@ -181,23 +253,26 @@ export function useChat() {
       abortRef.current = null;
     }
     setIsStreaming(false);
-    setMessages((prev) =>
-      prev.map((m) =>
-        m.isStreaming ? { ...m, isStreaming: false } : m
-      )
+    updateActiveSessionMessages((prev) =>
+      prev.map((m) => (m.isStreaming ? { ...m, isStreaming: false } : m))
     );
-  }, []);
+  }, [updateActiveSessionMessages]);
 
   /**
-   * Clear all messages.
+   * Clear all messages in the active session.
    */
   const clearChat = useCallback(() => {
     stopStreaming();
-    setMessages([]);
+    updateActiveSessionMessages([]);
     setError(null);
-  }, [stopStreaming]);
+  }, [stopStreaming, updateActiveSessionMessages]);
 
   return {
+    sessions,
+    activeSessionId,
+    createSession,
+    deleteSession,
+    selectSession,
     messages,
     isStreaming,
     error,
