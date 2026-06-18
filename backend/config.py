@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     # RAG Pipeline
     chunk_size: int = Field(500, env="CHUNK_SIZE")
     chunk_overlap: int = Field(50, env="CHUNK_OVERLAP")
-    top_k_sources: int = Field(1)
+    top_k_sources: int = Field(4, env="TOP_K_SOURCES")
 
     # Storage
     upload_dir: str = Field("uploads", env="UPLOAD_DIR")
