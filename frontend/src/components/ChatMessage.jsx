@@ -150,23 +150,9 @@ export default function ChatMessage({ message }) {
             </button>
 
             {showSources && (
-              <div className="space-y-2.5">
-                {getGroupedSources().map(([docName, chunks]) => (
-                  <div key={docName} className="rounded-lg border border-subtle bg-ink-900/40 p-2.5 space-y-2">
-                    {/* Document Header */}
-                    <div className="flex items-center gap-2 text-ink-300 font-semibold text-xs border-b border-subtle/30 pb-1.5">
-                      <span className="truncate flex-1" title={docName}>{docName}</span>
-                      <span className="text-ink-500 text-[10px] bg-ink-800 rounded-full px-2 py-0.5 shrink-0">
-                        {chunks.length} chunk{chunks.length !== 1 ? 's' : ''}
-                      </span>
-                    </div>
-                    {/* Chunks inside this document */}
-                    <div className="space-y-1.5">
-                      {chunks.map((chunk, idx) => (
-                        <SourceCard key={chunk.id} source={chunk} index={idx + 1} hideDocName={true} />
-                      ))}
-                    </div>
-                  </div>
+              <div className="space-y-1.5">
+                {getGroupedSources().map(([docName, chunks], idx) => (
+                  <SourceCard key={docName} docName={docName} chunks={chunks} index={idx + 1} />
                 ))}
               </div>
             )}
