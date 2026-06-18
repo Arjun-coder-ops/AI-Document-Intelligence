@@ -395,16 +395,79 @@ class RAGPipeline:
             "top_k": settings.top_k_sources,
         }
 
-    def delete_document(self, filename: str) -> bool:
+    async def _rebuild_vector_store(self):
+        """Rebuild the FAISS vector store from all registered documents."""
+        if not self.document_registry:
+            # Clean up vector store files on disk
+            self.vector_store = None
+            index_path = os.path.join(self.vector_store_path, "index.faiss")
+            pkl_path = os.path.join(self.vector_store_path, "index.pkl")
+            if os.path.exists(index_path):
+                os.remove(index_path)
+            if os.path.exists(pkl_path):
+                os.remove(pkl_path)
+            logger.info("Registry is empty. Deleted FAISS vector store from disk.")
+            return
+
+        all_chunks = []
+        for filename, doc_meta in self.document_registry.items():
+            file_path = doc_meta.get("file_path")
+            if not file_path or not os.path.exists(file_path):
+                logger.warning(f"File not found during rebuild: {file_path}")
+                continue
+
+            try:
+                # Extract and chunk
+                raw_documents = await asyncio.to_thread(extract_text_from_pdf, file_path)
+                chunks = text_splitter.split_documents(raw_documents)
+                for i, chunk in enumerate(chunks):
+                    chunk.metadata["chunk_id"] = i
+                    chunk.metadata["source"] = filename
+                all_chunks.extend(chunks)
+            except Exception as e:
+                logger.error(f"Error reading {file_path} during rebuild: {e}")
+
+        if all_chunks:
+            # Build new FAISS index
+            self.vector_store = await asyncio.to_thread(
+                FAISS.from_documents, all_chunks, embeddings
+            )
+            self._save_state()
+            logger.info(f"Rebuilt vector store with {len(all_chunks)} chunks from {len(self.document_registry)} documents.")
+        else:
+            self.vector_store = None
+            index_path = os.path.join(self.vector_store_path, "index.faiss")
+            pkl_path = os.path.join(self.vector_store_path, "index.pkl")
+            if os.path.exists(index_path):
+                os.remove(index_path)
+            if os.path.exists(pkl_path):
+                os.remove(pkl_path)
+            logger.info("No chunks extracted. Deleted FAISS vector store from disk.")
+
+    async def delete_document(self, filename: str) -> bool:
         """
-        Remove a document from the registry.
-        Note: FAISS doesn't support selective deletion easily.
-        A full rebuild would be needed for production. This removes from registry only.
+        Remove a document from the registry, delete its uploaded file,
+        and rebuild the FAISS vector store.
         """
         if filename in self.document_registry:
+            doc_meta = self.document_registry[filename]
+            file_path = doc_meta.get("file_path")
+
+            # 1. Delete file if it exists
+            if file_path and os.path.exists(file_path):
+                try:
+                    os.remove(file_path)
+                    logger.info(f"Deleted physical file: {file_path}")
+                except Exception as e:
+                    logger.error(f"Failed to delete file {file_path}: {e}")
+
+            # 2. Remove from registry
             del self.document_registry[filename]
             self._save_state()
             logger.info(f"Removed '{filename}' from document registry")
+
+            # 3. Rebuild vector store
+            await self._rebuild_vector_store()
             return True
         return False
 

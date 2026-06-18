@@ -258,10 +258,10 @@ async def list_documents():
 @app.delete("/documents/{filename}")
 async def delete_document(filename: str):
     """
-    Remove a document from the registry.
-    Note: The FAISS index is not rebuilt on deletion (requires restart to fully remove).
+    Remove a document from the registry, delete its uploaded file,
+    and rebuild the FAISS vector store.
     """
-    success = rag_pipeline.delete_document(filename)
+    success = await rag_pipeline.delete_document(filename)
     if not success:
         raise HTTPException(status_code=404, detail=f"Document '{filename}' not found")
     return {"success": True, "message": f"'{filename}' removed from registry"}
