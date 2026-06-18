@@ -6,14 +6,14 @@
     <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt="FastAPI" />
     <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
     <img src="https://img.shields.io/badge/LangChain-1C3C3C?style=for-the-badge&logo=langchain&logoColor=white" alt="LangChain" />
-    <img src="https://img.shields.io/badge/OpenAI-412991?style=for-the-badge&logo=openai&logoColor=white" alt="OpenAI" />
+    <img src="https://img.shields.io/badge/Groq-F55036?style=for-the-badge" alt="Groq" />
     <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
   </p>
 </div>
 
 <br />
 
-A production-ready Retrieval-Augmented Generation (RAG) chatbot that lets you upload PDFs and chat with them intelligently. Built with FastAPI, React, LangChain, OpenAI, and FAISS.
+A production-ready Retrieval-Augmented Generation (RAG) chatbot that lets you upload PDFs and chat with them intelligently. Built with FastAPI, React, LangChain, Groq, and FAISS.
 
 ---
 
@@ -80,8 +80,8 @@ PDF File
 [LangChain RecursiveCharacterTextSplitter]
   Split into 500-char chunks with 50-char overlap
   ↓
-[OpenAI text-embedding-3-small]
-  Convert each chunk → dense vector (1536 dims)
+[HuggingFace all-MiniLM-L6-v2]
+  Convert each chunk → dense vector (384 dims)
   ↓
 [FAISS IndexFlatL2]
   Store vectors + text on disk
@@ -91,9 +91,9 @@ QUERY (every chat message)
 ──────────────────────────
 User Question
   ↓
-[OpenAI Embeddings] Embed the question
+[HuggingFace Embeddings] Embed the question
   ↓
-[FAISS] Top-K nearest neighbor search (default k=4)
+[FAISS] Top-K nearest neighbor search (default k=1)
   ↓
 Retrieved Chunks + metadata (source, page, score)
   ↓
@@ -102,7 +102,7 @@ Retrieved Chunks + metadata (source, page, score)
   History: last 6 conversation turns
   Human: {user_question}
   ↓
-[OpenAI gpt-4o-mini] Streaming generation
+[Groq llama-3.1-8b-instant] Streaming generation
   ↓
 Token-by-token SSE stream → React frontend
 ```
@@ -127,7 +127,7 @@ cd backend
 
 # Copy and fill in your API key
 cp .env.example .env
-# Edit .env: set OPENAI_API_KEY=sk-...
+# Edit .env: set GROQ_API_KEY=gsk-...
 
 # Create virtual environment
 python -m venv venv
@@ -170,7 +170,7 @@ Frontend is now at: `http://localhost:5173`
 
 ```bash
 # Set your API key first
-export OPENAI_API_KEY=sk-your-key-here
+export GROQ_API_KEY=gsk-your-key-here
 
 # Build and start everything
 docker-compose up --build -d
@@ -185,7 +185,7 @@ docker-compose up --build -d
 ```bash
 docker build -t rag-backend .
 docker run -p 8000:8000 \
-  -e OPENAI_API_KEY=sk-your-key \
+  -e GROQ_API_KEY=gsk-your-key \
   -v $(pwd)/data/uploads:/app/uploads \
   -v $(pwd)/data/vectorstore:/app/vectorstore \
   rag-backend
@@ -288,12 +288,11 @@ All settings via environment variables (or `.env` file):
 
 | Variable | Default | Description |
 |---|---|---|
-| `OPENAI_API_KEY` | *required* | Your OpenAI API key |
-| `OPENAI_MODEL` | `gpt-4o-mini` | LLM for generation |
-| `OPENAI_EMBEDDING_MODEL` | `text-embedding-3-small` | Embedding model |
+| `GROQ_API_KEY` | *required* | Your Groq API key |
+| `GROQ_CHAT_MODEL` | `llama-3.1-8b-instant` | LLM for generation |
 | `CHUNK_SIZE` | `500` | Characters per chunk |
 | `CHUNK_OVERLAP` | `50` | Overlap between chunks |
-| `TOP_K_RESULTS` | `4` | Chunks to retrieve per query |
+| `TOP_K_SOURCES` | `1` | Chunks to retrieve per query |
 | `UPLOAD_DIR` | `uploads` | PDF storage path |
 | `VECTOR_STORE_DIR` | `vectorstore` | FAISS index path |
 | `MAX_UPLOAD_SIZE_MB` | `50` | Max PDF size |
@@ -364,7 +363,8 @@ Visit `http://localhost:8000/docs` and test endpoints directly, including the `/
 | **Frontend** | React 18, Vite, Tailwind CSS |
 | **Backend** | FastAPI, Python 3.11, Uvicorn |
 | **RAG Pipeline** | LangChain 0.2 |
-| **LLM & Embeddings** | OpenAI (gpt-4o-mini, text-embedding-3-small) |
+| **LLM** | Groq (llama-3.1-8b-instant) |
+| **Embeddings** | HuggingFace (all-MiniLM-L6-v2, running locally) |
 | **Vector Database** | FAISS (local, persisted to disk) |
 | **PDF Processing** | pypdf |
 | **Logging** | Loguru |
