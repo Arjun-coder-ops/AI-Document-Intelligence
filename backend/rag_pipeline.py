@@ -182,7 +182,7 @@ class RAGPipeline:
     # ────────────────────────────────────────────────────────
 
     def retrieve_relevant_chunks(
-        self, query: str, k: Optional[int] = None
+        self, query: str, k: Optional[int] = None, doc_source: Optional[str] = None
     ) -> List[Tuple[Document, float]]:
         """
         Retrieve top-K chunks most semantically similar to the query.
@@ -190,6 +190,7 @@ class RAGPipeline:
         Args:
             query: User's question
             k: Number of chunks to retrieve (defaults to settings.top_k_results)
+            doc_source: Optional filename to restrict search to
 
         Returns:
             List of (Document, similarity_score) tuples
@@ -198,8 +199,9 @@ class RAGPipeline:
             raise ValueError("No documents have been indexed yet. Please upload PDFs first.")
 
         k = k or settings.top_k_sources
-        results = self.vector_store.similarity_search_with_score(query, k=k)
-        logger.debug(f"Retrieved {len(results)} chunks for query: '{query[:60]}...'")
+        filter_dict = {"source": doc_source} if doc_source else None
+        results = self.vector_store.similarity_search_with_score(query, k=k, filter=filter_dict)
+        logger.debug(f"Retrieved {len(results)} chunks for query: '{query[:60]}...' (filter={filter_dict})")
         return results
 
     def format_context(self, chunks: List[Tuple[Document, float]]) -> Tuple[str, List[Dict]]:
@@ -274,6 +276,7 @@ class RAGPipeline:
         query: str,
         chat_history: List[Dict[str, str]],
         debug: bool = False,
+        doc_source: Optional[str] = None,
     ) -> AsyncGenerator[str, None]:
         """
         Full RAG query pipeline with streaming output.
@@ -288,6 +291,7 @@ class RAGPipeline:
             query: User's question
             chat_history: List of {"role": "user"|"assistant", "content": "..."}
             debug: If True, also yield retrieved chunks for inspection
+            doc_source: Optional document filename to restrict search to
         """
         if not query.strip():
             yield json.dumps({"type": "error", "data": "Query cannot be empty"})
@@ -299,8 +303,8 @@ class RAGPipeline:
 
         try:
             # ── Step 1: Retrieve relevant chunks ──
-            logger.info(f"Processing query: '{query[:80]}'")
-            chunks = await asyncio.to_thread(self.retrieve_relevant_chunks, query)
+            logger.info(f"Processing query: '{query[:80]}' (doc_source: {doc_source})")
+            chunks = await asyncio.to_thread(self.retrieve_relevant_chunks, query, doc_source=doc_source)
             context, sources = self.format_context(chunks)
 
             # ── Step 2: Yield sources first (client can render immediately) ──

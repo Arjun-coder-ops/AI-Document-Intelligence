@@ -1,131 +1,82 @@
 import { useState, useCallback, useRef, useEffect } from "react";
 import { askQuestion } from "../utils/api";
 
-const SESSIONS_KEY = "docsage_chat_sessions";
-const ACTIVE_SESSION_ID_KEY = "docsage_active_session_id";
-
-const defaultSession = {
-  id: "default",
-  title: "General Chat",
-  messages: [],
-  timestamp: new Date().toISOString(),
-};
+const ACTIVE_DOC_KEY = "docsage_active_doc_name";
 
 export function useChat() {
-  const [sessions, setSessions] = useState(() => {
+  const [activeDocName, setActiveDocName] = useState(() => {
     try {
-      const stored = localStorage.getItem(SESSIONS_KEY);
-      if (stored) {
-        const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
+      return localStorage.getItem(ACTIVE_DOC_KEY) || null;
     } catch (e) {
-      console.error("Failed to load chat sessions:", e);
+      console.error("Failed to load active document name:", e);
+      return null;
     }
-    return [defaultSession];
   });
 
-  const [activeSessionId, setActiveSessionId] = useState(() => {
-    try {
-      const stored = localStorage.getItem(ACTIVE_SESSION_ID_KEY);
-      if (stored) return stored;
-    } catch (e) {
-      console.error("Failed to load active session ID:", e);
-    }
-    return "default";
-  });
-
+  const [messages, setMessages] = useState([]);
   const [isStreaming, setIsStreaming] = useState(false);
   const [error, setError] = useState(null);
   const abortRef = useRef(null);
 
-  // Sync sessions to localStorage
+  // Load chat history when activeDocName changes
+  useEffect(() => {
+    if (!activeDocName) {
+      setMessages([]);
+      return;
+    }
+    try {
+      const stored = localStorage.getItem(`docsage_history_${activeDocName}`);
+      if (stored) {
+        setMessages(JSON.parse(stored));
+      } else {
+        setMessages([]);
+      }
+      setError(null);
+    } catch (e) {
+      console.error("Failed to load chat history for", activeDocName, e);
+      setMessages([]);
+    }
+  }, [activeDocName]);
+
+  // Save chat history when messages change
+  useEffect(() => {
+    if (!activeDocName) return;
+    try {
+      localStorage.setItem(`docsage_history_${activeDocName}`, JSON.stringify(messages));
+    } catch (e) {
+      console.error("Failed to save chat history for", activeDocName, e);
+    }
+  }, [messages, activeDocName]);
+
+  // Sync activeDocName to localStorage
   useEffect(() => {
     try {
-      localStorage.setItem(SESSIONS_KEY, JSON.stringify(sessions));
+      if (activeDocName) {
+        localStorage.setItem(ACTIVE_DOC_KEY, activeDocName);
+      } else {
+        localStorage.removeItem(ACTIVE_DOC_KEY);
+      }
     } catch (e) {
-      console.error("Failed to save chat sessions:", e);
+      console.error("Failed to save active doc name:", e);
     }
-  }, [sessions]);
-
-  // Sync activeSessionId to localStorage
-  useEffect(() => {
-    try {
-      localStorage.setItem(ACTIVE_SESSION_ID_KEY, activeSessionId);
-    } catch (e) {
-      console.error("Failed to save active session ID:", e);
-    }
-  }, [activeSessionId]);
-
-  // Get active session messages
-  const activeSession = sessions.find((s) => s.id === activeSessionId) || sessions[0] || defaultSession;
-  const messages = activeSession.messages || [];
+  }, [activeDocName]);
 
   /**
-   * Create a new chat session.
+   * Delete history for a document.
    */
-  const createSession = useCallback((title = "New Chat") => {
-    const newSession = {
-      id: `session-${Date.now()}-${Math.random().toString(36).slice(2)}`,
-      title,
-      messages: [],
-      timestamp: new Date().toISOString(),
-    };
-    setSessions((prev) => [newSession, ...prev]);
-    setActiveSessionId(newSession.id);
-    return newSession.id;
-  }, []);
-
-  /**
-   * Delete a chat session.
-   */
-  const deleteSession = useCallback(
-    (id) => {
-      let nextActiveId = "default";
-      setSessions((prev) => {
-        const filtered = prev.filter((s) => s.id !== id);
-        if (filtered.length === 0) {
-          nextActiveId = "default";
-          return [defaultSession];
-        }
-        nextActiveId = filtered[0].id;
-        return filtered;
-      });
-
-      if (activeSessionId === id) {
-        setActiveSessionId(nextActiveId);
+  const deleteHistoryForDoc = useCallback(
+    (docName) => {
+      try {
+        localStorage.removeItem(`docsage_history_${docName}`);
+      } catch (e) {
+        console.error("Failed to delete chat history for", docName, e);
+      }
+      if (activeDocName === docName) {
+        setActiveDocName(null);
       }
     },
-    [activeSessionId]
+    [activeDocName]
   );
-
-  /**
-   * Switch active session.
-   */
-  const selectSession = useCallback((id) => {
-    setActiveSessionId(id);
-    setError(null);
-    if (abortRef.current) {
-      abortRef.current.abort();
-      abortRef.current = null;
-    }
-    setIsStreaming(false);
-  }, []);
-
-  /**
-   * Helper to update messages for the active session.
-   */
-  const updateActiveSessionMessages = useCallback((updater) => {
-    setSessions((prev) =>
-      prev.map((s) => {
-        if (s.id === activeSessionId) {
-          const newMessages = typeof updater === "function" ? updater(s.messages || []) : updater;
-          return { ...s, messages: newMessages, timestamp: new Date().toISOString() };
-        }
-        return s;
-      })
-    );
-  }, [activeSessionId]);
 
   /**
    * Build the chat history array for the API (last N turns).
@@ -138,11 +89,20 @@ export function useChat() {
   }, []);
 
   /**
+   * Helper to update messages.
+   */
+  const updateMessages = useCallback((updater) => {
+    setMessages((prev) => {
+      return typeof updater === "function" ? updater(prev) : updater;
+    });
+  }, []);
+
+  /**
    * Send a query through the RAG pipeline.
    */
   const sendMessage = useCallback(
     async (query, { debug = false } = {}) => {
-      if (!query.trim() || isStreaming) return;
+      if (!query.trim() || isStreaming || !activeDocName) return;
 
       setError(null);
 
@@ -170,24 +130,10 @@ export function useChat() {
         isStreaming: true,
       };
 
-      // Add user and placeholder assistant message to the active session
       let historySnapshot = [];
-      setSessions((prev) => {
-        const active = prev.find((s) => s.id === activeSessionId) || prev[0] || defaultSession;
-        const currentMsgs = active.messages || [];
-        historySnapshot = buildHistory(
-          currentMsgs.filter((m) => m.role === "user" || m.role === "assistant")
-        );
-        return prev.map((s) => {
-          if (s.id === activeSessionId) {
-            return {
-              ...s,
-              messages: [...currentMsgs, userMsg, assistantMsg],
-              timestamp: new Date().toISOString(),
-            };
-          }
-          return s;
-        });
+      setMessages((prev) => {
+        historySnapshot = buildHistory(prev);
+        return [...prev, userMsg, assistantMsg];
       });
 
       setIsStreaming(true);
@@ -196,35 +142,36 @@ export function useChat() {
         query: query.trim(),
         chatHistory: historySnapshot,
         debug,
+        docSource: activeDocName,
         signal: abortRef.current.signal,
 
         onSources: (sources) => {
-          updateActiveSessionMessages((prev) =>
+          updateMessages((prev) =>
             prev.map((m) => (m.id === assistantId ? { ...m, sources } : m))
           );
         },
 
         onToken: (token) => {
-          updateActiveSessionMessages((prev) =>
+          updateMessages((prev) =>
             prev.map((m) => (m.id === assistantId ? { ...m, content: m.content + token } : m))
           );
         },
 
         onDebug: (chunks) => {
-          updateActiveSessionMessages((prev) =>
+          updateMessages((prev) =>
             prev.map((m) => (m.id === assistantId ? { ...m, debugChunks: chunks } : m))
           );
         },
 
         onDone: () => {
-          updateActiveSessionMessages((prev) =>
+          updateMessages((prev) =>
             prev.map((m) => (m.id === assistantId ? { ...m, isStreaming: false } : m))
           );
           setIsStreaming(false);
         },
 
         onError: (err) => {
-          updateActiveSessionMessages((prev) =>
+          updateMessages((prev) =>
             prev.map((m) =>
               m.id === assistantId
                 ? {
@@ -241,7 +188,7 @@ export function useChat() {
         },
       });
     },
-    [isStreaming, activeSessionId, buildHistory, updateActiveSessionMessages]
+    [isStreaming, activeDocName, buildHistory, updateMessages]
   );
 
   /**
@@ -253,32 +200,37 @@ export function useChat() {
       abortRef.current = null;
     }
     setIsStreaming(false);
-    updateActiveSessionMessages((prev) =>
+    updateMessages((prev) =>
       prev.map((m) => (m.isStreaming ? { ...m, isStreaming: false } : m))
     );
-  }, [updateActiveSessionMessages]);
+  }, [updateMessages]);
 
   /**
-   * Clear all messages in the active session.
+   * Clear all messages for the active document.
    */
   const clearChat = useCallback(() => {
     stopStreaming();
-    updateActiveSessionMessages([]);
+    setMessages([]);
     setError(null);
-  }, [stopStreaming, updateActiveSessionMessages]);
+    if (activeDocName) {
+      try {
+        localStorage.removeItem(`docsage_history_${activeDocName}`);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+  }, [stopStreaming, activeDocName]);
 
   return {
-    sessions,
-    activeSessionId,
-    createSession,
-    deleteSession,
-    selectSession,
+    activeDocName,
+    setActiveDocName,
     messages,
     isStreaming,
     error,
     sendMessage,
     stopStreaming,
     clearChat,
+    deleteHistoryForDoc,
     setError,
   };
 }

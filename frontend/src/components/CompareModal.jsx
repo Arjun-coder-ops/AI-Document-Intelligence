@@ -5,7 +5,7 @@ import { compareAnswers } from "../utils/api";
 /**
  * CompareModal — side-by-side comparison of RAG vs baseline answers.
  */
-export default function CompareModal({ onClose, hasDocuments }) {
+export default function CompareModal({ onClose, hasDocuments, activeDocName }) {
   const [query, setQuery] = useState("");
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState(null);
@@ -17,7 +17,7 @@ export default function CompareModal({ onClose, hasDocuments }) {
     setError(null);
     setResult(null);
     try {
-      const data = await compareAnswers(query.trim());
+      const data = await compareAnswers(query.trim(), [], activeDocName);
       setResult(data);
     } catch (err) {
       setError(err.message);

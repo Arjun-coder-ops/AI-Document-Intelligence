@@ -61,6 +61,7 @@ class AskRequest(BaseModel):
     query: str = Field(..., min_length=1, max_length=2000)
     chat_history: List[ChatMessage] = Field(default_factory=list)
     debug: bool = Field(False, description="Include retrieved chunks in response")
+    doc_source: Optional[str] = Field(None, description="Optional document filename to filter search")
 
     @validator("query")
     def query_not_empty(cls, v):
@@ -72,6 +73,7 @@ class AskRequest(BaseModel):
 class CompareRequest(BaseModel):
     query: str = Field(..., min_length=1)
     chat_history: List[ChatMessage] = Field(default_factory=list)
+    doc_source: Optional[str] = Field(None, description="Optional document filename to filter search")
 
 
 class UploadResponse(BaseModel):
@@ -189,6 +191,7 @@ async def ask_question(request: AskRequest):
             query=request.query,
             chat_history=history,
             debug=request.debug,
+            doc_source=request.doc_source,
         ):
             yield f"data: {event}\n\n"
         yield "data: [DONE]\n\n"
@@ -215,7 +218,11 @@ async def compare_answers(request: CompareRequest):
     history = [{"role": m.role, "content": m.content} for m in request.chat_history]
 
     # Run both in parallel
-    chunks_task = asyncio.to_thread(rag_pipeline.retrieve_relevant_chunks, request.query)
+    chunks_task = asyncio.to_thread(
+        rag_pipeline.retrieve_relevant_chunks, 
+        request.query, 
+        doc_source=request.doc_source
+    )
     no_ctx_task = rag_pipeline.query_without_context(request.query, history)
 
     chunks_result, no_ctx_answer = await asyncio.gather(chunks_task, no_ctx_task)

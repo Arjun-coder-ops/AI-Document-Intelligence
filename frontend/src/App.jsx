@@ -13,17 +13,15 @@ import { healthCheck } from "./utils/api";
 
 export default function App() {
   const {
-    sessions,
-    activeSessionId,
-    createSession,
-    deleteSession,
-    selectSession,
+    activeDocName,
+    setActiveDocName,
     messages,
     isStreaming,
     error,
     sendMessage,
     stopStreaming,
-    clearChat
+    clearChat,
+    deleteHistoryForDoc,
   } = useChat();
   const {
     documents, stats, uploading, uploadProgress, error: uploadError,
@@ -55,19 +53,43 @@ export default function App() {
     return () => clearInterval(interval);
   }, [refresh]);
 
+  // Auto-select first document if current activeDocName doesn't exist
+  useEffect(() => {
+    if (documents.length > 0) {
+      const exists = documents.some((d) => d.filename === activeDocName);
+      if (!exists) {
+        setActiveDocName(documents[0].filename);
+      }
+    } else {
+      setActiveDocName(null);
+    }
+  }, [documents, activeDocName, setActiveDocName]);
+
   const handleUpload = useCallback(
     async (files) => {
       try {
         const result = await upload(files);
         if (result && result.results && result.results.length > 0) {
-          const firstDoc = result.results[0].original_filename;
-          createSession(`Chat: ${firstDoc}`);
+          const firstDocStoredAs = result.results[0].stored_as;
+          setActiveDocName(firstDocStoredAs);
         }
       } catch (err) {
         console.error("Upload failed:", err);
       }
     },
-    [upload, createSession]
+    [upload, setActiveDocName]
+  );
+
+  const handleDeleteDocument = useCallback(
+    async (filename) => {
+      try {
+        await remove(filename);
+        deleteHistoryForDoc(filename);
+      } catch (err) {
+        console.error("Delete failed:", err);
+      }
+    },
+    [remove, deleteHistoryForDoc]
   );
 
   const handleSend = useCallback(
@@ -99,12 +121,9 @@ export default function App() {
         uploadError={uploadError}
         loading={docsLoading}
         onUpload={handleUpload}
-        onDelete={remove}
-        sessions={sessions}
-        activeSessionId={activeSessionId}
-        onCreateChat={createSession}
-        onDeleteChat={deleteSession}
-        onSelectChat={selectSession}
+        onDelete={handleDeleteDocument}
+        activeDocName={activeDocName}
+        onSelectDocument={setActiveDocName}
       />
 
       {/* Main chat area */}
@@ -114,7 +133,7 @@ export default function App() {
           <div className="flex items-center gap-3">
             <div>
               <h1 className="font-display text-base font-semibold text-parchment-100">
-                Document Intelligence
+                {activeDocName ? `Chatting with: ${activeDocName}` : "Document Intelligence"}
               </h1>
               <p className="text-[11px] text-ink-500">
                 {hasDocuments
@@ -280,7 +299,9 @@ export default function App() {
                 ? "Backend offline…"
                 : !hasDocuments
                   ? "Upload a PDF first to start chatting…"
-                  : "Ask a question about your documents…"
+                  : activeDocName
+                    ? `Ask a question about ${activeDocName}…`
+                    : "Select a document to start chatting…"
             }
           />
         </div>
@@ -291,6 +312,7 @@ export default function App() {
         <CompareModal
           onClose={() => setShowCompare(false)}
           hasDocuments={hasDocuments}
+          activeDocName={activeDocName}
         />
       )}
     </div>

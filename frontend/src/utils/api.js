@@ -46,6 +46,7 @@ export async function askQuestion({
   query,
   chatHistory = [],
   debug = false,
+  docSource = null,
   onSources,
   onToken,
   onDebug,
@@ -57,7 +58,7 @@ export async function askQuestion({
     const response = await fetch(`${API_BASE}/ask`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ query, chat_history: chatHistory, debug }),
+      body: JSON.stringify({ query, chat_history: chatHistory, debug, doc_source: docSource }),
       signal,
     });
 
@@ -126,11 +127,11 @@ export async function askQuestion({
  * @param {Array} chatHistory
  * @returns {Promise<{with_context, without_context, query}>}
  */
-export async function compareAnswers(query, chatHistory = []) {
+export async function compareAnswers(query, chatHistory = [], docSource = null) {
   const response = await fetch(`${API_BASE}/compare`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ query, chat_history: chatHistory }),
+    body: JSON.stringify({ query, chat_history: chatHistory, doc_source: docSource }),
   });
 
   if (!response.ok) {
