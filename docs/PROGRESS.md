@@ -377,4 +377,36 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `npm test` -> 29 test files, 142 tests passed.
 - **Next Up:** Level 13 — Deploy, Docs, and Proof.
 
+---
+
+## Level 13: Deploy, Docs, and Proof
+
+- **Status:** COMPLETE (Passed: all 13 levels, lint, typecheck, tests, retrieval-eval, documentation review)
+- **What Was Built:**
+  - Authored hiring-committee-grade root [`README.md`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/README.md):
+    - System problem statement and architectural Mermaid diagram detailing Edge, Database, Worker, RAG Core, and Inference layers.
+    - Comprehensive ADR summaries (0001 through 0010) explaining engineering trade-offs.
+    - Measured retrieval results table derived directly from `docs/results/` with 95% bootstrap confidence intervals.
+    - Concurrency and latency benchmarks from k6 stress runs (50 VUs, 218.59 req/sec, 0.00% error rate).
+    - Bottlenecks profiled and fixed (HNSW `ef_search` 100 -> 40, pool sizing 10 -> 25).
+    - Multi-tenant security model (PostgreSQL kernel RLS with `NOBYPASSRLS`, Argon2id, JWT + rotating httpOnly refresh token, prompt injection defusing, Delimiter breakout protection).
+    - Roadmap to 100x scale ($10\text{M}+$ documents: table partitioning by tenant_id, vector read replicas, dedicated vector DB migration).
+    - 5-minute local quick start guide and pre-seeded demo credentials.
+  - Authored [`docs/INTERVIEW_PREP.md`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/INTERVIEW_PREP.md):
+    - 15 deep, technical interview questions with exhaustive answers referencing real files, ADRs, and measured numbers.
+  - Authored [`docs/RESUME_BULLETS.md`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/RESUME_BULLETS.md):
+    - 5 high-impact resume bullets grounded strictly in measured metrics from `docs/results/` (zero fabricated numbers).
+  - Authored [`docs/DEMO_SCRIPT.md`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/DEMO_SCRIPT.md):
+    - Precise 2-minute screen recording script demonstrating authentication, ingestion, streaming chat, evidence inspection, stop cancellation, and admin observability.
+- **Verification Evidence:**
+  - `git ls-files "*.py"` -> 0 Python files in repository
+  - `git ls-files "*.pkl" "*.faiss"` -> 0 FAISS/pickle artifacts in repository
+  - `git ls-files ".env"` -> 0 secrets tracked (only `.env.example`)
+  - `npm test -- rls.test.ts` -> Passed (kernel-level tenant isolation proven)
+  - `npm test -- ingestion.test.ts` -> Passed (asynchronous & idempotent ingestion proven)
+  - `npm run eval:retrieval` -> Passed (+300% Recall@5 lift with 95% CIs, CI regression gate passed)
+  - `npm test -- reliability.test.ts chat-contract.test.ts` -> Passed (abort-on-disconnect, circuit breaker, and fallbacks proven)
+  - `docs/results/load-test.json` -> 50 VUs, 218.59 req/sec, 250ms p95 latency recorded
+- **Project Rebuild Status:** 100% COMPLETE.
+
 
