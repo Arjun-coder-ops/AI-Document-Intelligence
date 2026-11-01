@@ -36,6 +36,7 @@ export default tseslint.config(
       '**/*.d.ts',
       'docs/**',
       'evals/dataset/**',
+      'infra/k6/**',
     ],
   },
 );

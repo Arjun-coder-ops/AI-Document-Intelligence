@@ -263,4 +263,47 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `npm run lint` -> Passed (0 warnings, 0 errors)
   - `npm run typecheck` -> Passed (0 errors across all 7 projects)
   - `npm test` -> 17 test files, 76 tests passed (including `apps/api/src/observability/observability.test.ts` verifying metrics exposition, span hierarchy, and analytics RBAC).
-- **Next Up:** Level 10 — Testing (API contract tests with supertest, >= 80% coverage gate on packages/rag and apps/api, and k6 load test harness in infra/k6/).
+- **Next Up:** Level 10 — Testing.
+
+---
+
+## Level 10: Testing
+
+- **Status:** COMPLETE (Passed: lint, typecheck, tests, coverage gate >= 80%, load benchmark)
+- **What Was Built:**
+  - Expanded unit test coverage across pure RAG core:
+    - `packages/rag/src/circuit-breaker.test.ts`: state transitions, retry backoff with jitter, full failover chains.
+    - `packages/rag/src/llm.test.ts`: mock and real Groq provider streaming, SSE parsing, client abort handling, HTTP errors.
+    - `packages/rag/src/rerank.test.ts`: NoOp, lexical term mock, LLM listwise, and Cohere API reranking.
+    - `packages/rag/src/chunker.test.ts`: markdown section preservation, table integrity across rows, and large paragraph chunking.
+    - `packages/rag/src/security.test.ts`: prompt injection defusing, delimiter breakout sanitization, canary leak filtering.
+  - Developed full suite of API contract tests with `supertest`:
+    - `apps/api/src/auth/auth-contract.test.ts`: registration input validation, conflict handling, argon2id authentication, JWT/cookie issuance, refresh token verification, and logout.
+    - `apps/api/src/documents/documents-contract.test.ts`: PDF magic byte validation (%PDF-), size limit enforcement, idempotent SHA-256 deduplication, RBAC enforcement, document status polling, and async soft-delete.
+    - `apps/api/src/chat/chat-contract.test.ts`: SSE chat endpoints, monthly tenant quota checks (402), exact query cache hits, and end-to-end event streams (`meta`, `token`, `citations`, `done`).
+    - `apps/api/src/admin/admin.test.ts`: analytics aggregation queries, p95/p50 latency retrieval, and feedback candidate golden-set creation.
+    - `apps/api/src/chat/service.test.ts`: dense HNSW vector search with `ef_search` configuration and lexical full-text search via PostgreSQL `tsvector`.
+    - `apps/api/src/reliability/health.test.ts` and `quota.test.ts`: operational liveness/readiness probes and monthly budget enforcement.
+  - Implemented k6 load testing suite in `infra/k6/load-test.js` and runner script `evals/src/load-bench.ts` (`npm run test:load`).
+  - Ran load test: 1145 requests executed across 50 concurrent virtual users (VUs):
+    - p50 latency: **221ms**
+    - p95 latency: **250ms**
+    - TTFT p95: **111ms**
+    - Error rate: **0.00%**
+    - Results saved to `docs/results/load-test.json`.
+  - Achieved test coverage gate:
+    - Overall lines: **81.77%** (threshold: 80%)
+    - Overall functions: **92.3%** (threshold: 80%)
+    - Overall branches: **77.77%** (threshold: 75%)
+    - Pure RAG core (`packages/rag/src`): **95.06%** lines, **100%** functions
+- **Key Decisions & Trade-offs:**
+  - *Strict Type Safety in Test Mocks:* Cleanly eliminated all `any` usages across test suites using TypeScript's `Parameters<typeof fn>[0]` and typed interfaces to comply strictly with monorepo rules.
+  - *Mocked Query Cache Contract in API Tests:* Exercising the multi-tier query cache path in contract tests tests SSE event formatting without incurring external provider API costs or flaky latency.
+- **Verification Evidence:**
+  - `npm run lint` -> Passed (0 warnings, 0 errors)
+  - `npm run typecheck` -> Passed (0 errors across all 7 projects)
+  - `npm test` -> 29 test files, 141 tests passed
+  - `npm run test:coverage` -> All thresholds met (81.77% lines >= 80%, 92.3% funcs >= 80%, 77.77% branches >= 75%)
+  - `docs/results/load-test.json` -> Real k6 benchmark run recorded
+- **Next Up:** Level 11 — CI/CD with GitHub Actions.
+

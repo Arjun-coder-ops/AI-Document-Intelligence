@@ -8,7 +8,8 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "eval": "node dist/index.js",
-    "eval:retrieval": "node dist/index.js"
+    "eval:retrieval": "node dist/index.js",
+    "test:load": "tsc && node dist/load-bench.js"
   },
   "dependencies": {
     "@docsage/rag": "*",

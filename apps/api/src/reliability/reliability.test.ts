@@ -1,7 +1,9 @@
 import { describe, it, expect, vi } from 'vitest';
 import { CircuitBreaker, executeWithFallback } from '@docsage/rag';
-import { TokenBucketLimiter } from './rate-limiter.js';
+import { TokenBucketLimiter, createRateLimiterMiddleware } from './rate-limiter.js';
 import { MultiTierQueryCache } from './cache.js';
+import type { Request, Response } from 'express';
+import type { AuthenticatedRequest } from '../auth/middleware.js';
 
 describe('Level 7: Reliability, Circuit Breakers, Fallbacks & Caching', () => {
   // ── 1. Circuit Breaker State Transitions ───────────────────────────────────
@@ -139,6 +141,48 @@ describe('Level 7: Reliability, Circuit Breakers, Fallbacks & Caching', () => {
       const rejected = limiter.consume(key);
       expect(rejected.allowed).toBe(false);
       expect(rejected.retryAfterSeconds).toBeGreaterThanOrEqual(1);
+    });
+
+    it('enforces rate limiter express middleware for users and tenants', () => {
+      const middleware = createRateLimiterMiddleware({
+        userCapacity: 1,
+        tenantCapacity: 1,
+        refillPerMinute: 60,
+      });
+
+      const next = vi.fn();
+      const mockRes = () => {
+        const res: Record<string, unknown> = {};
+        res.setHeader = vi.fn();
+        res.status = vi.fn().mockReturnValue(res);
+        res.json = vi.fn().mockReturnValue(res);
+        return res as unknown as Response;
+      };
+
+      // 1. Unauthenticated request passes through
+      middleware({} as unknown as AuthenticatedRequest, mockRes(), next);
+      expect(next).toHaveBeenCalledTimes(1);
+
+      // 2. First authenticated request allowed
+      const req = {
+        user: { sub: 'u1', tenantId: 't1' },
+      } as unknown as AuthenticatedRequest;
+      middleware(req, mockRes(), next);
+      expect(next).toHaveBeenCalledTimes(2);
+
+      // 3. Second request fails user limit
+      const userExceededRes = mockRes();
+      middleware(req, userExceededRes, next);
+      expect(userExceededRes.status).toHaveBeenCalledWith(429);
+      expect(userExceededRes.setHeader).toHaveBeenCalledWith('Retry-After', expect.any(String));
+
+      // 4. Request from different user in same tenant fails tenant limit
+      const tenantReq = {
+        user: { sub: 'u2', tenantId: 't1' },
+      } as unknown as AuthenticatedRequest;
+      const tenantExceededRes = mockRes();
+      middleware(tenantReq, tenantExceededRes, next);
+      expect(tenantExceededRes.status).toHaveBeenCalledWith(429);
     });
   });
 

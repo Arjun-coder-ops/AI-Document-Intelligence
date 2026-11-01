@@ -33,6 +33,7 @@ describe('Structure-Aware Document Chunker', () => {
       '| Isolation | RLS (PostgreSQL) | None (Shared Index) |',
       '| Search | Hybrid + Rerank | Dense Only |',
       '| Queue | pg-boss (Postgres) | Synchronous / None |',
+      'This is text immediately following the table to verify table buffer flush.',
     ].join('\n');
 
     const chunks = chunkDocument([{ page: 1, text: tableText }], {
@@ -40,11 +41,22 @@ describe('Structure-Aware Document Chunker', () => {
       overlapTokens: 20,
     });
 
-    // The whole table must be preserved in a single chunk
     const tableChunk = chunks.find((c) => c.content.includes('| Isolation |'));
     expect(tableChunk).toBeDefined();
     expect(tableChunk?.content).toContain('| Search |');
     expect(tableChunk?.content).toContain('| Queue |');
+  });
+
+  it('chunks long continuous paragraphs across target character boundaries', () => {
+    const longParagraph = Array.from({ length: 40 }, (_, i) => `Sentence number ${i} with substantial detailed technical explanations.`).join(' ');
+    const chunks = chunkDocument([{ page: 1, text: longParagraph }], {
+      targetTokens: 50,
+      overlapTokens: 10,
+    });
+
+    expect(chunks.length).toBeGreaterThan(1);
+    expect(chunks[0]?.ordinal).toBe(0);
+    expect(chunks[1]?.ordinal).toBe(1);
   });
 
   it('generates consistent SHA-256 hashes for deduplication', () => {

@@ -52,6 +52,12 @@ documentsRouter.post(
       return;
     }
 
+    const contentType = req.headers['content-type'] ?? '';
+    if (!contentType.includes('multipart/form-data')) {
+      res.status(400).json({ error: 'Invalid content type: expected multipart/form-data' });
+      return;
+    }
+
     const maxUploadSizeMb = Number(process.env['MAX_UPLOAD_SIZE_MB'] ?? 50);
     const maxBytes = maxUploadSizeMb * 1024 * 1024;
 
@@ -84,11 +90,12 @@ documentsRouter.post(
           const magic = chunk.subarray(0, 5).toString('utf-8');
           if (!magic.startsWith('%PDF-')) {
             magicBytesValid = false;
-            fileError = 'Invalid file format: file magic bytes do not match %PDF-';
-            statusCode = 400;
             fileStream.destroy();
             writeStream.destroy();
             fs.unlink(tempFilePath, () => {});
+            if (!res.headersSent) {
+              res.status(400).json({ error: 'Invalid file format: file magic bytes do not match %PDF-' });
+            }
             return;
           }
         }
@@ -100,6 +107,9 @@ documentsRouter.post(
           fileStream.destroy();
           writeStream.destroy();
           fs.unlink(tempFilePath, () => {});
+          if (!res.headersSent) {
+            res.status(413).json({ error: `File exceeds maximum allowed size of ${maxUploadSizeMb}MB` });
+          }
           return;
         }
 

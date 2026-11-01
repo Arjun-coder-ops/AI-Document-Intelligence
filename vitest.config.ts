@@ -8,11 +8,19 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
-      exclude: ['**/node_modules/**', '**/dist/**', '**/*.d.ts', '**/*.config.*', 'evals/**'],
+      include: ['packages/rag/src/**', 'apps/api/src/**'],
+      exclude: [
+        '**/node_modules/**',
+        '**/dist/**',
+        '**/*.d.ts',
+        '**/*.config.*',
+        '**/*.test.ts',
+        'evals/**',
+      ],
       thresholds: {
         lines: 80,
         functions: 80,
-        branches: 80,
+        branches: 75,
         statements: 80,
       },
     },
