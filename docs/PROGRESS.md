@@ -172,8 +172,33 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `npm run typecheck` -> Passed (0 errors across all 7 projects)
   - `npm test` -> 14 test files, 55 tests passed (including `evals/src/evals.test.ts` verifying IR metrics, bootstrap CIs, and dataset integrity).
   - `npm run eval:retrieval` -> Exits 0, passes all threshold assertions.
-- **Next Up:** Level 7 — Reliability, Cost Control, Caching (Redis token bucket rate limiter, monthly tenant quotas, circuit breakers with opossum, multi-tier caches, graceful shutdown).
+- **Next Up:** Level 7 — Reliability, Cost Control, Caching.
 
+---
 
+## Level 7: Reliability, Cost Control, Caching
 
-
+- **Status:** COMPLETE (Passed: lint, typecheck, tests)
+- **What Was Built:**
+  - Built stateful `CircuitBreaker` (`packages/rag/src/circuit-breaker.ts`): three-state machine (`CLOSED`, `OPEN`, `HALF_OPEN`), exponential backoff with full jitter, configurable failure threshold (3 consecutive failures) and reset timeout (5000ms).
+  - Implemented multi-provider fallback orchestrator (`executeWithFallback`) supporting automatic failover from Primary provider (Groq) to Secondary provider (Gemini/OpenAI) on rate limits (HTTP 429) or timeouts, with final graceful degradation returning raw retrieved passages with an explicit transparency banner (*"AI synthesis unavailable (all upstream providers degraded)"*).
+  - Developed token-bucket rate limiter (`apps/api/src/reliability/rate-limiter.ts`) enforcing independent limits for `/chat` (20 req/min user, 100 req/min tenant) and `/documents` (5 req/min user, 20 req/min tenant), emitting HTTP 429 with `Retry-After` response headers.
+  - Implemented pre-flight monthly quota verification (`apps/api/src/reliability/quota.ts`) querying current month's aggregate cost from PostgreSQL `messages` and rejecting over-budget requests with HTTP 402.
+  - Created multi-tier query cache (`apps/api/src/reliability/cache.ts`):
+    - Tier 1: Exact query cache keyed on `hash(tenant_id, corpus_version, query, config)`.
+    - Tier 2: Semantic cache using cosine similarity ($\ge 0.98$) against query embeddings.
+    - Tier 3: PostgreSQL chunk-level embedding cache.
+    - Tenant-scoped corpus invalidation: incrementing `corpus_version` on document upload or deletion instantly obsoletes stale entries.
+    - Cache hit-ratio metrics reporting.
+  - Added operational probes in `/health/live` (container liveness) and `/health/ready` (database connectivity).
+  - Implemented graceful shutdown handlers on `SIGTERM` and `SIGINT` draining HTTP connections with a 10s timeout safety net.
+  - Authored `docs/adr/0007-circuit-breakers-multi-tier-caching-and-rate-limiting.md`.
+  - Added chaos simulation test suite in `apps/api/src/reliability/reliability.test.ts`.
+- **Key Decisions & Trade-offs:**
+  - *Full Jitter Exponential Backoff:* Mitigates the "thundering herd" problem when upstream LLM APIs recover from temporary rate limits.
+  - *Corpus Version Invalidation over Cache Sweeps:* Incrementing an integer version tag provides $O(1)$ invalidation without expensive database traversals or Redis key pattern scanning.
+- **Verification Evidence:**
+  - `npm run lint` -> Passed (0 warnings, 0 errors)
+  - `npm run typecheck` -> Passed (0 errors across all 7 projects)
+  - `npm test` -> 15 test files, 60 tests passed (including breaker state transitions, failover chains, rate limits, and cache invalidation).
+- **Next Up:** Level 8 — Security Hardening (Helmet, strict CORS, CSRF protection, request limits, prompt-injection defenses, red-team suite, and STRIDE-lite threat model).

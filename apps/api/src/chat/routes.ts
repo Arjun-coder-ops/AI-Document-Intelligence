@@ -21,8 +21,17 @@ import {
 } from '@docsage/rag';
 import { authenticate, requireRole, type AuthenticatedRequest } from '../auth/middleware.js';
 import { postgresQueryExecutor } from './service.js';
+import { createRateLimiterMiddleware } from '../reliability/rate-limiter.js';
+import { checkTenantMonthlyQuota } from '../reliability/quota.js';
+import { queryCache } from '../reliability/cache.js';
 
 export const chatRouter: Router = Router();
+
+const chatRateLimiter = createRateLimiterMiddleware({
+  userCapacity: 20,
+  tenantCapacity: 100,
+  refillPerMinute: 60,
+});
 
 // LLM Provider Factory
 function getLLMProvider(): LLMProvider {
@@ -50,10 +59,19 @@ chatRouter.post(
   '/',
   authenticate,
   requireRole('viewer'),
+  chatRateLimiter,
   async (req: AuthenticatedRequest, res: Response): Promise<void> => {
     const user = req.user;
     if (!user) {
       res.status(401).json({ error: 'Unauthorized' });
+      return;
+    }
+
+    const quota = await checkTenantMonthlyQuota(user.tenantId);
+    if (!quota.withinQuota) {
+      res.status(402).json({
+        error: `Monthly quota exceeded ($${quota.currentCost} / $${quota.monthlyLimit}). Upgrade tenant tier to continue.`,
+      });
       return;
     }
 
@@ -163,8 +181,47 @@ chatRouter.post(
       });
       _history.reverse();
 
-      // 7. Embed Query & Execute Hybrid Retrieval
+      // 7. Embed Query & Check Multi-Tier Cache
       const queryEmbedding = await getQueryEmbedding(message);
+      const cached = queryCache.get(user.tenantId, message, queryEmbedding);
+      if (cached) {
+        const tokenPayload: SSEEventToken = { token: cached.text };
+        await sendSSE('token', tokenPayload);
+
+        const citationsPayload: SSEEventCitations = { citations: cached.citations };
+        await sendSSE('citations', citationsPayload);
+
+        const totalDuration = Date.now() - startTime;
+        await withTenant(user.tenantId, async (tx) => {
+          await tx.insert(messages).values({
+            tenantId: user.tenantId,
+            conversationId,
+            role: 'assistant',
+            content: cached.text,
+            citations: cached.citations,
+            ttftMs: totalDuration,
+            totalDurationMs: totalDuration,
+            promptTokens: estimateTokens(message),
+            completionTokens: cached.totalTokens,
+            estimatedCost: '0.000000',
+          });
+        });
+
+        const donePayload: SSEEventDone = {
+          aborted: false,
+          error: false,
+          totalTokens: cached.totalTokens,
+          estimatedCost: 0,
+          latencyMs: totalDuration,
+          ttftMs: totalDuration,
+        };
+        await sendSSE('done', donePayload);
+
+        cleanup();
+        res.end();
+        return;
+      }
+
       const retrievalResult = await executeHybridRetrieval(
         user.tenantId,
         message,
@@ -273,6 +330,18 @@ chatRouter.post(
           estimatedCost: costEstimateStr,
         });
       });
+
+      // Populate Query Cache
+      queryCache.set(
+        user.tenantId,
+        message,
+        {
+          text: citationResult.cleanedText,
+          citations: citationResult.verifiedCitations,
+          totalTokens,
+        },
+        queryEmbedding,
+      );
 
       // 14. Emit Done Event
       const donePayload: SSEEventDone = {

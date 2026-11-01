@@ -1,9 +1,9 @@
 import express, { type Request, type Response, type NextFunction } from 'express';
 import cookieParser from 'cookie-parser';
-import type { HealthCheckResponse } from '@docsage/shared';
 import { authRouter } from './auth/routes.js';
 import { documentsRouter } from './documents/routes.js';
 import { chatRouter } from './chat/routes.js';
+import { healthRouter } from './reliability/health.js';
 
 export function createApp(): express.Express {
   const app = express();
@@ -11,17 +11,8 @@ export function createApp(): express.Express {
   app.use(express.json());
   app.use(cookieParser());
 
-  // Health check endpoint
-  app.get('/health', (_req: Request, res: Response) => {
-    const response: HealthCheckResponse = {
-      status: 'healthy',
-      version: '0.1.0',
-      timestamp: new Date().toISOString(),
-      database: 'unverified',
-      redis: 'unverified',
-    };
-    res.status(200).json(response);
-  });
+  // Health check endpoints (liveness & readiness)
+  app.use('/health', healthRouter);
 
   // Auth routes
   app.use('/auth', authRouter);
@@ -45,9 +36,27 @@ const app = createApp();
 
 if (process.env['NODE_ENV'] !== 'test') {
   const port = process.env['PORT'] ?? 8000;
-  app.listen(port, () => {
+  const server = app.listen(port, () => {
     console.info(`DocSage API server listening on port ${port}`);
   });
+
+  // Graceful shutdown handling
+  const shutdown = (signal: string) => {
+    console.info(`Received ${signal}. Draining connections and initiating graceful shutdown...`);
+    server.close(() => {
+      console.info('HTTP server closed. Exiting process.');
+      process.exit(0);
+    });
+
+    // Force exit after 10s if connections do not close cleanly
+    setTimeout(() => {
+      console.error('Graceful shutdown timeout exceeded. Forcefully killing process.');
+      process.exit(1);
+    }, 10000).unref();
+  };
+
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+  process.on('SIGINT', () => shutdown('SIGINT'));
 }
 
 export default app;

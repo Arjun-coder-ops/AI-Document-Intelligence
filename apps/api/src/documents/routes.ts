@@ -8,8 +8,16 @@ import { eq, and, isNull } from 'drizzle-orm';
 import { authenticate, requireRole, type AuthenticatedRequest } from '../auth/middleware.js';
 import { logAuditEvent } from '../audit/service.js';
 import { PgBoss } from 'pg-boss';
+import { createRateLimiterMiddleware } from '../reliability/rate-limiter.js';
+import { queryCache } from '../reliability/cache.js';
 
 export const documentsRouter: Router = Router();
+
+const uploadRateLimiter = createRateLimiterMiddleware({
+  userCapacity: 5,
+  tenantCapacity: 20,
+  refillPerMinute: 10,
+});
 
 const uploadDir = path.resolve(process.cwd(), process.env['UPLOAD_DIR'] ?? './uploads');
 if (!fs.existsSync(uploadDir)) {
@@ -36,6 +44,7 @@ documentsRouter.post(
   '/',
   authenticate,
   requireRole('editor'),
+  uploadRateLimiter,
   (req: AuthenticatedRequest, res: Response): void => {
     const user = req.user;
     if (!user) {
@@ -167,6 +176,9 @@ documentsRouter.post(
 
               return inserted;
             });
+
+            // Invalidate query cache for this tenant
+            queryCache.invalidateTenantCorpus(user.tenantId);
 
             // Enqueue asynchronous ingestion job via pg-boss
             const boss = await getBoss();
@@ -375,6 +387,9 @@ documentsRouter.delete(
       res.status(404).json({ error: 'Document not found or already deleted' });
       return;
     }
+
+    // Invalidate query cache for this tenant
+    queryCache.invalidateTenantCorpus(user.tenantId);
 
     // Enqueue O(document) chunk purge job
     const boss = await getBoss();

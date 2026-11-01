@@ -7,6 +7,7 @@ export * from './citations.js';
 export * from './threshold.js';
 export * from './retrieval.js';
 export * from './llm.js';
+export * from './circuit-breaker.js';
 
 import type { Citation } from '@docsage/shared';
 
