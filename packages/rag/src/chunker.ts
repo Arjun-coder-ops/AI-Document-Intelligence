@@ -1,5 +1,5 @@
 import crypto from 'crypto';
-import type { DocumentChunk } from './index.js';
+import type { DocumentChunk } from './types.js';
 
 export interface RawPageText {
   page: number;

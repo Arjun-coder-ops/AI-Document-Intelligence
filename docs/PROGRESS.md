@@ -89,3 +89,26 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `npm test` -> 11 test files, 30 tests passed (verified deduplication, magic bytes, retry idempotency, cache reuse, O(document) deletion)
 - **Next Up:** Level 4 — Retrieval Quality (Hybrid SQL search, Reciprocal Rank Fusion, Reranker interface, citation parser, and XML prompt sandboxing).
 
+---
+
+## Level 4: Retrieval Quality
+
+- **Status:** COMPLETE (Passed: lint, typecheck, tests)
+- **What Was Built:**
+  - Implemented Reciprocal Rank Fusion (`packages/rag/src/rrf.ts`) combining ranked lists from dense HNSW search and sparse lexical full-text search with $k=60$ smoothing and deterministic tie-breaking.
+  - Built extensible `Reranker` interface (`packages/rag/src/rerank.ts`) with implementations: `ListwiseLLMReranker` (prompt-based listwise reranking), `CohereReranker` (cross-encoder API integration with `rerank-v3.5`), `MockReranker` (deterministic offline BM25/Jaccard overlap), and `NoOpReranker`.
+  - Implemented relevance threshold cutoff evaluator (`packages/rag/src/threshold.ts`): skips LLM generation and short-circuits when top candidate relevance score falls below cutoff, returning 0 citations and an honest fallback.
+  - Designed defensive XML prompt sandboxing (`packages/rag/src/prompt.ts`): sanitizes XML special characters, sandboxes untrusted document chunks in `<context><chunk id="n">` tags, and injects strict system boundary instructions forbidding prompt injection and hallucinated external facts.
+  - Implemented citation verification and extraction engine (`packages/rag/src/citations.ts`): parses `[n]` bracket markers, verifies correspondence against context chunks, detects and strips hallucinated citations, and formats structured citation metadata (document title, page, snippet).
+  - Built hybrid retrieval orchestrator (`packages/rag/src/retrieval.ts`) executing dense search, lexical search, RRF fusion, cross-encoder reranking, and threshold gating.
+  - Authored `docs/adr/0005-hybrid-search-rrf-and-reranking.md`.
+- **Key Decisions & Trade-offs:**
+  - *RRF over Linear Weighted Combination:* RRF does not require calibrating heterogeneous cosine distance and `ts_rank` score distributions, providing robust performance without query-specific hyperparameter tuning.
+  - *Short-Circuit Relevance Gating:* Bypassing the LLM on sub-threshold queries saves latency, eliminates API costs, and avoids confident hallucinations on queries unanswerable from the tenant's corpus.
+- **Verification Evidence:**
+  - `npm run lint` -> Passed (0 warnings, 0 errors)
+  - `npm run typecheck` -> Passed (0 errors across all 7 projects)
+  - `npm test` -> 12 test files, 44 tests passed (14 tests in `packages/rag/src/retrieval.test.ts` verifying RRF math, threshold short-circuits, citation verification, hallucination removal, XML escaping, and hybrid orchestration).
+- **Next Up:** Level 5 — Production-Grade Streaming Chat (`POST /chat` with SSE, AbortController cancellation, heartbeat comments, backpressure handling, and latency tracking).
+
+
