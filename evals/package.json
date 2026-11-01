@@ -1,0 +1,21 @@
+{
+  "name": "@docsage/evals",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "eval:retrieval": "node dist/index.js --retrieval-only"
+  },
+  "dependencies": {
+    "@docsage/rag": "*",
+    "@docsage/shared": "*",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.5",
+    "typescript": "^5.7.3"
+  }
+}

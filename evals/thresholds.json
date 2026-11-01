@@ -1,0 +1,10 @@
+{
+  "recallAt1": 0.55,
+  "recallAt3": 0.75,
+  "recallAt5": 0.85,
+  "mrr": 0.7,
+  "ndcgAt5": 0.75,
+  "faithfulness": 0.9,
+  "answerRelevance": 0.85,
+  "unanswerableAbstentionAccuracy": 0.95
+}

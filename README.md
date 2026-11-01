@@ -1,7 +1,7 @@
 <div align="center">
   <h1>DocSage — AI Document Intelligence</h1>
   <p><i>A production-ready Retrieval-Augmented Generation (RAG) chatbot for intelligent document analysis.</i></p>
-  
+
   <p>
     <img src="https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi" alt="FastAPI" />
     <img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" />
@@ -116,6 +116,7 @@ Token-by-token SSE stream → React frontend
 ## ⬢ Quick Start (Local Development)
 
 ### Prerequisites
+
 - Python 3.11+
 - Node.js 20+
 - OpenAI API key
@@ -196,11 +197,13 @@ docker run -p 8000:8000 \
 ## ⬢ API Reference
 
 ### `POST /upload`
+
 Upload one or more PDF files.
 
 **Request:** `multipart/form-data` with `files[]`
 
 **Response:**
+
 ```json
 {
   "success": true,
@@ -220,21 +223,24 @@ Upload one or more PDF files.
 ---
 
 ### `POST /ask`
+
 Ask a question. Returns Server-Sent Events stream.
 
 **Request:**
+
 ```json
 {
   "query": "What are the main conclusions?",
   "chat_history": [
-    {"role": "user", "content": "..."},
-    {"role": "assistant", "content": "..."}
+    { "role": "user", "content": "..." },
+    { "role": "assistant", "content": "..." }
   ],
   "debug": false
 }
 ```
 
 **SSE Events:**
+
 ```
 data: {"type": "sources", "data": [{...source chunks...}]}
 data: {"type": "token", "data": "The"}
@@ -246,11 +252,13 @@ data: [DONE]
 ---
 
 ### `POST /compare`
+
 Compare RAG answer vs LLM-only (no context) answer side by side.
 
 **Request:** `{ "query": "...", "chat_history": [] }`
 
 **Response:**
+
 ```json
 {
   "query": "...",
@@ -269,15 +277,19 @@ Compare RAG answer vs LLM-only (no context) answer side by side.
 ---
 
 ### `GET /documents`
+
 List all indexed documents with metadata.
 
 ### `DELETE /documents/{filename}`
+
 Remove a document from the registry.
 
 ### `GET /stats`
+
 Pipeline configuration and statistics.
 
 ### `GET /health`
+
 Health check endpoint.
 
 ---
@@ -286,50 +298,54 @@ Health check endpoint.
 
 All settings via environment variables (or `.env` file):
 
-| Variable | Default | Description |
-|---|---|---|
-| `GROQ_API_KEY` | *required* | Your Groq API key |
-| `GROQ_CHAT_MODEL` | `llama-3.1-8b-instant` | LLM for generation |
-| `CHUNK_SIZE` | `500` | Characters per chunk |
-| `CHUNK_OVERLAP` | `50` | Overlap between chunks |
-| `TOP_K_SOURCES` | `1` | Chunks to retrieve per query |
-| `UPLOAD_DIR` | `uploads` | PDF storage path |
-| `VECTOR_STORE_DIR` | `vectorstore` | FAISS index path |
-| `MAX_UPLOAD_SIZE_MB` | `50` | Max PDF size |
-| `CORS_ORIGINS` | `["http://localhost:3000","http://localhost:5173"]` | Allowed origins |
+| Variable             | Default                                             | Description                  |
+| -------------------- | --------------------------------------------------- | ---------------------------- |
+| `GROQ_API_KEY`       | _required_                                          | Your Groq API key            |
+| `GROQ_CHAT_MODEL`    | `llama-3.1-8b-instant`                              | LLM for generation           |
+| `CHUNK_SIZE`         | `500`                                               | Characters per chunk         |
+| `CHUNK_OVERLAP`      | `50`                                                | Overlap between chunks       |
+| `TOP_K_SOURCES`      | `1`                                                 | Chunks to retrieve per query |
+| `UPLOAD_DIR`         | `uploads`                                           | PDF storage path             |
+| `VECTOR_STORE_DIR`   | `vectorstore`                                       | FAISS index path             |
+| `MAX_UPLOAD_SIZE_MB` | `50`                                                | Max PDF size                 |
+| `CORS_ORIGINS`       | `["http://localhost:3000","http://localhost:5173"]` | Allowed origins              |
 
 ---
 
 ## ⬢ Features
 
-| Feature | Details |
-|---|---|
-| **Multi-PDF support** | Upload and query across multiple documents simultaneously |
-| **Streaming responses** | Token-by-token SSE streaming |
-| **Chat memory** | Last 6 conversation turns sent to LLM |
-| **Source attribution** | Each answer shows which chunks were retrieved, from which file/page, with relevance scores |
-| **Debug mode** | Toggle in UI to see raw retrieved chunks alongside answers |
-| **RAG comparison** | Side-by-side: answer with vs without document context |
-| **Persistent index** | FAISS index saved to disk, survives server restarts |
-| **Error handling** | Invalid PDFs, empty queries, scanned documents, size limits |
-| **Structured logging** | Loguru — console + rotating file logs |
-| **Docker-ready** | Multi-stage Dockerfile, nginx for frontend, compose for full stack |
+| Feature                 | Details                                                                                    |
+| ----------------------- | ------------------------------------------------------------------------------------------ |
+| **Multi-PDF support**   | Upload and query across multiple documents simultaneously                                  |
+| **Streaming responses** | Token-by-token SSE streaming                                                               |
+| **Chat memory**         | Last 6 conversation turns sent to LLM                                                      |
+| **Source attribution**  | Each answer shows which chunks were retrieved, from which file/page, with relevance scores |
+| **Debug mode**          | Toggle in UI to see raw retrieved chunks alongside answers                                 |
+| **RAG comparison**      | Side-by-side: answer with vs without document context                                      |
+| **Persistent index**    | FAISS index saved to disk, survives server restarts                                        |
+| **Error handling**      | Invalid PDFs, empty queries, scanned documents, size limits                                |
+| **Structured logging**  | Loguru — console + rotating file logs                                                      |
+| **Docker-ready**        | Multi-stage Dockerfile, nginx for frontend, compose for full stack                         |
 
 ---
 
 ## ⬢ Evaluation / Debugging
 
 ### 1. Debug mode in UI
+
 Click the `[Debug]` bug icon in the chat input. Each response will include the raw retrieved chunks with their scores.
 
 ### 2. Compare endpoint
+
 Use the **Compare** button (top right) to see side-by-side:
+
 - RAG answer (grounded in your PDFs)
 - Baseline LLM answer (general knowledge only)
 
 This clearly shows the value added by retrieval.
 
 ### 3. API logs
+
 ```bash
 # Live logs
 tail -f backend/logs/rag_app.log
@@ -339,6 +355,7 @@ docker-compose logs -f backend
 ```
 
 ### 4. Swagger UI
+
 Visit `http://localhost:8000/docs` and test endpoints directly, including the `/compare` evaluation endpoint.
 
 ---
@@ -358,14 +375,14 @@ Visit `http://localhost:8000/docs` and test endpoints directly, including the `/
 
 ## ⬢ Tech Stack
 
-| Layer | Technology |
-|---|---|
-| **Frontend** | React 18, Vite, Tailwind CSS |
-| **Backend** | FastAPI, Python 3.11, Uvicorn |
-| **RAG Pipeline** | LangChain 0.2 |
-| **LLM** | Groq (llama-3.1-8b-instant) |
-| **Embeddings** | HuggingFace (all-MiniLM-L6-v2, running locally) |
-| **Vector Database** | FAISS (local, persisted to disk) |
-| **PDF Processing** | pypdf |
-| **Logging** | Loguru |
-| **Containerization** | Docker, nginx, docker-compose |
+| Layer                | Technology                                      |
+| -------------------- | ----------------------------------------------- |
+| **Frontend**         | React 18, Vite, Tailwind CSS                    |
+| **Backend**          | FastAPI, Python 3.11, Uvicorn                   |
+| **RAG Pipeline**     | LangChain 0.2                                   |
+| **LLM**              | Groq (llama-3.1-8b-instant)                     |
+| **Embeddings**       | HuggingFace (all-MiniLM-L6-v2, running locally) |
+| **Vector Database**  | FAISS (local, persisted to disk)                |
+| **PDF Processing**   | pypdf                                           |
+| **Logging**          | Loguru                                          |
+| **Containerization** | Docker, nginx, docker-compose                   |
