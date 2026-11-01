@@ -1,0 +1,188 @@
+{
+  "baseline-dense": {
+    "timestamp": "2026-11-01T19:06:15.566Z",
+    "configName": "baseline-dense",
+    "sampleCount": 65,
+    "metrics": {
+      "recallAt1": {
+        "mean": 0.0818,
+        "ciLower": 0.0182,
+        "ciUpper": 0.1636
+      },
+      "recallAt3": {
+        "mean": 0.1636,
+        "ciLower": 0.0727,
+        "ciUpper": 0.2636
+      },
+      "recallAt5": {
+        "mean": 0.2455,
+        "ciLower": 0.1364,
+        "ciUpper": 0.3545
+      },
+      "mrr": {
+        "mean": 0.2157,
+        "ciLower": 0.1515,
+        "ciUpper": 0.2908
+      },
+      "ndcgAt5": {
+        "mean": 0.167,
+        "ciLower": 0.0903,
+        "ciUpper": 0.2466
+      },
+      "hitRate": {
+        "mean": 0.2727,
+        "ciLower": 0.1636,
+        "ciUpper": 0.3818
+      },
+      "unanswerableAbstentionAccuracy": {
+        "mean": 0,
+        "ciLower": 0,
+        "ciUpper": 0
+      }
+    },
+    "passedThresholds": false,
+    "thresholdFailures": [
+      "Recall@5 (0.2455) < required (0.85)",
+      "MRR (0.2157) < required (0.7)",
+      "Abstention accuracy (0) < required (0.95)"
+    ]
+  },
+  "lexical-only": {
+    "timestamp": "2026-11-01T19:06:15.591Z",
+    "configName": "lexical-only",
+    "sampleCount": 65,
+    "metrics": {
+      "recallAt1": {
+        "mean": 0.6545,
+        "ciLower": 0.5364,
+        "ciUpper": 0.7636
+      },
+      "recallAt3": {
+        "mean": 0.9091,
+        "ciLower": 0.8364,
+        "ciUpper": 0.9727
+      },
+      "recallAt5": {
+        "mean": 0.9545,
+        "ciLower": 0.9,
+        "ciUpper": 1
+      },
+      "mrr": {
+        "mean": 0.849,
+        "ciLower": 0.7768,
+        "ciUpper": 0.9152
+      },
+      "ndcgAt5": {
+        "mean": 0.8623,
+        "ciLower": 0.7969,
+        "ciUpper": 0.9226
+      },
+      "hitRate": {
+        "mean": 0.9636,
+        "ciLower": 0.9091,
+        "ciUpper": 1
+      },
+      "unanswerableAbstentionAccuracy": {
+        "mean": 0,
+        "ciLower": 0,
+        "ciUpper": 0
+      }
+    },
+    "passedThresholds": false,
+    "thresholdFailures": [
+      "Abstention accuracy (0) < required (0.95)"
+    ]
+  },
+  "hybrid": {
+    "timestamp": "2026-11-01T19:06:15.617Z",
+    "configName": "hybrid",
+    "sampleCount": 65,
+    "metrics": {
+      "recallAt1": {
+        "mean": 0.2545,
+        "ciLower": 0.1455,
+        "ciUpper": 0.3636
+      },
+      "recallAt3": {
+        "mean": 0.5273,
+        "ciLower": 0.4,
+        "ciUpper": 0.6545
+      },
+      "recallAt5": {
+        "mean": 0.6,
+        "ciLower": 0.4909,
+        "ciUpper": 0.7182
+      },
+      "mrr": {
+        "mean": 0.4687,
+        "ciLower": 0.3752,
+        "ciUpper": 0.5608
+      },
+      "ndcgAt5": {
+        "mean": 0.4502,
+        "ciLower": 0.3554,
+        "ciUpper": 0.5492
+      },
+      "hitRate": {
+        "mean": 0.6727,
+        "ciLower": 0.5455,
+        "ciUpper": 0.8
+      },
+      "unanswerableAbstentionAccuracy": {
+        "mean": 0,
+        "ciLower": 0,
+        "ciUpper": 0
+      }
+    },
+    "passedThresholds": false,
+    "thresholdFailures": [
+      "Recall@5 (0.6) < required (0.85)",
+      "MRR (0.4687) < required (0.7)",
+      "Abstention accuracy (0) < required (0.95)"
+    ]
+  },
+  "hybrid-rerank": {
+    "timestamp": "2026-11-01T19:06:15.654Z",
+    "configName": "hybrid-rerank",
+    "sampleCount": 65,
+    "metrics": {
+      "recallAt1": {
+        "mean": 0.6909,
+        "ciLower": 0.5727,
+        "ciUpper": 0.7909
+      },
+      "recallAt3": {
+        "mean": 0.9545,
+        "ciLower": 0.9,
+        "ciUpper": 1
+      },
+      "recallAt5": {
+        "mean": 0.9818,
+        "ciLower": 0.9455,
+        "ciUpper": 1
+      },
+      "mrr": {
+        "mean": 0.8833,
+        "ciLower": 0.8121,
+        "ciUpper": 0.9455
+      },
+      "ndcgAt5": {
+        "mean": 0.9021,
+        "ciLower": 0.8431,
+        "ciUpper": 0.953
+      },
+      "hitRate": {
+        "mean": 0.9818,
+        "ciLower": 0.9455,
+        "ciUpper": 1
+      },
+      "unanswerableAbstentionAccuracy": {
+        "mean": 1,
+        "ciLower": 1,
+        "ciUpper": 1
+      }
+    },
+    "passedThresholds": true,
+    "thresholdFailures": []
+  }
+}

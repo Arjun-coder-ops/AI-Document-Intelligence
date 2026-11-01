@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "eval:retrieval": "node dist/index.js --retrieval-only"
+    "eval": "node dist/index.js",
+    "eval:retrieval": "node dist/index.js"
   },
   "dependencies": {
     "@docsage/rag": "*",

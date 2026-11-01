@@ -1,0 +1,46 @@
+{
+  "timestamp": "2026-11-01T19:06:15.591Z",
+  "configName": "lexical-only",
+  "sampleCount": 65,
+  "metrics": {
+    "recallAt1": {
+      "mean": 0.6545,
+      "ciLower": 0.5364,
+      "ciUpper": 0.7636
+    },
+    "recallAt3": {
+      "mean": 0.9091,
+      "ciLower": 0.8364,
+      "ciUpper": 0.9727
+    },
+    "recallAt5": {
+      "mean": 0.9545,
+      "ciLower": 0.9,
+      "ciUpper": 1
+    },
+    "mrr": {
+      "mean": 0.849,
+      "ciLower": 0.7768,
+      "ciUpper": 0.9152
+    },
+    "ndcgAt5": {
+      "mean": 0.8623,
+      "ciLower": 0.7969,
+      "ciUpper": 0.9226
+    },
+    "hitRate": {
+      "mean": 0.9636,
+      "ciLower": 0.9091,
+      "ciUpper": 1
+    },
+    "unanswerableAbstentionAccuracy": {
+      "mean": 0,
+      "ciLower": 0,
+      "ciUpper": 0
+    }
+  },
+  "passedThresholds": false,
+  "thresholdFailures": [
+    "Abstention accuracy (0) < required (0.95)"
+  ]
+}

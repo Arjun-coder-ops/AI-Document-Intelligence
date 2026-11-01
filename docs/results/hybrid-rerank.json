@@ -1,0 +1,44 @@
+{
+  "timestamp": "2026-11-01T19:06:15.654Z",
+  "configName": "hybrid-rerank",
+  "sampleCount": 65,
+  "metrics": {
+    "recallAt1": {
+      "mean": 0.6909,
+      "ciLower": 0.5727,
+      "ciUpper": 0.7909
+    },
+    "recallAt3": {
+      "mean": 0.9545,
+      "ciLower": 0.9,
+      "ciUpper": 1
+    },
+    "recallAt5": {
+      "mean": 0.9818,
+      "ciLower": 0.9455,
+      "ciUpper": 1
+    },
+    "mrr": {
+      "mean": 0.8833,
+      "ciLower": 0.8121,
+      "ciUpper": 0.9455
+    },
+    "ndcgAt5": {
+      "mean": 0.9021,
+      "ciLower": 0.8431,
+      "ciUpper": 0.953
+    },
+    "hitRate": {
+      "mean": 0.9818,
+      "ciLower": 0.9455,
+      "ciUpper": 1
+    },
+    "unanswerableAbstentionAccuracy": {
+      "mean": 1,
+      "ciLower": 1,
+      "ciUpper": 1
+    }
+  },
+  "passedThresholds": true,
+  "thresholdFailures": []
+}

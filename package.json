@@ -17,6 +17,8 @@
     "format": "prettier --write .",
     "test": "vitest run",
     "test:coverage": "vitest run --coverage",
+    "eval": "npm --workspace=@docsage/evals run eval",
+    "eval:retrieval": "npm --workspace=@docsage/evals run eval:retrieval",
     "prepare": "husky"
   },
   "devDependencies": {

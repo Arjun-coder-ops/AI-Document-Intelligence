@@ -25,12 +25,17 @@ export class MockReranker implements Reranker {
     topK: number,
   ): Promise<Array<{ id: string; score: number }>> {
     await Promise.resolve();
+    const stopwords = new Set([
+      'what', 'is', 'the', 'in', 'for', 'of', 'to', 'a', 'an', 'and', 'or', 'by', 'on', 'with', 'at',
+      'how', 'does', 'do', 'are', 'from', 'as', 'that', 'this', 'their', 'when', 'which', 'where',
+    ]);
+
     const queryTokens = new Set(
       query
         .toLowerCase()
         .replace(/[^a-z0-9\s]/g, '')
         .split(/\s+/)
-        .filter(Boolean),
+        .filter((tok) => tok.length > 2 && !stopwords.has(tok)),
     );
 
     const scored = documents.map((doc) => {
