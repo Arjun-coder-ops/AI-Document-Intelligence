@@ -1,11 +1,15 @@
 import express, { type Request, type Response, type NextFunction } from 'express';
+import cookieParser from 'cookie-parser';
 import type { HealthCheckResponse } from '@docsage/shared';
+import { authRouter } from './auth/routes.js';
 
 export function createApp(): express.Express {
   const app = express();
 
   app.use(express.json());
+  app.use(cookieParser());
 
+  // Health check endpoint
   app.get('/health', (_req: Request, res: Response) => {
     const response: HealthCheckResponse = {
       status: 'healthy',
@@ -16,6 +20,9 @@ export function createApp(): express.Express {
     };
     res.status(200).json(response);
   });
+
+  // Auth routes
+  app.use('/auth', authRouter);
 
   // Global error handler
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {

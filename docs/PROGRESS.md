@@ -25,6 +25,7 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
 ---
 
 ## Level 1: Database Foundation (Neon + pgvector + Drizzle ORM)
+
 - **Status:** COMPLETE (Passed: lint, typecheck, tests, migration generated)
 - **What Was Built:**
   - Created `@docsage/db` package with comprehensive Drizzle schema (UUID PKs, timestamptz, cascade constraints): `tenants`, `users`, `documents`, `chunks`, `conversations`, `messages`, `embedding_cache`, `audit_log`, `eval_runs`, `eval_results`, `feedback`.
@@ -35,10 +36,31 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - Created database verification script `check.ts` (`npm run db:check`), migration runner `migrate.ts`, and database seed script `seed.ts`.
   - Authored `docs/adr/0002-hnsw-vs-ivfflat-vector-indexing.md` and `docs/adr/0003-neon-pooled-vs-direct-connections-and-rls.md`.
 - **Key Decisions & Trade-offs:**
-  - *HNSW over IVFFlat:* HNSW guarantees predictable sub-10ms search without requiring training phases or periodic re-indexing when documents are added/deleted.
-  - *Transaction-Local Configuration:* Setting `is_local = true` in `set_config` guarantees that when PgBouncer re-routes connections, session state is cleared automatically, preventing cross-tenant leakage.
+  - _HNSW over IVFFlat:_ HNSW guarantees predictable sub-10ms search without requiring training phases or periodic re-indexing when documents are added/deleted.
+  - _Transaction-Local Configuration:_ Setting `is_local = true` in `set_config` guarantees that when PgBouncer re-routes connections, session state is cleared automatically, preventing cross-tenant leakage.
 - **Verification Evidence:**
   - `npm run lint` -> Passed (0 warnings, 0 errors)
   - `npm run typecheck` -> Passed (0 errors across 7 workspace projects)
   - `npm test` -> 7 test files, 12 unit tests passed
 - **Next Up:** Level 2 — Auth, RBAC, and Tenant Isolation (RLS).
+
+---
+
+## Level 2: Auth, RBAC, and Tenant Isolation (RLS)
+- **Status:** COMPLETE (Passed: lint, typecheck, tests, RLS migrations)
+- **What Was Built:**
+  - Implemented Argon2id password hashing via `@node-rs/argon2` with strict memory and time costs.
+  - Built JWT authentication issuing 15-minute access tokens and rotating, revocable 7-day refresh tokens stored as SHA-256 hashes in `refresh_tokens`.
+  - Implemented RBAC middleware enforcing hierarchical permissions: `admin` > `editor` > `viewer`.
+  - Authored PostgreSQL RLS migration (`0002_enable_row_level_security.sql`) creating `app_user` non-owner role and establishing tenant isolation policies: `USING (tenant_id = NULLIF(current_setting('app.tenant_id', true), '')::uuid)`.
+  - Created auth router (`/auth/register`, `/auth/login`, `/auth/refresh`, `/auth/logout`) with Zod body validation and httpOnly cookie delivery.
+  - Implemented `logAuditEvent` to record immutable audit trail entries on security events.
+  - Added test suites in `apps/api/src/auth/auth.test.ts` and `packages/db/src/rls.test.ts` verifying password verification, token tampering detection, role gating, and transaction-local RLS rollback behavior.
+- **Key Decisions & Trade-offs:**
+  - *Argon2id over Bcrypt:* Adopted Argon2id (OWASP recommended standard) for superior GPU/ASIC brute-force resistance and memory-hardness.
+  - *Token Rotation & Revocation:* Refresh tokens are single-use; each refresh rotates the token and invalidates the previous hash, preventing replay attacks.
+- **Verification Evidence:**
+  - `npm run lint` -> Passed (0 warnings, 0 errors)
+  - `npm run typecheck` -> Passed (0 errors)
+  - `npm test` -> 9 test files, 22 tests passed
+- **Next Up:** Level 3 — Async Ingestion Pipeline (pg-boss queue, streaming upload, structure-aware chunker, embedding cache).

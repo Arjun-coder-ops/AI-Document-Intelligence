@@ -251,6 +251,25 @@ export const feedback = pgTable(
   (table) => [index('idx_feedback_message_id').on(table.messageId)],
 );
 
+// ─── 12. Refresh Tokens ──────────────────────────────────────────────────────
+export const refreshTokens = pgTable(
+  'refresh_tokens',
+  {
+    id: uuid('id').primaryKey().defaultRandom(),
+    userId: uuid('user_id')
+      .references(() => users.id, { onDelete: 'cascade' })
+      .notNull(),
+    tokenHash: text('token_hash').notNull(),
+    expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
+    revokedAt: timestamp('revoked_at', { withTimezone: true }),
+    createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+  },
+  (table) => [
+    index('idx_refresh_tokens_user').on(table.userId),
+    index('idx_refresh_tokens_hash').on(table.tokenHash),
+  ],
+);
+
 // ─── Relations ───────────────────────────────────────────────────────────────
 export const tenantsRelations = relations(tenants, ({ many }) => ({
   users: many(users),
