@@ -64,3 +64,28 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `npm run typecheck` -> Passed (0 errors)
   - `npm test` -> 9 test files, 22 tests passed
 - **Next Up:** Level 3 — Async Ingestion Pipeline (pg-boss queue, streaming upload, structure-aware chunker, embedding cache).
+
+---
+
+## Level 3: Async Ingestion Pipeline
+
+- **Status:** COMPLETE (Passed: lint, typecheck, tests)
+- **What Was Built:**
+  - Integrated `pg-boss` (PostgreSQL-backed queue) with retry backoff, exponential delay, and dead-letter handling.
+  - Built streaming PDF upload (`POST /documents`) using `busboy` streaming directly to disk with zero full-file in-memory buffering, enforcing 50MB file size limits, validating PDF magic bytes (`%PDF-`), sanitizing filenames, and calculating SHA-256 hash on-the-fly.
+  - Implemented tenant-scoped SHA-256 document deduplication returning existing document ID immediately without reprocessing.
+  - Developed structure-aware chunking engine (`packages/rag/src/chunker.ts`): enforces 300–500 target tokens, ~15% overlap, preserves section headings, never splits table rows mid-line, tracks page numbers, and computes chunk-level SHA-256.
+  - Built embedding cache lookup in Postgres (`embedding_cache` table) avoiding redundant embedding provider calls for identical chunk contents.
+  - Created worker ingestion pipeline (`apps/worker/src/ingestion.ts`) with atomic DB transaction, idempotent retry support (deleting partial chunks before re-inserting), crash safety (marking document failed on uncaught exceptions), and progress events.
+  - Added real-time SSE progress endpoint (`GET /documents/:id/events`) and polling endpoint (`GET /documents/:id/status`).
+  - Implemented soft-delete + async chunk purge (`DELETE /documents/:id`) with O(document) chunk deletion that never triggers full corpus re-embedding.
+  - Authored `docs/adr/0004-postgres-backed-queue-with-pg-boss.md`.
+- **Key Decisions & Trade-offs:**
+  - *Postgres-backed Queue (pg-boss):* Eliminated external queue dependencies (RabbitMQ, SQS, BullMQ/Redis) by leveraging PostgreSQL SKIP LOCKED semantics, enabling single-DB operations in dev and prod.
+  - *Stream-based Ingestion & Magic Bytes:* Enforced strict byte-level validation at the transport layer to drop corrupt uploads and avoid OOM vulnerability on massive concurrent uploads.
+- **Verification Evidence:**
+  - `npm run lint` -> Passed (0 warnings, 0 errors)
+  - `npm run typecheck` -> Passed (0 errors)
+  - `npm test` -> 11 test files, 30 tests passed (verified deduplication, magic bytes, retry idempotency, cache reuse, O(document) deletion)
+- **Next Up:** Level 4 — Retrieval Quality (Hybrid SQL search, Reciprocal Rank Fusion, Reranker interface, citation parser, and XML prompt sandboxing).
+

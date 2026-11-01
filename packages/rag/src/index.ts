@@ -1,3 +1,4 @@
+export * from './chunker.js';
 import type { Citation } from '@docsage/shared';
 
 export interface EmbeddingProvider {

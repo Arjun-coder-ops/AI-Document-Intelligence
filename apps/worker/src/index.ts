@@ -1,3 +1,7 @@
+export * from './queue.js';
+export * from './ingestion.js';
+export * from './embedding.js';
+
 export interface WorkerStatus {
   id: string;
   status: 'idle' | 'processing' | 'stopped';
