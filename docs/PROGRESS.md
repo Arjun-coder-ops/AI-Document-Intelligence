@@ -232,5 +232,35 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `npm run lint` -> Passed (0 warnings, 0 errors)
   - `npm run typecheck` -> Passed (0 errors across all 7 projects)
   - `npm test` -> 16 test files, 68 tests passed (including `apps/api/src/security/security.test.ts` verifying Helmet, CORS, CSRF, request limits, canary leakage, and all 10 red-team injection vectors).
-- **Next Up:** Level 9 — Observability (Structured JSON logging with Pino, OpenTelemetry tracing spans, Prometheus /metrics endpoint, and Grafana dashboard).
+- **Next Up:** Level 9 — Observability.
 
+---
+
+## Level 9: Observability
+
+- **Status:** COMPLETE (Passed: lint, typecheck, tests)
+- **What Was Built:**
+  - Deployed structured JSON logging via `pino` (`apps/api/src/observability/logger.ts`) with correlation fields (`requestId`, `tenantId`, `userId`, `method`, `route`, `statusCode`, `durationMs`) and zero raw query/content logging for privacy and compliance.
+  - Implemented OpenTelemetry-compatible tracing harness (`RequestTracer` in `apps/api/src/observability/tracer.ts`) generating hierarchical spans across RAG stages (`embed`, `dense_search`, `lexical_search`, `fusion`, `rerank`, `llm_ttft`, `llm_total`, `db_query`) and exportable in standard OTLP JSON format.
+  - Exposed Prometheus `/metrics` endpoint (`apps/api/src/observability/metrics.ts`) with `prom-client`:
+    - Latency histograms per stage (`docsage_stage_latency_seconds`).
+    - Token consumption counter (`docsage_tokens_total`) sliced by tenant, model, and type.
+    - Cumulative inference expenditure counter (`docsage_cost_dollars_total`).
+    - Stream abort counter (`docsage_stream_aborts_total`).
+    - Provider error counter (`docsage_provider_errors_total`).
+    - Cache hit ratio gauge (`docsage_cache_hit_ratio`).
+    - Retrieval top-1 relevance score distribution (`docsage_retrieval_top1_score`).
+  - Created Admin Analytics API (`apps/api/src/admin/routes.ts`):
+    - `GET /admin/analytics`: computes tenant aggregate spend, $p50$ and $p95$ response latencies via PostgreSQL `percentile_cont`, thumbs up/down feedback ratios, and top unanswered/zero-citation queries.
+    - `POST /admin/feedback`: records user thumbs-up/thumbs-down ratings and automatically queues negative feedback entries (`rating = -1`) as candidate golden-set queries.
+  - Committed production Grafana dashboard in `infra/grafana/docsage-overview.json`.
+  - Authored `docs/adr/0009-opentelemetry-tracing-and-prometheus-observability.md`.
+  - Added test suite in `apps/api/src/observability/observability.test.ts`.
+- **Key Decisions & Trade-offs:**
+  - *OTLP Standard Spans over Vendor SDKs:* Generating native OTLP-compliant spans allows zero-recompile switching between Jaeger, Grafana Tempo, and AWS X-Ray.
+  - *PostgreSQL percentile_cont for Latency Analysis:* Running exact percentile queries directly inside PostgreSQL eliminates the need for expensive in-memory reservoir sampling in Node.js.
+- **Verification Evidence:**
+  - `npm run lint` -> Passed (0 warnings, 0 errors)
+  - `npm run typecheck` -> Passed (0 errors across all 7 projects)
+  - `npm test` -> 17 test files, 76 tests passed (including `apps/api/src/observability/observability.test.ts` verifying metrics exposition, span hierarchy, and analytics RBAC).
+- **Next Up:** Level 10 — Testing (API contract tests with supertest, >= 80% coverage gate on packages/rag and apps/api, and k6 load test harness in infra/k6/).

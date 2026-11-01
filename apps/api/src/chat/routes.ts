@@ -25,6 +25,13 @@ import { postgresQueryExecutor } from './service.js';
 import { createRateLimiterMiddleware } from '../reliability/rate-limiter.js';
 import { checkTenantMonthlyQuota } from '../reliability/quota.js';
 import { queryCache } from '../reliability/cache.js';
+import {
+  stageLatencyHistogram,
+  tokensCounter,
+  costCounter,
+  streamAbortsCounter,
+  retrievalTop1Histogram,
+} from '../observability/metrics.js';
 
 export const chatRouter: Router = Router();
 
@@ -101,6 +108,7 @@ chatRouter.post(
     req.on('close', () => {
       if (!res.writableEnded) {
         isClientClosed = true;
+        streamAbortsCounter.inc({ tenant_id: user.tenantId });
         abortController.abort();
       }
     });
@@ -183,7 +191,10 @@ chatRouter.post(
       _history.reverse();
 
       // 7. Embed Query & Check Multi-Tier Cache
+      const embedStart = Date.now();
       const queryEmbedding = await getQueryEmbedding(message);
+      stageLatencyHistogram.observe({ stage: 'embed' }, (Date.now() - embedStart) / 1000);
+
       const cached = queryCache.get(user.tenantId, message, queryEmbedding);
       if (cached) {
         const tokenPayload: SSEEventToken = { token: cached.text };
@@ -223,12 +234,18 @@ chatRouter.post(
         return;
       }
 
+      const retStart = Date.now();
       const retrievalResult = await executeHybridRetrieval(
         user.tenantId,
         message,
         queryEmbedding,
         postgresQueryExecutor,
       );
+      stageLatencyHistogram.observe({ stage: 'retrieval' }, (Date.now() - retStart) / 1000);
+      const topScore = retrievalResult.chunks[0]?.score;
+      if (typeof topScore === 'number') {
+        retrievalTop1Histogram.observe(topScore);
+      }
 
       // 8. Handle Relevance Threshold Short-Circuit
       if (retrievalResult.shortCircuited) {
@@ -347,6 +364,15 @@ chatRouter.post(
         },
         queryEmbedding,
       );
+
+      // Record Prometheus Stage Latency, Token Usage, and Cost Metrics
+      if (ttftRecorded) {
+        stageLatencyHistogram.observe({ stage: 'llm_ttft' }, ttftRecorded / 1000);
+      }
+      stageLatencyHistogram.observe({ stage: 'llm_total' }, totalDuration / 1000);
+      tokensCounter.inc({ tenant_id: user.tenantId, model: llmProvider.modelName, token_type: 'prompt' }, promptTokens);
+      tokensCounter.inc({ tenant_id: user.tenantId, model: llmProvider.modelName, token_type: 'completion' }, completionTokens);
+      costCounter.inc({ tenant_id: user.tenantId, model: llmProvider.modelName }, costEstimateNumber);
 
       // 14. Emit Done Event
       const donePayload: SSEEventDone = {

@@ -8,6 +8,9 @@ import { documentsRouter } from './documents/routes.js';
 import { chatRouter } from './chat/routes.js';
 import { healthRouter } from './reliability/health.js';
 import { csrfProtection } from './security/csrf.js';
+import { requestLogger } from './observability/logger.js';
+import { register, getMetricsText } from './observability/metrics.js';
+import { adminRouter } from './admin/routes.js';
 
 export function createApp(): express.Express {
   const app = express();
@@ -46,6 +49,15 @@ export function createApp(): express.Express {
   // 4. CSRF Protection for ambient cookie authentication
   app.use(csrfProtection);
 
+  // 5. Structured Logging Middleware (Pino)
+  app.use(requestLogger);
+
+  // Prometheus /metrics endpoint
+  app.get('/metrics', async (_req: Request, res: Response) => {
+    res.setHeader('Content-Type', register.contentType);
+    res.send(await getMetricsText());
+  });
+
   // Health check endpoints (liveness & readiness)
   app.use('/health', healthRouter);
 
@@ -57,6 +69,9 @@ export function createApp(): express.Express {
 
   // Streaming Chat routes
   app.use('/chat', chatRouter);
+
+  // Admin Analytics & Feedback routes
+  app.use('/admin', adminRouter);
 
   // Global error handler respecting error status codes
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {

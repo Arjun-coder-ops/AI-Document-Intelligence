@@ -1,0 +1,147 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 0 },
+      "id": 1,
+      "title": "Stage Latency & Processing Performance",
+      "type": "row"
+    },
+    {
+      "id": 2,
+      "title": "Stage Latency Breakdown (p50 / p95 / p99)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 1 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(docsage_stage_latency_seconds_bucket[5m])) by (le, stage))",
+          "legendFormat": "{{stage}} (p95)"
+        },
+        {
+          "expr": "histogram_quantile(0.50, sum(rate(docsage_stage_latency_seconds_bucket[5m])) by (le, stage))",
+          "legendFormat": "{{stage}} (p50)"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "title": "Time To First Token (TTFT) vs Total Duration",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 1 },
+      "targets": [
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(docsage_stage_latency_seconds_bucket{stage=\"llm_ttft\"}[5m])) by (le))",
+          "legendFormat": "TTFT p95"
+        },
+        {
+          "expr": "histogram_quantile(0.95, sum(rate(docsage_stage_latency_seconds_bucket{stage=\"llm_total\"}[5m])) by (le))",
+          "legendFormat": "LLM Total p95"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 9 },
+      "id": 4,
+      "title": "Cost, Usage & Multi-Tenant Quotas",
+      "type": "row"
+    },
+    {
+      "id": 5,
+      "title": "Inference Spend by Tenant (USD)",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 10 },
+      "targets": [
+        {
+          "expr": "sum(docsage_cost_dollars_total) by (tenant_id)",
+          "legendFormat": "Tenant {{tenant_id}}"
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "title": "Token Consumption by Model & Type",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 10 },
+      "targets": [
+        {
+          "expr": "sum(rate(docsage_tokens_total[5m])) by (model, token_type)",
+          "legendFormat": "{{model}} - {{token_type}}"
+        }
+      ]
+    },
+    {
+      "id": 7,
+      "title": "Cache Hit Ratio (Exact vs Semantic)",
+      "type": "gauge",
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 10 },
+      "targets": [
+        {
+          "expr": "docsage_cache_hit_ratio",
+          "legendFormat": "{{tier}}"
+        }
+      ]
+    },
+    {
+      "collapsed": false,
+      "gridPos": { "h": 1, "w": 24, "x": 0, "y": 16 },
+      "id": 8,
+      "title": "Reliability, Circuit Breakers & Quality",
+      "type": "row"
+    },
+    {
+      "id": 9,
+      "title": "Client Stream Aborts Rate",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 8, "x": 0, "y": 17 },
+      "targets": [
+        {
+          "expr": "sum(rate(docsage_stream_aborts_total[5m])) by (tenant_id)",
+          "legendFormat": "Aborts ({{tenant_id}})"
+        }
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Provider Fallbacks & Errors",
+      "type": "timeseries",
+      "gridPos": { "h": 6, "w": 8, "x": 8, "y": 17 },
+      "targets": [
+        {
+          "expr": "sum(rate(docsage_provider_errors_total[5m])) by (provider, error_type)",
+          "legendFormat": "{{provider}} ({{error_type}})"
+        }
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Top-1 Retrieval Relevance Score Distribution",
+      "type": "heatmap",
+      "gridPos": { "h": 6, "w": 8, "x": 16, "y": 17 },
+      "targets": [
+        {
+          "expr": "sum(rate(docsage_retrieval_top1_score_bucket[5m])) by (le)",
+          "format": "heatmap",
+          "legendFormat": "{{le}}"
+        }
+      ]
+    }
+  ],
+  "refresh": "10s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["docsage", "rag", "production", "faang"],
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": { "refresh_intervals": ["5s", "10s", "30s", "1m"] },
+  "timezone": "browser",
+  "title": "DocSage Enterprise RAG - Observability & Telemetry",
+  "uid": "docsage-rag-overview",
+  "version": 1
+}
