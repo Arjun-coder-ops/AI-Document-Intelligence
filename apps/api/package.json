@@ -11,6 +11,7 @@
     "dev": "node --loader ts-node/esm src/index.ts"
   },
   "dependencies": {
+    "@docsage/db": "*",
     "@docsage/rag": "*",
     "@docsage/shared": "*",
     "dotenv": "^16.4.7",
@@ -20,8 +21,8 @@
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.5",
-    "supertest": "^7.0.0",
     "@types/supertest": "^6.0.2",
+    "supertest": "^7.0.0",
     "typescript": "^5.7.3"
   }
 }

@@ -10,6 +10,7 @@
     "start": "node dist/index.js"
   },
   "dependencies": {
+    "@docsage/db": "*",
     "@docsage/rag": "*",
     "@docsage/shared": "*",
     "dotenv": "^16.4.7",

@@ -4,6 +4,10 @@
     "rootDir": "./src",
     "outDir": "./dist"
   },
-  "references": [{ "path": "../../packages/shared" }, { "path": "../../packages/rag" }],
+  "references": [
+    { "path": "../../packages/shared" },
+    { "path": "../../packages/rag" },
+    { "path": "../../packages/db" }
+  ],
   "include": ["src/**/*"]
 }
