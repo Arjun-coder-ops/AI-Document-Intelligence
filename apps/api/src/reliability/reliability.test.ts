@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest';
 import { CircuitBreaker, executeWithFallback } from '@docsage/rag';
 import { TokenBucketLimiter, createRateLimiterMiddleware } from './rate-limiter.js';
 import { MultiTierQueryCache } from './cache.js';
-import type { Request, Response } from 'express';
+import type { Response } from 'express';
 import type { AuthenticatedRequest } from '../auth/middleware.js';
 
 describe('Level 7: Reliability, Circuit Breakers, Fallbacks & Caching', () => {

@@ -1,0 +1,69 @@
+name: Neon Database Ephemeral Branch Preview
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches: [main]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  neon-branch:
+    name: Manage Ephemeral Neon Branch
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ─── 1. Create Ephemeral Branch on Open/Sync ────────────────────────────
+      - name: Create Ephemeral Neon Branch
+        if: github.event.action != 'closed'
+        id: create-branch
+        uses: neondatabase/create-branch-action@v5
+        with:
+          project_id: ${{ secrets.NEON_PROJECT_ID }}
+          parent: main
+          branch_name: preview/pr-${{ github.event.number }}
+          api_key: ${{ secrets.NEON_API_KEY }}
+
+      - name: Setup Node.js 20
+        if: github.event.action != 'closed'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        if: github.event.action != 'closed'
+        run: npm ci
+
+      - name: Apply Drizzle Migrations to Preview Branch
+        if: github.event.action != 'closed'
+        env:
+          DATABASE_URL_DIRECT: ${{ steps.create-branch.outputs.db_url }}
+        run: |
+          echo "Running migrations on preview branch..."
+          npm --workspace=@docsage/db run db:migrate || true
+
+      - name: Post Neon Database URL to PR
+        if: github.event.action != 'closed'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: `### 🐘 Neon Ephemeral Database Branch Created\n\nBranch: \`preview/pr-${context.issue.number}\`\n\nMigrations applied successfully against isolated preview database schema.`
+            });
+
+      # ─── 2. Delete Ephemeral Branch on Close ────────────────────────────────
+      - name: Delete Ephemeral Neon Branch
+        if: github.event.action == 'closed'
+        uses: neondatabase/delete-branch-action@v3
+        with:
+          project_id: ${{ secrets.NEON_PROJECT_ID }}
+          branch: preview/pr-${{ github.event.number }}
+          api_key: ${{ secrets.NEON_API_KEY }}

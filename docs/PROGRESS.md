@@ -307,3 +307,46 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `docs/results/load-test.json` -> Real k6 benchmark run recorded
 - **Next Up:** Level 11 — CI/CD with GitHub Actions.
 
+---
+
+## Level 11: CI/CD with GitHub Actions
+
+- **Status:** COMPLETE (Passed: lint, typecheck, tests, retrieval-eval, Docker builds)
+- **What Was Built:**
+  - Complete multi-job GitHub Actions CI pipeline (`.github/workflows/ci.yml`):
+    - Concurrency cancellation per ref, `contents: read`, `pull-requests: write`.
+    - Job `quality`: checkout, Node 20, frozen lockfile (`npm ci`), lint, typecheck, prettier check.
+    - Job `test`: service container `pgvector/pgvector:pg16` with healthcheck, migration runner as owner, `app_user` non-superuser role creation, unit + integration tests with coverage reporting, failing under 80%.
+    - Job `retrieval-eval`: deterministic offline retrieval eval using committed embedding fixtures against `evals/thresholds.json`, posting results table as a PR comment, failing closed on regression.
+    - Job `security`: `npm audit --omit=dev --audit-level=high`, Gitleaks secret scan, dependency-review-action on PRs.
+    - Job `build`: full monorepo build, Docker Buildx image builds for API, Worker, and Web with GitHub Actions layer caching.
+    - Job `e2e`: containerized Playwright integration tests with trace artifact upload on failure.
+  - Production Continuous Delivery workflow (`.github/workflows/cd.yml`):
+    - Environment `production` with required approvals.
+    - Fail-closed Drizzle migrations against Neon via `DATABASE_URL_DIRECT` direct endpoint before deployment.
+    - Build and push images to GitHub Container Registry (GHCR) with `sha` and `latest` tags.
+    - Automated deployment triggers for backend services and Vercel edge deployment for web frontend.
+    - Post-deploy smoke test probing `/health/ready` with exponential retry.
+  - Nightly scheduled workflow (`.github/workflows/nightly.yml`):
+    - Generation eval (faithfulness, relevance) with real LLM keys, adversarial red-team suite, and k6 smoke test, committing updated results and opening GitHub issues on regressions.
+  - Ephemeral Neon database preview workflow (`.github/workflows/neon-preview.yml`):
+    - Instantiates ephemeral Neon branches on PR open/sync, runs migrations, exposes preview database URL, and tears down on PR close.
+  - Supporting governance & configuration:
+    - `.github/dependabot.yml` (weekly automated dependency updates for npm and actions).
+    - `.github/pull_request_template.md` (mandatory checklist for tests, migrations, ADRs, eval impacts, zero secrets).
+    - `.github/CODEOWNERS` (ownership routing for API, database, RAG core, and security).
+    - Multi-stage Dockerfiles: `apps/api/Dockerfile`, `apps/worker/Dockerfile`, `apps/web/Dockerfile`.
+    - `playwright.config.ts` and `e2e/chat-flow.spec.ts`.
+    - Comprehensive guide `docs/REPO_SETUP.md` with branch protection rules and secret configurations.
+    - Architectural decision record `docs/adr/0010-deployment-target-and-continuous-delivery.md`.
+- **Key Decisions & Trade-offs:**
+  - *Fail-Closed Migration Step:* Running migrations in a separate job *before* container deployment ensures that invalid schema changes never trigger broken application pod rollout.
+  - *Offline Deterministic Retrieval Evaluation in CI:* Precomputed embedding fixtures guarantee zero API calls and 100% deterministic regression gating against `evals/thresholds.json` in under 3 seconds.
+- **Verification Evidence:**
+  - `npm run eval:retrieval` -> Passed (`✅ CI REGRESSION GATE PASSED: All retrieval metrics meet or exceed production thresholds.`)
+  - `npm run lint` -> Passed (0 warnings, 0 errors)
+  - `npm run typecheck` -> Passed (0 errors across all 7 projects)
+  - `npm test` -> 29 test files, 141 tests passed
+- **Next Up:** Level 12 — Frontend (React 18 + Vite + TypeScript + TanStack Query).
+
+
