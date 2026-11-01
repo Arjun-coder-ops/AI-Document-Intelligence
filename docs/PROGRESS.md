@@ -201,4 +201,36 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `npm run lint` -> Passed (0 warnings, 0 errors)
   - `npm run typecheck` -> Passed (0 errors across all 7 projects)
   - `npm test` -> 15 test files, 60 tests passed (including breaker state transitions, failover chains, rate limits, and cache invalidation).
-- **Next Up:** Level 8 — Security Hardening (Helmet, strict CORS, CSRF protection, request limits, prompt-injection defenses, red-team suite, and STRIDE-lite threat model).
+- **Next Up:** Level 8 — Security Hardening.
+
+---
+
+## Level 8: Security Hardening
+
+- **Status:** COMPLETE (Passed: lint, typecheck, tests, npm audit)
+- **What Was Built:**
+  - Integrated `helmet` middleware setting hardened HTTP response headers (`X-Content-Type-Options: nosniff`, `X-Frame-Options: SAMEORIGIN`, CSP, and HSTS).
+  - Configured strict CORS origin allowlist restricting access to trusted frontend client domains with credential propagation.
+  - Implemented anti-CSRF protection middleware (`apps/api/src/security/csrf.ts`) verifying custom headers (`X-Requested-With`, `X-CSRF-Token`) or matching Origins for ambient cookie flows (`/auth/refresh`, `/auth/logout`).
+  - Enforced strict 1MB JSON request body limits on API payloads.
+  - Built comprehensive Prompt Injection Defense Engine (`packages/rag/src/security.ts`):
+    - Heuristic instruction-stripping regex scanner detecting and neutralizing injection vectors (`ignore previous instructions`, `DAN mode`, `system prompt leak`, etc.) with `[INSTRUCTION_DEFUSED]`.
+    - Delimiter breakout sanitizer preventing adversarial chunks or queries from escaping `<chunk>` or `<context>` XML boundaries.
+    - Embedded internal boundary canary (`SYSTEM_PROMPT_CANARY`) in system prompts.
+    - Output filtering engine (`filterModelOutput`) intercepting and redacting prompt leaks or canary reflections.
+  - Developed adversarial Red-Team dataset (`evals/dataset/redteam.jsonl`) with 10 attack vectors (jailbreaks, delimiter breakouts, canary extraction, indirect chunk injection, persona hijacking).
+  - Implemented startup environment validation (`apps/api/src/config/env.ts`) using Zod schemas to ensure valid database connections, minimum 32-character JWT secrets, and provider keys before server binding.
+  - Built PII and secret scrubber (`sanitizeLogData`) for telemetry and log streams.
+  - Authored comprehensive STRIDE-lite threat model (`docs/THREAT_MODEL.md`) mapping every threat to exact code implementations.
+  - Authored `docs/adr/0008-security-hardening-and-prompt-injection-defenses.md`.
+  - Upgraded Zod across all workspaces to `^4.6.7`, resolving high-severity advisory `GHSA-mrhx-c7xc-m3w5`.
+- **Key Decisions & Trade-offs:**
+  - *Custom Header Anti-CSRF over Heavy Stateful Tokens:* Mandating `X-Requested-With` or `X-CSRF-Token` headers on cookie flows leverages browser CORS preflight guarantees without requiring Redis-backed CSRF token stores.
+  - *Heuristic Neutralization over Hard Blocking:* Replacing adversarial instructions with `[INSTRUCTION_DEFUSED]` preserves legitimate queries that happen to contain security terms while safely stripping the attack payload.
+- **Verification Evidence:**
+  - `npm audit --audit-level=high --omit=dev` -> 0 vulnerabilities found
+  - `npm run lint` -> Passed (0 warnings, 0 errors)
+  - `npm run typecheck` -> Passed (0 errors across all 7 projects)
+  - `npm test` -> 16 test files, 68 tests passed (including `apps/api/src/security/security.test.ts` verifying Helmet, CORS, CSRF, request limits, canary leakage, and all 10 red-team injection vectors).
+- **Next Up:** Level 9 — Observability (Structured JSON logging with Pino, OpenTelemetry tracing spans, Prometheus /metrics endpoint, and Grafana dashboard).
+

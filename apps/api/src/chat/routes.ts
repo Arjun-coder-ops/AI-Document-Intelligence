@@ -14,6 +14,7 @@ import {
   executeHybridRetrieval,
   buildRAGPrompt,
   verifyAndExtractCitations,
+  filterModelOutput,
   estimateTokens,
   type LLMProvider,
   MockLLMProvider,
@@ -294,7 +295,11 @@ chatRouter.post(
         },
       );
 
-      // 11. Parse and Verify Citations
+      // 11. Apply Output Filtering (detect prompt leak or canary reflection)
+      const filtered = filterModelOutput(accumulatedResponse);
+      accumulatedResponse = filtered.filteredOutput;
+
+      // 12. Parse and Verify Citations
       const citationResult = verifyAndExtractCitations(
         accumulatedResponse,
         formattedPrompt.contextChunks,

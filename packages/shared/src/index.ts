@@ -1,10 +1,10 @@
 import { z } from 'zod';
 
-export const UserRoleSchema = z.enum(['admin', 'editor', 'viewer']);
-export type UserRole = z.infer<typeof UserRoleSchema>;
+export const UserRoleSchema = z.enum(['admin', 'editor', 'viewer'] as const);
+export type UserRole = 'admin' | 'editor' | 'viewer';
 
-export const DocumentStatusSchema = z.enum(['pending', 'processing', 'ready', 'failed']);
-export type DocumentStatus = z.infer<typeof DocumentStatusSchema>;
+export const DocumentStatusSchema = z.enum(['pending', 'processing', 'ready', 'failed'] as const);
+export type DocumentStatus = 'pending' | 'processing' | 'ready' | 'failed';
 
 export const HealthCheckResponseSchema = z.object({
   status: z.literal('healthy'),
