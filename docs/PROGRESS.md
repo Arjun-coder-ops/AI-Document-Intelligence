@@ -111,4 +111,36 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `npm test` -> 12 test files, 44 tests passed (14 tests in `packages/rag/src/retrieval.test.ts` verifying RRF math, threshold short-circuits, citation verification, hallucination removal, XML escaping, and hybrid orchestration).
 - **Next Up:** Level 5 — Production-Grade Streaming Chat (`POST /chat` with SSE, AbortController cancellation, heartbeat comments, backpressure handling, and latency tracking).
 
+---
+
+## Level 5: Production-Grade Streaming Chat
+
+- **Status:** COMPLETE (Passed: lint, typecheck, tests)
+- **What Was Built:**
+  - Built streaming chat endpoint (`POST /chat`) using Server-Sent Events (SSE) with `text/event-stream`, `no-cache`, and `X-Accel-Buffering: no`.
+  - Structured event streaming protocol emitting:
+    - `meta`: request ID, conversation ID, model name.
+    - `token`: streaming text tokens.
+    - `citations`: grounded array of verified citation objects (document title, page, snippet, score).
+    - `error`: structured error payloads on mid-stream failures.
+    - `done`: terminal frame with TTFT, latency, token metrics, and cost estimates.
+  - Implemented 15-second heartbeat comments (`: heartbeat\n\n`) to prevent intermediate proxy/load balancer timeouts.
+  - Wired `AbortController` end-to-end: listening to client disconnection (`req.on('close')`), aborting upstream LLM streaming calls immediately, avoiding GPU/token wastage on canceled requests.
+  - Built backpressure safety: monitors `res.write()` return status and awaits `drain` events on saturated TCP buffers.
+  - Implemented conversation management and history windowing (configurable limit, default 6 messages).
+  - Integrated hybrid retrieval pipeline with short-circuit relevance cutoff.
+  - Handled mid-stream provider failures gracefully: emits structured `error` event followed by `done` frame without crashing the process.
+  - Implemented message persistence in PostgreSQL (`messages` table) recording `ttftMs`, `totalDurationMs`, `promptTokens`, `completionTokens`, `estimatedCost`, and `citations`.
+  - Implemented `MockLLMProvider` and `GroqLLMProvider` in `packages/rag/src/llm.ts` with cancellation signal support.
+  - Authored `docs/adr/0006-streaming-chat-sse-and-abort-cancellation.md`.
+- **Key Decisions & Trade-offs:**
+  - *SSE over WebSockets:* SSE uses standard HTTP without custom handshake protocol transitions, easily traversing enterprise firewalls, reverse proxies, and CDN load balancers.
+  - *End-to-End Abort Propagation:* Listening to socket closure and propagating `AbortSignal` to the upstream provider cuts off token generation at the source, preventing resource waste.
+- **Verification Evidence:**
+  - `npm run lint` -> Passed (0 warnings, 0 errors)
+  - `npm run typecheck` -> Passed (0 errors across all 7 projects)
+  - `npm test` -> 13 test files, 48 tests passed (including `apps/api/src/chat/chat.test.ts` proving abort-on-disconnect, mid-stream error events, and SSE framing).
+- **Next Up:** Level 6 — Evaluation Harness (Golden dataset >= 60 questions, retrieval metrics Recall@k, MRR, nDCG@5, LLM-as-judge generation metrics, experiment matrix, and CI regression gate).
+
+
 

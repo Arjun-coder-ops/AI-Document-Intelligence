@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import type { HealthCheckResponse } from '@docsage/shared';
 import { authRouter } from './auth/routes.js';
 import { documentsRouter } from './documents/routes.js';
+import { chatRouter } from './chat/routes.js';
 
 export function createApp(): express.Express {
   const app = express();
@@ -27,6 +28,9 @@ export function createApp(): express.Express {
 
   // Documents ingestion & management routes
   app.use('/documents', documentsRouter);
+
+  // Streaming Chat routes
+  app.use('/chat', chatRouter);
 
   // Global error handler
   app.use((err: unknown, _req: Request, res: Response, _next: NextFunction) => {

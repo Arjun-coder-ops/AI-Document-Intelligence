@@ -6,6 +6,7 @@ export * from './prompt.js';
 export * from './citations.js';
 export * from './threshold.js';
 export * from './retrieval.js';
+export * from './llm.js';
 
 import type { Citation } from '@docsage/shared';
 
