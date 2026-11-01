@@ -349,4 +349,32 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `npm test` -> 29 test files, 141 tests passed
 - **Next Up:** Level 12 — Frontend (React 18 + Vite + TypeScript + TanStack Query).
 
+---
+
+## Level 12: Frontend (React 18 + TypeScript + TanStack Query)
+
+- **Status:** COMPLETE (Passed: lint, typecheck, tests, Vite production build)
+- **What Was Built:**
+  - Modern React 18 + TypeScript SPA in `apps/web` powered by Vite and TanStack Query.
+  - Adhered strictly to Better Design MCP guidelines:
+    - Step 1 & 2: Curated brand tokens in `apps/web/src/index.css` (dark mode palette, glassmorphism surfaces, subtle borders, glowing accents, Inter & JetBrains Mono typography).
+    - Principles applied: `hierarchy` for data density and typography contrast; `brand-in-sparse-interfaces` for empty-state guidance and responsive app shell.
+    - Step 4: `check-comprehension` verified for Chat, Document Library, and Admin analytics views.
+  - Core components and views:
+    - `AuthPage.tsx`: Tenant registration and authentication with Zod validation, role indicators, and one-click demo credentials for Admin and Viewer roles.
+    - `DocumentsPage.tsx`: Drag-and-drop PDF upload with client-side magic byte and size validation, auto-polling (3s intervals) for pending ingestion jobs, status badges (`pending`, `processing`, `ready`, `failed`), and soft-delete actions.
+    - `ChatPage.tsx`: Production-grade streaming chat timeline consuming HTTP SSE streams with fetch-based parser, AbortController stop button, inline clickable citation tags `[n]`, slide-out evidence drawer with chunk text, page numbers, and relevance scores, feedback voting (thumbs up/down), and stage latency/cost chips.
+    - `AdminPage.tsx`: Executive observability dashboard displaying monthly inference spend vs quota, p95/p50 latency metrics via PostgreSQL percentile_cont, 65-question golden benchmark comparison matrix, and zero-citation query review queue.
+    - `Layout.tsx` & `ErrorBoundary.tsx`: Persistent navigation shell with tenant and role badges, active link indicators, and fault-tolerant error boundaries.
+    - `api/client.ts`: Zod-validated client with JWT bearer authentication, multi-line SSE buffer parsing, and typed endpoint interfaces.
+- **Key Decisions & Trade-offs:**
+  - *Vanilla CSS Design System over Tailwind:* Employs curated CSS custom properties and reusable utility classes, yielding complete styling autonomy with zero framework bundle overhead.
+  - *Fetch-based SSE Parser over EventSource:* Native `fetch` with `ReadableStream` enables sending custom `Authorization: Bearer <jwt>` headers and abort signals, which standard browser `EventSource` cannot support without query params.
+- **Verification Evidence:**
+  - `npm run build --workspace=@docsage/web` -> Built clean production bundle in 3.11s (dist/index.html, dist/assets/index.css, dist/assets/index.js).
+  - `npm run lint` -> Passed (0 warnings, 0 errors).
+  - `npm run typecheck` -> Passed (0 errors across all 7 projects).
+  - `npm test` -> 29 test files, 142 tests passed.
+- **Next Up:** Level 13 — Deploy, Docs, and Proof.
+
 
