@@ -28,7 +28,7 @@ export const messageRoleEnum = pgEnum('message_role', ['user', 'assistant', 'sys
 export const evalRunStatusEnum = pgEnum('eval_run_status', ['running', 'completed', 'failed']);
 
 // ─── Custom Types (pgvector and tsvector) ────────────────────────────────────
-const embeddingDim = Number(process.env['EMBEDDING_DIM'] ?? 384);
+const embeddingDim = Number(process.env['EMBEDDING_DIM'] ?? 768);
 
 export function serializeVector(value: number[]): string {
   return `[${value.join(',')}]`;

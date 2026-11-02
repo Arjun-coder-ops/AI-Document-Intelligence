@@ -1,8 +1,8 @@
 import crypto from 'crypto';
-import type { EmbeddingProvider } from '@docsage/rag';
+import { type EmbeddingProvider, GeminiEmbeddingProvider, MODEL_CONFIG } from '@docsage/rag';
 
 export class MockEmbeddingProvider implements EmbeddingProvider {
-  constructor(public readonly dimension = 384) {}
+  constructor(public readonly dimension: number = MODEL_CONFIG.embedding.dimension) {}
 
   async embedText(text: string): Promise<number[]> {
     await Promise.resolve();
@@ -24,13 +24,11 @@ export class MockEmbeddingProvider implements EmbeddingProvider {
 }
 
 export function getEmbeddingProvider(): EmbeddingProvider {
-  const providerType = process.env['EMBEDDING_PROVIDER'] ?? 'mock';
-  const dimension = Number(process.env['EMBEDDING_DIM'] ?? 384);
-
-  if (providerType === 'mock') {
-    return new MockEmbeddingProvider(dimension);
+  const geminiKey = process.env['GEMINI_API_KEY'];
+  if (geminiKey && !geminiKey.includes('placeholder')) {
+    return new GeminiEmbeddingProvider(geminiKey);
   }
 
-  // Fallback to deterministic mock in local environments without external keys
+  const dimension = Number(process.env['EMBEDDING_DIM'] ?? MODEL_CONFIG.embedding.dimension);
   return new MockEmbeddingProvider(dimension);
 }

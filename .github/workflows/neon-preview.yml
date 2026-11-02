@@ -17,9 +17,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      - name: Check Neon Secrets Available
+        if: secrets.NEON_API_KEY == '' || secrets.NEON_PROJECT_ID == ''
+        run: echo "NEON_API_KEY or NEON_PROJECT_ID not set in repository secrets. Skipping ephemeral branch workflow."
+
       # ─── 1. Create Ephemeral Branch on Open/Sync ────────────────────────────
       - name: Create Ephemeral Neon Branch
-        if: github.event.action != 'closed'
+        if: github.event.action != 'closed' && secrets.NEON_API_KEY != '' && secrets.NEON_PROJECT_ID != ''
         id: create-branch
         uses: neondatabase/create-branch-action@v5
         with:
@@ -29,18 +33,18 @@ jobs:
           api_key: ${{ secrets.NEON_API_KEY }}
 
       - name: Setup Node.js 20
-        if: github.event.action != 'closed'
+        if: github.event.action != 'closed' && steps.create-branch.outputs.db_url != ''
         uses: actions/setup-node@v4
         with:
           node-version: 20
           cache: npm
 
       - name: Install dependencies
-        if: github.event.action != 'closed'
+        if: github.event.action != 'closed' && steps.create-branch.outputs.db_url != ''
         run: npm ci
 
       - name: Apply Drizzle Migrations to Preview Branch
-        if: github.event.action != 'closed'
+        if: github.event.action != 'closed' && steps.create-branch.outputs.db_url != ''
         env:
           DATABASE_URL_DIRECT: ${{ steps.create-branch.outputs.db_url }}
         run: |
@@ -48,7 +52,7 @@ jobs:
           npm --workspace=@docsage/db run db:migrate || true
 
       - name: Post Neon Database URL to PR
-        if: github.event.action != 'closed'
+        if: github.event.action != 'closed' && steps.create-branch.outputs.db_url != ''
         uses: actions/github-script@v7
         with:
           script: |
@@ -61,7 +65,7 @@ jobs:
 
       # ─── 2. Delete Ephemeral Branch on Close ────────────────────────────────
       - name: Delete Ephemeral Neon Branch
-        if: github.event.action == 'closed'
+        if: github.event.action == 'closed' && secrets.NEON_API_KEY != '' && secrets.NEON_PROJECT_ID != ''
         uses: neondatabase/delete-branch-action@v3
         with:
           project_id: ${{ secrets.NEON_PROJECT_ID }}

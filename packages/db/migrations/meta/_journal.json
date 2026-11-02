@@ -15,6 +15,13 @@
       "when": 1793556488938,
       "tag": "0001_overrated_expediter",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793556700000,
+      "tag": "0003_upgrade_embedding_dim_768",
+      "breakpoints": true
     }
   ]
 }

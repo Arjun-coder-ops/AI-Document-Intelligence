@@ -109,13 +109,13 @@ DocSage uses `busboy` streaming:
 **Real File:** [`apps/api/src/chat/routes.ts`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/apps/api/src/chat/routes.ts), [`apps/web/src/api/client.ts`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/apps/web/src/api/client.ts)  
 **ADR Reference:** [ADR 0006: Production Streaming Chat and Cancellation](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0006-production-streaming-chat-and-cancellation.md)  
 **The Answer:**  
-In generative AI chat applications, users frequently close their browser tab or click "Stop Generating" when they realize the answer has begun answering incorrectly or when they made a typo. If the backend continues calling Groq/OpenAI, tokens and GPU compute are completely wasted.
+In generative AI chat applications, users frequently close their browser tab or click "Stop Generating" when they realize the answer has begun answering incorrectly or when they made a typo. If the backend continues calling Groq/Gemini, tokens and GPU compute are completely wasted.
 
 DocSage connects an `AbortController` end-to-end:
 
 1. In the client, the "Stop" button triggers `abortController.abort()`.
 2. In Express, the HTTP server listens to `req.on('close')`. If the response has not ended, Express triggers `upstreamAbortController.abort()`.
-3. The upstream provider call (`GroqLLMProvider` or `OpenAILLMProvider`) passes this `AbortSignal` directly to `fetch`. The TCP socket to Groq closes immediately, cutting token consumption.
+3. The upstream provider call (`GroqLLMProvider` or `GeminiLLMProvider`) passes this `AbortSignal` directly to `fetch`. The TCP socket to Groq closes immediately, cutting token consumption.
 4. For backpressure: When writing chunks to the client (`res.write(...)`), if the client network buffer is saturated (`res.write() === false`), the stream pauses and awaits the `'drain'` event before pushing additional tokens.
 
 ---
@@ -130,7 +130,7 @@ We wrap external LLM and embedding API calls in an `Opossum` circuit breaker pai
 - **Tripping Threshold:** 50% error rate over a rolling 10-second window, or 3 consecutive timeouts.
 - **Circuit States:**
   - `CLOSED`: Normal operations; calls route to primary LLM (Groq Llama 3.3 70B).
-  - `OPEN`: Primary circuit is tripped. Incoming requests fail fast without attempting Groq, immediately delegating to the secondary provider (OpenAI GPT-4o-mini).
+  - `OPEN`: Primary circuit is tripped. Incoming requests fail fast without attempting Groq, immediately delegating to the secondary provider (Gemini 1.5 Flash).
   - `HALF_OPEN`: After a 30-second reset timeout, a single trial request probes Groq. If it succeeds, the circuit closes; if it fails, it returns to `OPEN`.
 - **Graceful Final Degradation:** If both primary and secondary LLM providers fail or are rate-limited, DocSage does not crash with a 500. Instead, it falls back to returning the verified retrieved chunk passages directly to the user with the disclaimer: _"AI synthesis is temporarily unavailable. Displaying raw retrieved document passages."_
 

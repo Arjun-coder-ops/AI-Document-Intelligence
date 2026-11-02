@@ -12,12 +12,11 @@ export const EnvSchema = z.object({
   JWT_ACCESS_EXPIRY: z.string().default('15m'),
   JWT_REFRESH_EXPIRY_DAYS: z.coerce.number().default(7),
   CORS_ORIGIN: z.string().default('http://localhost:5173'),
-  EMBEDDING_DIM: z.coerce.number().default(384),
+  EMBEDDING_DIM: z.coerce.number().default(768),
   MAX_UPLOAD_SIZE_MB: z.coerce.number().default(50),
   UPLOAD_DIR: z.string().default('./uploads'),
-  LLM_PROVIDER: z.enum(['mock', 'groq', 'gemini', 'openai']).default('mock'),
+  LLM_PROVIDER: z.enum(['mock', 'groq', 'gemini']).default('mock'),
   GROQ_API_KEY: z.string().optional(),
-  OPENAI_API_KEY: z.string().optional(),
   GEMINI_API_KEY: z.string().optional(),
 });
 

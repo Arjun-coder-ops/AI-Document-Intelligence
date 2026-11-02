@@ -1,4 +1,5 @@
-import type { Reranker } from './types.js';
+import type { Reranker, LLMProvider } from './types.js';
+import { GeminiLLMProvider } from './llm.js';
 
 export class NoOpReranker implements Reranker {
   readonly name = 'noop';
@@ -90,10 +91,10 @@ export class MockReranker implements Reranker {
   }
 }
 
-export class ListwiseLLMReranker implements Reranker {
-  readonly name = 'listwise-llm';
+export class GeminiListwiseReranker implements Reranker {
+  readonly name = 'gemini-listwise';
 
-  constructor(private readonly llmCall: (prompt: string) => Promise<string>) {}
+  constructor(private readonly provider: LLMProvider = new GeminiLLMProvider()) {}
 
   async rerank(
     query: string,
@@ -101,25 +102,25 @@ export class ListwiseLLMReranker implements Reranker {
     topK: number,
   ): Promise<Array<{ id: string; score: number }>> {
     if (documents.length === 0) return [];
-    if (documents.length <= topK) {
-      return documents.map((d, i) => ({ id: d.id, score: Number((1 / (i + 1)).toFixed(4)) }));
+    if (documents.length <= 1) {
+      return documents.map((d) => ({ id: d.id, score: 1.0 }));
     }
 
     const docItems = documents
-      .map((d, idx) => `[${idx + 1}] ${d.content.slice(0, 200).replace(/\s+/g, ' ')}`)
+      .map((d, idx) => `[${idx + 1}] ${d.content.slice(0, 300).replace(/\s+/g, ' ')}`)
       .join('\n');
 
-    const prompt = `You are a relevance ranking engine.
-Given the search query and the list of candidate passages, order the passage IDs from most relevant to least relevant to answering the query.
+    const prompt = `You are a relevance ranking engine for document retrieval.
+Given the query and candidate passages, rank the passage IDs from most relevant to least relevant.
 Query: "${query}"
 
-Passages:
+Candidate Passages:
 ${docItems}
 
-Output strictly a JSON array of passage numbers in descending order of relevance, e.g. [3, 1, 5, 2, 4]. Do not include explanations.`;
+Output strictly a JSON array of integers representing passage IDs in descending order of relevance, e.g. [2, 1, 3]. Do not include any explanations or conversational text.`;
 
     try {
-      const response = await this.llmCall(prompt);
+      const response = await this.provider.generateText(prompt, { temperature: 0.0 });
       const match = response.match(/\[\s*([0-9\s,]+)\s*\]/);
       if (match && match[0]) {
         const parsedIndices = JSON.parse(match[0]) as number[];
@@ -154,56 +155,5 @@ Output strictly a JSON array of passage numbers in descending order of relevance
       id: doc.id,
       score: Number((1 / (1 + idx)).toFixed(4)),
     }));
-  }
-}
-
-export class CohereReranker implements Reranker {
-  readonly name = 'cohere';
-
-  constructor(
-    private readonly apiKey = process.env['COHERE_API_KEY'] ?? '',
-    private readonly model = 'rerank-v3.5',
-  ) {}
-
-  async rerank(
-    query: string,
-    documents: Array<{ id: string; content: string }>,
-    topK: number,
-  ): Promise<Array<{ id: string; score: number }>> {
-    if (!this.apiKey) {
-      throw new Error('COHERE_API_KEY environment variable is not configured');
-    }
-
-    const res = await fetch('https://api.cohere.com/v1/rerank', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${this.apiKey}`,
-      },
-      body: JSON.stringify({
-        model: this.model,
-        query,
-        documents: documents.map((d) => d.content),
-        top_n: topK,
-      }),
-    });
-
-    if (!res.ok) {
-      const errText = await res.text();
-      throw new Error(`Cohere rerank failed with status ${res.status}: ${errText}`);
-    }
-
-    interface CohereResponse {
-      results: Array<{ index: number; relevance_score: number }>;
-    }
-
-    const data = (await res.json()) as CohereResponse;
-    return data.results.map((r) => {
-      const doc = documents[r.index];
-      return {
-        id: doc ? doc.id : `doc-${r.index}`,
-        score: Number(r.relevance_score.toFixed(4)),
-      };
-    });
   }
 }

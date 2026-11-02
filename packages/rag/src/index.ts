@@ -9,31 +9,4 @@ export * from './retrieval.js';
 export * from './llm.js';
 export * from './circuit-breaker.js';
 export * from './security.js';
-
-import type { Citation } from '@docsage/shared';
-
-export interface EmbeddingProvider {
-  readonly dimension: number;
-  embedText(text: string): Promise<number[]>;
-  embedBatch(texts: string[]): Promise<number[][]>;
-}
-
-export interface StreamCallbacks {
-  onToken?: (token: string) => void;
-  onMeta?: (meta: { requestId: string; model: string }) => void;
-  onCitations?: (citations: Citation[]) => void;
-  onError?: (err: Error) => void;
-}
-
-export interface LLMProvider {
-  readonly modelName: string;
-  generateText(
-    prompt: string,
-    options?: { temperature?: number; maxTokens?: number },
-  ): Promise<string>;
-  streamText(
-    prompt: string,
-    callbacks: StreamCallbacks,
-    options?: { signal?: AbortSignal; temperature?: number; maxTokens?: number },
-  ): Promise<void>;
-}
+export * from './models.js';

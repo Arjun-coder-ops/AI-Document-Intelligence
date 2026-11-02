@@ -63,26 +63,25 @@ describe('Level 7: Reliability, Circuit Breakers, Fallbacks & Caching', () => {
     });
   });
 
-  // ── 2. Chaos-Style Provider Fallback Simulation ────────────────────────────
-  describe('Multi-Provider Fallback Chain', () => {
-    it('automatically fails over to secondary provider when primary encounters 429 rate limit', async () => {
+  // ── 2. Chaos-Style Provider Fallback Simulation (Groq -> Gemini -> Degraded) ────────
+  describe('Multi-Provider Fallback Chain (Groq -> Gemini -> Passages)', () => {
+    it('automatically fails over to Gemini when Groq encounters 429 rate limit', async () => {
       const primaryBreaker = new CircuitBreaker('groq', { maxRetries: 0 });
       const secondaryBreaker = new CircuitBreaker('gemini', { maxRetries: 0 });
 
-      const failingPrimary = async () => {
+      const failingGroq429 = async () => {
         await Promise.resolve();
-        const err = new Error('429 Too Many Requests: Rate limit exceeded');
-        throw err;
+        throw new Error('429 Too Many Requests: Rate limit exceeded');
       };
 
-      const healthySecondary = async () => {
+      const healthyGemini = async () => {
         await Promise.resolve();
-        return 'Successful synthesis from secondary provider';
+        return 'Successful synthesis from Gemini fallback provider';
       };
 
       const result = await executeWithFallback(
-        failingPrimary,
-        healthySecondary,
+        failingGroq429,
+        healthyGemini,
         ['Passage 1 content', 'Passage 2 content'],
         primaryBreaker,
         secondaryBreaker,
@@ -90,18 +89,45 @@ describe('Level 7: Reliability, Circuit Breakers, Fallbacks & Caching', () => {
 
       expect(result.degraded).toBe(false);
       expect(result.providerUsed).toBe('gemini');
-      expect(result.text).toBe('Successful synthesis from secondary provider');
+      expect(result.text).toBe('Successful synthesis from Gemini fallback provider');
     });
 
-    it('falls back to raw retrieved passages when all upstream providers are degraded', async () => {
+    it('fails over to Gemini when Groq encounters 504 timeout or 500 error', async () => {
       const primaryBreaker = new CircuitBreaker('groq', { maxRetries: 0 });
-      const secondaryBreaker = new CircuitBreaker('openai', { maxRetries: 0 });
+      const secondaryBreaker = new CircuitBreaker('gemini', { maxRetries: 0 });
 
-      const failingPrimary = async () => {
+      const failingGroq5xx = async () => {
+        await Promise.resolve();
+        throw new Error('504 Gateway Timeout: Upstream inference socket hung up');
+      };
+
+      const healthyGemini = async () => {
+        await Promise.resolve();
+        return 'Gemini response after Groq timeout';
+      };
+
+      const result = await executeWithFallback(
+        failingGroq5xx,
+        healthyGemini,
+        ['Passage 1 content'],
+        primaryBreaker,
+        secondaryBreaker,
+      );
+
+      expect(result.degraded).toBe(false);
+      expect(result.providerUsed).toBe('gemini');
+      expect(result.text).toBe('Gemini response after Groq timeout');
+    });
+
+    it('falls back to raw retrieved passages when both Groq and Gemini are down', async () => {
+      const primaryBreaker = new CircuitBreaker('groq', { maxRetries: 0 });
+      const secondaryBreaker = new CircuitBreaker('gemini', { maxRetries: 0 });
+
+      const failingGroq = async () => {
         await Promise.resolve();
         throw new Error('504 Gateway Timeout');
       };
-      const failingSecondary = async () => {
+      const failingGemini = async () => {
         await Promise.resolve();
         throw new Error('503 Service Unavailable');
       };
@@ -112,8 +138,8 @@ describe('Level 7: Reliability, Circuit Breakers, Fallbacks & Caching', () => {
       ];
 
       const result = await executeWithFallback(
-        failingPrimary,
-        failingSecondary,
+        failingGroq,
+        failingGemini,
         passages,
         primaryBreaker,
         secondaryBreaker,

@@ -38,6 +38,10 @@ jobs:
         env:
           DATABASE_URL_DIRECT: ${{ secrets.DATABASE_URL_DIRECT }}
         run: |
+          if [ -z "$DATABASE_URL_DIRECT" ]; then
+            echo "DATABASE_URL_DIRECT secret not set in GitHub Secrets. Skipping production migration."
+            exit 0
+          fi
           echo "Running Drizzle schema migrations against Neon DIRECT endpoint..."
           npm --workspace=@docsage/db run db:migrate
 
@@ -45,6 +49,10 @@ jobs:
         env:
           DATABASE_URL_DIRECT: ${{ secrets.DATABASE_URL_DIRECT }}
         run: |
+          if [ -z "$DATABASE_URL_DIRECT" ]; then
+            echo "DATABASE_URL_DIRECT secret not set in GitHub Secrets. Skipping schema consistency check."
+            exit 0
+          fi
           npm --workspace=@docsage/db run db:check
 
   # ─── 2. Container Build & Push to GHCR ───────────────────────────────────────
