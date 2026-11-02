@@ -1,6 +1,6 @@
 {
   "baseline-dense": {
-    "timestamp": "2026-11-02T03:54:41.635Z",
+    "timestamp": "2026-11-02T05:10:44.009Z",
     "configName": "baseline-dense",
     "sampleCount": 87,
     "testSampleCount": 67,
@@ -54,7 +54,7 @@
     "thresholdFailures": []
   },
   "lexical-only": {
-    "timestamp": "2026-11-02T03:54:41.668Z",
+    "timestamp": "2026-11-02T05:10:44.043Z",
     "configName": "lexical-only",
     "sampleCount": 87,
     "testSampleCount": 67,
@@ -111,7 +111,7 @@
     ]
   },
   "hybrid": {
-    "timestamp": "2026-11-02T03:54:41.706Z",
+    "timestamp": "2026-11-02T05:10:44.074Z",
     "configName": "hybrid",
     "sampleCount": 87,
     "testSampleCount": 67,
@@ -165,7 +165,7 @@
     "thresholdFailures": []
   },
   "hybrid-rerank": {
-    "timestamp": "2026-11-02T03:54:41.740Z",
+    "timestamp": "2026-11-02T05:10:44.108Z",
     "configName": "hybrid-rerank",
     "sampleCount": 87,
     "testSampleCount": 67,

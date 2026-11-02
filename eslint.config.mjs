@@ -18,12 +18,16 @@ export default tseslint.config(
       '@typescript-eslint/no-misused-promises': 'error',
       '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }],
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
+      'max-lines': ['error', { max: 300, skipBlankLines: true, skipComments: true }],
     },
   },
   {
     files: ['**/*.test.ts', '**/*.spec.ts'],
     rules: {
       '@typescript-eslint/unbound-method': 'off',
+      'max-lines': 'off',
+      'max-lines-per-function': 'off',
+      complexity: 'off',
     },
   },
   {

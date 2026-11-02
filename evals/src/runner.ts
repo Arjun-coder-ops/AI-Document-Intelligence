@@ -1,15 +1,10 @@
 import fs from 'fs';
 import path from 'path';
 import { fuseRRF } from '@docsage/rag';
-import {
-  calculateRecallAtK,
-  calculateMRR,
-  calculateNDCGAtK,
-  calculateHitRate,
-  bootstrapConfidenceInterval,
-} from './metrics.js';
+import { calculateRecallAtK, calculateMRR, calculateNDCGAtK, calculateHitRate } from './metrics.js';
 import type { GoldenQuestion, CorpusChunk, RetrievalEvalReport } from './types.js';
 import { CORPUS, GOLDEN_QUESTIONS, writeDatasets } from './generate-dataset.js';
+import { compileExperimentResult } from './report.js';
 
 export interface EvalConfig {
   name: string;
@@ -236,74 +231,24 @@ export async function runRetrievalEvaluation(
     }
   }
 
-  // Load and check thresholds
-  const thresholdsPath = path.join(baseDir, 'thresholds.json');
-  interface ThresholdsJson {
-    recallAt1?: number;
-    recallAt3?: number;
-    recallAt5?: number;
-    mrr?: number;
-    ndcgAt5?: number;
-    unanswerableAbstentionAccuracy?: number;
-  }
-  const thresholds = JSON.parse(fs.readFileSync(thresholdsPath, 'utf-8')) as ThresholdsJson;
-
-  const r1CI = bootstrapConfidenceInterval(recall1Values);
-  const r3CI = bootstrapConfidenceInterval(recall3Values);
-  const r5CI = bootstrapConfidenceInterval(recall5Values);
-  const mrrCI = bootstrapConfidenceInterval(mrrValues);
-  const ndcg5CI = bootstrapConfidenceInterval(ndcg5Values);
-  const hitCI = bootstrapConfidenceInterval(hitRateValues);
-  const abstentionCI = bootstrapConfidenceInterval(abstentionValues);
-
-  const abstentionPrecision =
-    unanswerableAbstained + answerableAbstained > 0
-      ? Number((unanswerableAbstained / (unanswerableAbstained + answerableAbstained)).toFixed(4))
-      : 1.0;
-  const abstentionRecall =
-    unanswerableTotal > 0 ? Number((unanswerableAbstained / unanswerableTotal).toFixed(4)) : 1.0;
-
-  const perTypeRecallAt5: Record<string, number> = {};
-  for (const [t, vals] of Object.entries(perTypeRecall)) {
-    perTypeRecallAt5[t] =
-      vals.length > 0 ? Number((vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(4)) : 0;
-  }
-
-  const thresholdFailures: string[] = [];
-  if (thresholds.recallAt5 && r5CI.mean < thresholds.recallAt5) {
-    thresholdFailures.push(`Recall@5 (${r5CI.mean}) < required (${thresholds.recallAt5})`);
-  }
-  if (thresholds.mrr && mrrCI.mean < thresholds.mrr) {
-    thresholdFailures.push(`MRR (${mrrCI.mean}) < required (${thresholds.mrr})`);
-  }
-  if (
-    thresholds.unanswerableAbstentionAccuracy &&
-    abstentionCI.mean < thresholds.unanswerableAbstentionAccuracy
-  ) {
-    thresholdFailures.push(
-      `Abstention accuracy (${abstentionCI.mean}) < required (${thresholds.unanswerableAbstentionAccuracy})`,
-    );
-  }
-
-  return {
-    timestamp: new Date().toISOString(),
-    configName: config.name,
-    sampleCount: allQuestions.length,
-    testSampleCount: questions.length,
-    heldOutSampleCount: heldOut.length,
-    perTypeRecallAt5,
-    metrics: {
-      recallAt1: r1CI,
-      recallAt3: r3CI,
-      recallAt5: r5CI,
-      mrr: mrrCI,
-      ndcgAt5: ndcg5CI,
-      hitRate: hitCI,
-      unanswerableAbstentionAccuracy: abstentionCI,
-      abstentionPrecision,
-      abstentionRecall,
+  return compileExperimentResult(
+    {
+      recall1Values,
+      recall3Values,
+      recall5Values,
+      mrrValues,
+      ndcg5Values,
+      hitRateValues,
+      abstentionValues,
+      unanswerableAbstained,
+      answerableAbstained,
+      unanswerableTotal,
+      perTypeRecall,
     },
-    passedThresholds: thresholdFailures.length === 0,
-    thresholdFailures,
-  };
+    baseDir,
+    config.name,
+    allQuestions.length,
+    questions.length,
+    heldOut.length,
+  );
 }

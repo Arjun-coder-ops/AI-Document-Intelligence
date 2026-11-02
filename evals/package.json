@@ -12,9 +12,7 @@
     "test:load": "tsc && node dist/load-bench.js"
   },
   "dependencies": {
-    "@docsage/rag": "*",
-    "@docsage/shared": "*",
-    "zod": "^4.6.7"
+    "@docsage/rag": "*"
   },
   "devDependencies": {
     "@types/node": "^22.13.5",

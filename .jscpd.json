@@ -1,0 +1,15 @@
+{
+  "threshold": 3,
+  "reporters": ["console"],
+  "ignore": [
+    "**/dist/**",
+    "**/node_modules/**",
+    "**/*.json",
+    "**/coverage/**",
+    "**/*.d.ts",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/migrations/**"
+  ],
+  "path": ["packages", "apps", "evals"]
+}

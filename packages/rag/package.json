@@ -17,8 +17,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@docsage/shared": "*",
-    "zod": "^4.6.7"
+    "@docsage/shared": "*"
   },
   "devDependencies": {
     "typescript": "^5.7.3"

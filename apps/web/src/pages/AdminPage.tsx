@@ -12,6 +12,7 @@ import {
   BarChart2,
   RefreshCw,
 } from 'lucide-react';
+import { KPICard } from '../components/KPICard.js';
 
 export const AdminPage: React.FC = () => {
   const {
@@ -70,100 +71,30 @@ export const AdminPage: React.FC = () => {
           marginBottom: '32px',
         }}
       >
-        {/* Total Cost */}
-        <div className="card">
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '12px',
-            }}
-          >
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-              MONTHLY INFERENCE SPEND
-            </span>
-            <div
-              style={{
-                padding: '6px',
-                backgroundColor: 'var(--emerald-bg)',
-                borderRadius: 'var(--radius-sm)',
-              }}
-            >
-              <DollarSign size={16} color="var(--emerald)" />
-            </div>
-          </div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            ${analytics?.totalCost !== undefined ? analytics.totalCost.toFixed(4) : '0.0000'}
-          </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-            Budget limit: $100.00 / month
-          </div>
-        </div>
+        <KPICard
+          title="MONTHLY INFERENCE SPEND"
+          value={`$${analytics?.totalCost !== undefined ? analytics.totalCost.toFixed(4) : '0.0000'}`}
+          subtitle="Budget limit: $100.00 / month"
+          icon={<DollarSign size={16} color="var(--emerald)" />}
+          iconBg="var(--emerald-bg)"
+        />
 
-        {/* Total Messages */}
-        <div className="card">
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '12px',
-            }}
-          >
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-              SYNTHESIZED QUERIES
-            </span>
-            <div
-              style={{
-                padding: '6px',
-                backgroundColor: 'var(--cyan-bg)',
-                borderRadius: 'var(--radius-sm)',
-              }}
-            >
-              <BarChart2 size={16} color="var(--cyan)" />
-            </div>
-          </div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            {analytics?.totalMessages ?? 0}
-          </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-            100% token usage persisted
-          </div>
-        </div>
+        <KPICard
+          title="P95 STAGE LATENCY"
+          value={`${analytics?.p95LatencyMs !== undefined ? Math.round(analytics.p95LatencyMs) : 0}ms`}
+          subtitle={`p50 latency: ${analytics?.p50LatencyMs !== undefined ? Math.round(analytics.p50LatencyMs) : 0}ms`}
+          icon={<Clock size={16} color="var(--accent)" />}
+          iconBg="var(--accent-light)"
+        />
 
-        {/* p95 Latency */}
-        <div className="card">
-          <div
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              marginBottom: '12px',
-            }}
-          >
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-              p95 TOTAL LATENCY
-            </span>
-            <div
-              style={{
-                padding: '6px',
-                backgroundColor: 'var(--accent-light)',
-                borderRadius: 'var(--radius-sm)',
-              }}
-            >
-              <Clock size={16} color="var(--accent)" />
-            </div>
-          </div>
-          <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--text-primary)' }}>
-            {analytics?.p95LatencyMs ?? 0}ms
-          </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-            p50 median: {analytics?.p50LatencyMs ?? 0}ms
-          </div>
-        </div>
+        <KPICard
+          title="TOTAL MESSAGES SERVICED"
+          value={`${analytics?.totalMessages ?? 0}`}
+          subtitle="Across all tenant conversations"
+          icon={<BarChart2 size={16} color="var(--text-secondary)" />}
+          iconBg="var(--bg-surface)"
+        />
 
-        {/* Feedback Ratio */}
         <div className="card">
           <div
             style={{
@@ -174,7 +105,7 @@ export const AdminPage: React.FC = () => {
             }}
           >
             <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
-              ACCURACY FEEDBACK
+              USER FEEDBACK RATIO
             </span>
             <div
               style={{
@@ -183,12 +114,12 @@ export const AdminPage: React.FC = () => {
                 borderRadius: 'var(--radius-sm)',
               }}
             >
-              <ThumbsUp size={16} color="var(--accent)" />
+              <ThumbsUp size={16} color="var(--emerald)" />
             </div>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
             <div
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--emerald)' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--emerald)' }}
             >
               <ThumbsUp size={16} />
               <span style={{ fontSize: '1.25rem', fontWeight: 700 }}>
@@ -196,7 +127,7 @@ export const AdminPage: React.FC = () => {
               </span>
             </div>
             <div
-              style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--rose)' }}
+              style={{ display: 'flex', alignItems: 'center', gap: '6px', color: 'var(--rose)' }}
             >
               <ThumbsDown size={16} />
               <span style={{ fontSize: '1.25rem', fontWeight: 700 }}>

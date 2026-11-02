@@ -492,3 +492,40 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `npm test` -> 30 test files, 155 tests passed.
   - `npm run eval:retrieval` -> Passed CI regression gate; Recall@5 = 1.0000, MRR = 0.9677, Abstention = 1.0000.
 - **Next Up:** Phase 4 — Code Quality and Structure (docs/CODE_AUDIT.md, boundaries, lines <= 300, complexity <= 10, knip, jscpd, docs/ARCHITECTURE.md).
+
+---
+
+## Phase 4: Code Quality, Architectural Boundaries & Quality Gates
+
+- **Status:** COMPLETE (Passed: Prettier, ESLint, TypeScript typecheck, 31 test files / 163 unit & integration tests, offline retrieval eval, jscpd < 3.0%, knip 0 dead code, 0 files > 300 lines)
+- **What Was Built:**
+  - **Comprehensive Code Quality Audit:** Authored `docs/CODE_AUDIT.md` reviewing file lengths, architectural boundaries, cyclomatic complexity, dead code, and duplication clones.
+  - **Modular Architecture Blueprint:** Authored `docs/ARCHITECTURE.md` complete with Mermaid diagrams, boundary rules (RAG isolated from Express/DB, web isolated from API, only `packages/db` touches SQL, only `withTenant` touches connection pool), error hierarchy, and file layout conventions.
+  - **Strict File Length Boundary (<= 300 lines):**
+    - Extracted `apps/api/src/chat/stream.ts` and `apps/api/src/chat/db.ts` from `apps/api/src/chat/routes.ts` (routes reduced from 434 to 74 lines).
+    - Extracted `apps/api/src/documents/upload.ts` from `apps/api/src/documents/routes.ts` (routes reduced from 419 to 253 lines).
+    - Modularized LLM providers into `packages/rag/src/llm/` (`groq.ts`, `gemini.ts`, `mock.ts`, `sse.ts`, `index.ts`), reducing `packages/rag/src/llm.ts` from 386 to 7 lines.
+    - Modularized evaluation datasets into `evals/src/dataset/` (`corpus-data.ts`, `factual.ts`, `complex.ts`, `heldout.ts`, `unanswerable.ts`, `paraphrased.ts`, `golden-data.ts`), reducing `evals/src/generate-dataset.ts` from 1010 to 69 lines.
+    - Extracted `evals/src/report.ts` from `evals/src/runner.ts` (runner reduced from 310 to 260 lines).
+    - Extracted reusable frontend UI components (`KPICard.tsx`, `AuthInput.tsx`, `UploadDropzone.tsx`, `DocumentTable.tsx`, `CitationDrawer.tsx`, `ChatMessageItem.tsx`), bringing all web pages under 285 lines.
+    - **Total files exceeding 300 lines across entire repository: exactly 0.**
+  - **Copy-Paste Duplication Gate (jscpd < 3.0%):**
+    - Added `.jscpd.json` and root script `jscpd packages apps evals`.
+    - Achieved **2.84%** duplication rate across 100 source files (passed under 3.0% threshold).
+  - **Dead Code & Package Hygiene Gate (knip):**
+    - Configured `knip.json` for monorepo workspaces and eliminated unused packages across worker, evals, rag, db, and root workspaces.
+    - Achieved **0 unused exports, 0 unlisted dependencies, 0 dead dependencies** (passed exit code 0).
+  - **Coverage & Test Hardening:**
+    - Authored unit test suite `packages/rag/src/llm/gemini.test.ts` for Gemini LLM and Embedding providers.
+    - 31 test files / 163 unit and contract tests green with **82.51% statement / line coverage** (exceeding 80% threshold).
+- **Verification Evidence:**
+  - Files > 300 lines -> 0 files (VERIFIED).
+  - `npm run format:check` -> All matched files use Prettier code style (VERIFIED).
+  - `npm run lint` -> Passed with 0 warnings, 0 errors (VERIFIED).
+  - `npm run typecheck` (`tsc -b`) -> Passed with 0 errors across all workspaces (VERIFIED).
+  - `npm run jscpd` -> Passed at 2.84% duplication (VERIFIED).
+  - `npm run knip` -> Passed with 0 issues (VERIFIED).
+  - `npm run test:coverage` -> 31 test files, 163 tests passed, coverage >= 80% (VERIFIED).
+  - `npm run eval:retrieval` -> Passed CI regression gate; Recall@5 = 1.0000, MRR = 0.9677, Abstention = 1.0000 (VERIFIED).
+- **Next Up:** Phase 5 — UI Redesign via Stitch MCP (Design system, warm paper theme, Fraunces + Instrument Sans, motion landing page, product app shell).
+

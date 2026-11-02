@@ -12,11 +12,8 @@
   "dependencies": {
     "@docsage/db": "*",
     "@docsage/rag": "*",
-    "@docsage/shared": "*",
-    "dotenv": "^16.4.7",
     "pdf-parse": "^1.1.1",
-    "pg-boss": "^12.38.0",
-    "zod": "^4.6.7"
+    "pg-boss": "^12.38.0"
   },
   "devDependencies": {
     "@types/node": "^22.13.5",

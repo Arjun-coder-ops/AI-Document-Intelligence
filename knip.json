@@ -1,0 +1,57 @@
+{
+  "$schema": "https://unpkg.com/knip@5/schema.json",
+  "ignoreDependencies": ["@commitlint/cli", "lint-staged", "drizzle-kit", "@playwright/test"],
+  "ignoreBinaries": ["playwright"],
+  "workspaces": {
+    ".": {
+      "entry": ["e2e/**/*.ts", "playwright.config.ts", "drizzle.config.ts"],
+      "ignore": ["infra/**"]
+    },
+    "apps/api": {
+      "entry": ["src/**/*.test.ts"],
+      "project": ["src/**/*.ts"],
+      "ignoreDependencies": ["ts-node"]
+    },
+    "apps/worker": {
+      "entry": ["src/**/*.test.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "apps/web": {
+      "entry": ["src/**/*.test.ts"],
+      "project": ["src/**/*.{ts,tsx}"],
+      "ignoreDependencies": ["autoprefixer", "postcss", "tailwindcss"]
+    },
+    "packages/shared": {
+      "entry": ["src/**/*.test.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/db": {
+      "entry": [
+        "src/check.ts",
+        "src/migrate.ts",
+        "src/reembed.ts",
+        "src/seed.ts",
+        "src/**/*.test.ts"
+      ],
+      "project": ["src/**/*.ts"]
+    },
+    "packages/rag": {
+      "entry": ["src/**/*.test.ts"],
+      "project": ["src/**/*.ts"]
+    },
+    "evals": {
+      "entry": [
+        "src/generate-dataset.ts",
+        "src/generate-gemini-embeddings.ts",
+        "src/load-bench.ts",
+        "src/runner.ts",
+        "src/**/*.test.ts"
+      ],
+      "project": ["src/**/*.ts"]
+    }
+  },
+  "rules": {
+    "types": "off",
+    "exports": "off"
+  }
+}

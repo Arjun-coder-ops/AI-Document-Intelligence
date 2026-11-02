@@ -30,8 +30,7 @@
     "@docsage/shared": "*",
     "dotenv": "^16.4.7",
     "drizzle-orm": "^0.45.4",
-    "pg": "^8.13.3",
-    "zod": "^4.6.7"
+    "pg": "^8.13.3"
   },
   "devDependencies": {
     "@types/node": "^22.13.5",

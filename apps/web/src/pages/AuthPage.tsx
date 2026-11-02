@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.js';
 import { Sparkles, Lock, Mail, Building, AlertCircle, ArrowRight } from 'lucide-react';
+import { AuthInput } from '../components/AuthInput.js';
 
 export const AuthPage: React.FC = () => {
   const [isRegister, setIsRegister] = useState(false);
@@ -98,34 +99,31 @@ export const AuthPage: React.FC = () => {
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
             {isRegister
-              ? 'Deploy an isolated multi-tenant RAG intelligence workspace'
-              : 'Sign in to access your enterprise document intelligence'}
+              ? 'Deploy an isolated multi-tenant RAG knowledge base.'
+              : 'Sign in to access your organization documents.'}
           </p>
         </div>
 
-        {/* Error Alert */}
         {error && (
           <div
-            className="animate-fade-in"
             style={{
               display: 'flex',
-              alignItems: 'flex-start',
+              alignItems: 'center',
               gap: '10px',
               padding: '12px 14px',
               backgroundColor: 'var(--rose-bg)',
-              border: '1px solid rgba(239, 68, 68, 0.25)',
-              borderRadius: 'var(--radius-md)',
               color: 'var(--rose)',
+              borderRadius: 'var(--radius-md)',
               fontSize: '0.875rem',
               marginBottom: '20px',
+              border: '1px solid rgba(244, 63, 94, 0.2)',
             }}
           >
-            <AlertCircle size={18} style={{ flexShrink: 0, marginTop: '2px' }} />
-            <div>{error}</div>
+            <AlertCircle size={18} style={{ flexShrink: 0 }} />
+            <span>{error}</span>
           </div>
         )}
 
-        {/* Auth Form */}
         <form
           onSubmit={(e) => {
             void handleSubmit(e);
@@ -133,109 +131,37 @@ export const AuthPage: React.FC = () => {
           style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
         >
           {isRegister && (
-            <div>
-              <label
-                style={{
-                  display: 'block',
-                  fontSize: '0.8rem',
-                  fontWeight: 500,
-                  color: 'var(--text-secondary)',
-                  marginBottom: '6px',
-                }}
-              >
-                Organization / Workspace Name
-              </label>
-              <div style={{ position: 'relative' }}>
-                <Building
-                  size={16}
-                  style={{
-                    position: 'absolute',
-                    left: '12px',
-                    top: '13px',
-                    color: 'var(--text-muted)',
-                  }}
-                />
-                <input
-                  type="text"
-                  className="input"
-                  style={{ paddingLeft: '38px' }}
-                  placeholder="Acme Corporation"
-                  value={tenantName}
-                  onChange={(e) => setTenantName(e.target.value)}
-                  required
-                />
-              </div>
-            </div>
+            <AuthInput
+              label="Organization / Workspace Name"
+              icon={<Building size={16} />}
+              type="text"
+              placeholder="e.g. Acme Corporation"
+              value={tenantName}
+              onChange={(e) => setTenantName(e.target.value)}
+              required
+            />
           )}
 
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '0.8rem',
-                fontWeight: 500,
-                color: 'var(--text-secondary)',
-                marginBottom: '6px',
-              }}
-            >
-              Corporate Email Address
-            </label>
-            <div style={{ position: 'relative' }}>
-              <Mail
-                size={16}
-                style={{
-                  position: 'absolute',
-                  left: '12px',
-                  top: '13px',
-                  color: 'var(--text-muted)',
-                }}
-              />
-              <input
-                type="email"
-                className="input"
-                style={{ paddingLeft: '38px' }}
-                placeholder="name@enterprise.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-            </div>
-          </div>
+          <AuthInput
+            label="Corporate Email Address"
+            icon={<Mail size={16} />}
+            type="email"
+            placeholder="colleague@enterprise.com"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-          <div>
-            <label
-              style={{
-                display: 'block',
-                fontSize: '0.8rem',
-                fontWeight: 500,
-                color: 'var(--text-secondary)',
-                marginBottom: '6px',
-              }}
-            >
-              Password
-            </label>
-            <div style={{ position: 'relative' }}>
-              <Lock
-                size={16}
-                style={{
-                  position: 'absolute',
-                  left: '12px',
-                  top: '13px',
-                  color: 'var(--text-muted)',
-                }}
-              />
-              <input
-                type="password"
-                className="input"
-                style={{ paddingLeft: '38px' }}
-                placeholder="••••••••••••"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                minLength={8}
-              />
-            </div>
-          </div>
+          <AuthInput
+            label="Password"
+            icon={<Lock size={16} />}
+            type="password"
+            placeholder="••••••••••••"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            minLength={8}
+          />
 
           <button
             type="submit"

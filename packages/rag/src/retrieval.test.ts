@@ -269,12 +269,7 @@ describe('Level 4: Retrieval Quality & Math Verifications', () => {
         [0.1, 0.2, 0.3],
         mockExecutor,
         reranker,
-        {
-          hybrid: true,
-          relevanceThreshold: 0.01,
-          rerank: true,
-          rerankTopK: 5,
-        },
+        { hybrid: true, relevanceThreshold: 0.01, rerank: true, rerankTopK: 5 },
       );
 
       expect(result.shortCircuited).toBe(false);
@@ -289,10 +284,7 @@ describe('Level 4: Retrieval Quality & Math Verifications', () => {
         [0.1, 0.2, 0.3],
         mockExecutor,
         undefined,
-        {
-          hybrid: true,
-          relevanceThreshold: 0.999, // Unattainably high cutoff to test short-circuit
-        },
+        { hybrid: true, relevanceThreshold: 0.999 },
       );
 
       expect(result.shortCircuited).toBe(true);

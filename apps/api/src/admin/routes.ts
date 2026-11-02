@@ -6,7 +6,7 @@ import { authenticate, requireRole, type AuthenticatedRequest } from '../auth/mi
 
 export const adminRouter: Router = Router();
 
-export const FeedbackRequestSchema = z.object({
+const FeedbackRequestSchema = z.object({
   messageId: z.string().uuid(),
   rating: z.union([z.literal(1), z.literal(-1)]),
   comment: z.string().max(1000).optional(),
