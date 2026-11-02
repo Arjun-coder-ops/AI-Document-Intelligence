@@ -2,28 +2,9 @@ import React, { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api, type DocumentRecord } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.js';
-import {
-  FileText,
-  Trash2,
-  CheckCircle2,
-  AlertCircle,
-  Clock,
-  Loader2,
-  RefreshCw,
-  HardDrive,
-  FileCheck,
-} from 'lucide-react';
+import { FileText, CheckCircle2, AlertCircle, Loader2, RefreshCw, HardDrive } from 'lucide-react';
 import { UploadDropzone } from '../components/UploadDropzone.js';
 import { DocumentTable } from '../components/DocumentTable.js';
-
-function formatBytes(bytes: number, decimals = 1): string {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
-}
 
 export const DocumentsPage: React.FC = () => {
   const { user } = useAuth();
