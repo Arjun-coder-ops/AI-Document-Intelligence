@@ -75,7 +75,9 @@ describe('Level 9: Observability, Metrics, Tracing & Analytics', () => {
       // Export OTLP formatted spans
       const otlp = tracer.toOTLPFormat();
       expect(otlp).toHaveProperty('resourceSpans');
-      const resourceSpans = otlp['resourceSpans'] as Array<{ scopeSpans: Array<{ spans: unknown[] }> }>;
+      const resourceSpans = otlp['resourceSpans'] as Array<{
+        scopeSpans: Array<{ spans: unknown[] }>;
+      }>;
       expect(resourceSpans[0]?.scopeSpans[0]?.spans.length).toBe(2);
     });
   });

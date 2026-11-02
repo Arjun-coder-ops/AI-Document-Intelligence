@@ -23,10 +23,17 @@ export async function runCLI(): Promise<void> {
   console.info('===============================================================');
 
   const configs: EvalConfig[] = [
-    { name: 'baseline-dense', mode: 'dense', relevanceThreshold: 0.1 },
-    { name: 'lexical-only', mode: 'lexical', relevanceThreshold: 0.005 },
-    { name: 'hybrid', mode: 'hybrid', k: 60, relevanceThreshold: 0.01 },
-    { name: 'hybrid-rerank', mode: 'hybrid-rerank', k: 60, rerankTopK: 5, relevanceThreshold: 0.12 },
+    { name: 'baseline-dense', mode: 'baseline-dense', denseThreshold: 0.58 },
+    { name: 'lexical-only', mode: 'lexical-only', lexicalThreshold: 0.08 },
+    { name: 'hybrid', mode: 'hybrid', k: 60, denseThreshold: 0.58, lexicalThreshold: 0.08 },
+    {
+      name: 'hybrid-rerank',
+      mode: 'hybrid-rerank',
+      k: 60,
+      rerankTopK: 5,
+      denseThreshold: 0.58,
+      lexicalThreshold: 0.08,
+    },
   ];
 
   const results: Record<string, RetrievalEvalReport> = {};
@@ -42,7 +49,9 @@ export async function runCLI(): Promise<void> {
       JSON.stringify(report, null, 2),
       'utf-8',
     );
-    console.info(`✓ Recall@5: ${report.metrics.recallAt5.mean.toFixed(3)} | MRR: ${report.metrics.mrr.mean.toFixed(3)}`);
+    console.info(
+      `✓ Recall@5: ${report.metrics.recallAt5.mean.toFixed(3)} | MRR: ${report.metrics.mrr.mean.toFixed(3)}`,
+    );
   }
 
   // Save comparison summary JSON
@@ -54,7 +63,9 @@ export async function runCLI(): Promise<void> {
 
   // Print Markdown Comparison Table
   console.info('\n### Retrieval Experiment Results Matrix (95% Bootstrap Confidence Intervals)');
-  console.info('| Strategy | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 | Hit Rate | Abstention |');
+  console.info(
+    '| Strategy | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 | Hit Rate | Abstention |',
+  );
   console.info('| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |');
 
   for (const [name, r] of Object.entries(results)) {
@@ -84,7 +95,9 @@ export async function runCLI(): Promise<void> {
     process.exit(1);
   }
 
-  console.info('\n✅ CI REGRESSION GATE PASSED: All retrieval metrics meet or exceed production thresholds.');
+  console.info(
+    '\n✅ CI REGRESSION GATE PASSED: All retrieval metrics meet or exceed production thresholds.',
+  );
 }
 
 // When run via CLI

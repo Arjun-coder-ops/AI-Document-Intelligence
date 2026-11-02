@@ -75,10 +75,7 @@ export async function processIngestion(
       }));
 
       // Persist to embedding_cache (ignore conflicts if already cached concurrently)
-      await db
-        .insert(embeddingCache)
-        .values(cacheInserts)
-        .onConflictDoNothing();
+      await db.insert(embeddingCache).values(cacheInserts).onConflictDoNothing();
 
       for (let i = 0; i < uncachedChunks.length; i++) {
         const chunk = uncachedChunks[i];
@@ -92,9 +89,7 @@ export async function processIngestion(
     // 7. Atomic DB Transaction: clear existing chunks for this doc and bulk insert
     await db.transaction(async (tx) => {
       // Idempotency: delete previous partial chunks for this document version
-      await tx
-        .delete(chunks)
-        .where(eq(chunks.documentId, documentId));
+      await tx.delete(chunks).where(eq(chunks.documentId, documentId));
 
       const chunkInserts = generatedChunks.map((c) => ({
         tenantId,

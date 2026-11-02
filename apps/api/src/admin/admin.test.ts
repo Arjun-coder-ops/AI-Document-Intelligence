@@ -76,7 +76,9 @@ describe('apps/api: Admin & Feedback Routes', () => {
         const mockTx = {
           insert: vi.fn().mockReturnValue({
             values: vi.fn().mockReturnValue({
-              returning: vi.fn().mockResolvedValue([{ id: '550e8400-e29b-41d4-a716-446655440088' }]),
+              returning: vi
+                .fn()
+                .mockResolvedValue([{ id: '550e8400-e29b-41d4-a716-446655440088' }]),
             }),
           }),
         };
@@ -102,7 +104,9 @@ describe('apps/api: Admin & Feedback Routes', () => {
         const mockTx = {
           insert: vi.fn().mockReturnValue({
             values: vi.fn().mockReturnValue({
-              returning: vi.fn().mockResolvedValue([{ id: '550e8400-e29b-41d4-a716-446655440089' }]),
+              returning: vi
+                .fn()
+                .mockResolvedValue([{ id: '550e8400-e29b-41d4-a716-446655440089' }]),
             }),
           }),
         };

@@ -48,7 +48,10 @@ describe('Structure-Aware Document Chunker', () => {
   });
 
   it('chunks long continuous paragraphs across target character boundaries', () => {
-    const longParagraph = Array.from({ length: 40 }, (_, i) => `Sentence number ${i} with substantial detailed technical explanations.`).join(' ');
+    const longParagraph = Array.from(
+      { length: 40 },
+      (_, i) => `Sentence number ${i} with substantial detailed technical explanations.`,
+    ).join(' ');
     const chunks = chunkDocument([{ page: 1, text: longParagraph }], {
       targetTokens: 50,
       overlapTokens: 10,

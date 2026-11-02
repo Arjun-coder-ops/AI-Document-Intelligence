@@ -1,46 +1,57 @@
 {
-  "timestamp": "2026-11-01T20:34:36.874Z",
+  "timestamp": "2026-11-02T03:09:28.889Z",
   "configName": "lexical-only",
-  "sampleCount": 65,
+  "sampleCount": 87,
+  "testSampleCount": 67,
+  "heldOutSampleCount": 20,
+  "perTypeRecallAt5": {
+    "factual": 0.65,
+    "multi-hop": 0.75,
+    "keyword-exact": 0.5833,
+    "paraphrased": 0.1667
+  },
   "metrics": {
     "recallAt1": {
-      "mean": 0.6545,
-      "ciLower": 0.5364,
-      "ciUpper": 0.7636
+      "mean": 0.4032,
+      "ciLower": 0.2823,
+      "ciUpper": 0.5161
     },
     "recallAt3": {
-      "mean": 0.9091,
-      "ciLower": 0.8364,
-      "ciUpper": 0.9727
+      "mean": 0.4758,
+      "ciLower": 0.3468,
+      "ciUpper": 0.5968
     },
     "recallAt5": {
-      "mean": 0.9545,
-      "ciLower": 0.9,
-      "ciUpper": 1
+      "mean": 0.5161,
+      "ciLower": 0.3871,
+      "ciUpper": 0.6452
     },
     "mrr": {
-      "mean": 0.849,
-      "ciLower": 0.7768,
-      "ciUpper": 0.9152
+      "mean": 0.4723,
+      "ciLower": 0.3465,
+      "ciUpper": 0.5901
     },
     "ndcgAt5": {
-      "mean": 0.8623,
-      "ciLower": 0.7969,
-      "ciUpper": 0.9226
+      "mean": 0.4798,
+      "ciLower": 0.354,
+      "ciUpper": 0.5978
     },
     "hitRate": {
-      "mean": 0.9636,
-      "ciLower": 0.9091,
-      "ciUpper": 1
+      "mean": 0.5161,
+      "ciLower": 0.3871,
+      "ciUpper": 0.6452
     },
     "unanswerableAbstentionAccuracy": {
-      "mean": 0,
-      "ciLower": 0,
-      "ciUpper": 0
-    }
+      "mean": 1,
+      "ciLower": 1,
+      "ciUpper": 1
+    },
+    "abstentionPrecision": 0.1429,
+    "abstentionRecall": 1
   },
   "passedThresholds": false,
   "thresholdFailures": [
-    "Abstention accuracy (0) < required (0.95)"
+    "Recall@5 (0.5161) < required (0.85)",
+    "MRR (0.4723) < required (0.7)"
   ]
 }

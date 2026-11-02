@@ -38,13 +38,9 @@ describe('packages/rag: LLM Providers', () => {
       controller.abort();
     }, 15);
 
-    await expect(
-      provider.streamText(
-        'query',
-        {},
-        { signal: controller.signal },
-      ),
-    ).rejects.toThrow(/aborted/);
+    await expect(provider.streamText('query', {}, { signal: controller.signal })).rejects.toThrow(
+      /aborted/,
+    );
   });
 
   it('throws immediately if signal is already aborted before starting', async () => {
@@ -52,24 +48,26 @@ describe('packages/rag: LLM Providers', () => {
     const controller = new AbortController();
     controller.abort();
 
-    await expect(
-      provider.streamText('query', {}, { signal: controller.signal }),
-    ).rejects.toThrow(/aborted/);
+    await expect(provider.streamText('query', {}, { signal: controller.signal })).rejects.toThrow(
+      /aborted/,
+    );
   });
 
   it('handles mid-stream provider failures', async () => {
     const provider = new MockLLMProvider('mock-test', 1, true); // shouldFailMidStream = true
 
-    await expect(
-      provider.streamText('query', {}),
-    ).rejects.toThrow('Simulated upstream LLM socket termination');
+    await expect(provider.streamText('query', {})).rejects.toThrow(
+      'Simulated upstream LLM socket termination',
+    );
   });
 
   describe('GroqLLMProvider', () => {
     it('throws error when apiKey is missing', async () => {
       const provider = new GroqLLMProvider('llama-3', '');
       await expect(provider.generateText('hello')).rejects.toThrow(/GROQ_API_KEY.*not configured/);
-      await expect(provider.streamText('hello', {})).rejects.toThrow(/GROQ_API_KEY.*not configured/);
+      await expect(provider.streamText('hello', {})).rejects.toThrow(
+        /GROQ_API_KEY.*not configured/,
+      );
     });
 
     it('generates text successfully on 200 OK', async () => {

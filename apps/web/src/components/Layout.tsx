@@ -50,8 +50,12 @@ export const Layout: React.FC = () => {
               <Sparkles size={18} />
             </div>
             <div>
-              <div style={{ fontWeight: 700, fontSize: '1rem', letterSpacing: '-0.02em' }}>DocSage</div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>Enterprise RAG v1.0</div>
+              <div style={{ fontWeight: 700, fontSize: '1rem', letterSpacing: '-0.02em' }}>
+                DocSage
+              </div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                Enterprise RAG v1.0
+              </div>
             </div>
           </div>
 
@@ -72,7 +76,15 @@ export const Layout: React.FC = () => {
             >
               <Layers size={13} color="var(--accent)" />
               <span style={{ color: 'var(--text-secondary)' }}>Workspace:</span>
-              <span style={{ color: 'var(--text-primary)', fontWeight: 600, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+              <span
+                style={{
+                  color: 'var(--text-primary)',
+                  fontWeight: 600,
+                  overflow: 'hidden',
+                  textOverflow: 'ellipsis',
+                  whiteSpace: 'nowrap',
+                }}
+              >
                 {user.tenantId.slice(0, 8)}...
               </span>
             </div>
@@ -80,7 +92,15 @@ export const Layout: React.FC = () => {
         </div>
 
         {/* Navigation Links */}
-        <nav style={{ padding: '14px 10px', flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <nav
+          style={{
+            padding: '14px 10px',
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '4px',
+          }}
+        >
           {navItems.map((item) => {
             if (item.requireAdmin && user?.role !== 'admin') {
               return null;
@@ -122,8 +142,17 @@ export const Layout: React.FC = () => {
               backgroundColor: 'var(--bg-app)',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                marginBottom: '10px',
+              }}
+            >
+              <div
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', overflow: 'hidden' }}
+              >
                 <div
                   style={{
                     width: '28px',
@@ -140,7 +169,15 @@ export const Layout: React.FC = () => {
                   {user.email.slice(0, 2).toUpperCase()}
                 </div>
                 <div style={{ overflow: 'hidden' }}>
-                  <div style={{ fontSize: '0.8rem', fontWeight: 600, textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+                  <div
+                    style={{
+                      fontSize: '0.8rem',
+                      fontWeight: 600,
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
                     {user.email}
                   </div>
                 </div>
@@ -166,7 +203,12 @@ export const Layout: React.FC = () => {
                 void handleLogout();
               }}
               className="btn btn-ghost"
-              style={{ width: '100%', fontSize: '0.8rem', padding: '6px 10px', justifyContent: 'flex-start' }}
+              style={{
+                width: '100%',
+                fontSize: '0.8rem',
+                padding: '6px 10px',
+                justifyContent: 'flex-start',
+              }}
             >
               <LogOut size={14} />
               Sign Out

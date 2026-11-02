@@ -199,7 +199,8 @@ export const GOLDEN_QUESTIONS: GoldenQuestion[] = [
   {
     id: 'q-f01',
     question: 'What triggers a leader election in the Raft consensus algorithm?',
-    expectedAnswer: 'An election is triggered when a follower experiences an election timeout without receiving heartbeats from a leader.',
+    expectedAnswer:
+      'An election is triggered when a follower experiences an election timeout without receiving heartbeats from a leader.',
     goldChunkIds: ['raft-c1'],
     type: 'factual',
   },
@@ -213,14 +214,16 @@ export const GOLDEN_QUESTIONS: GoldenQuestion[] = [
   {
     id: 'q-f03',
     question: 'How does a Raft candidate win an election?',
-    expectedAnswer: 'A candidate wins by receiving votes from a strict majority of servers in the cluster for the same term.',
+    expectedAnswer:
+      'A candidate wins by receiving votes from a strict majority of servers in the cluster for the same term.',
     goldChunkIds: ['raft-c2'],
     type: 'factual',
   },
   {
     id: 'q-f04',
     question: 'How does a Raft leader replicate commands to follower nodes?',
-    expectedAnswer: 'The leader appends the command to its log and issues AppendEntries RPCs in parallel to all other servers.',
+    expectedAnswer:
+      'The leader appends the command to its log and issues AppendEntries RPCs in parallel to all other servers.',
     goldChunkIds: ['raft-c3'],
     type: 'factual',
   },
@@ -241,14 +244,16 @@ export const GOLDEN_QUESTIONS: GoldenQuestion[] = [
   {
     id: 'q-f07',
     question: 'How are vector layers structured in an HNSW index?',
-    expectedAnswer: 'HNSW structures vectors into a multi-layer proximity graph where upper layers have longer links and sparser connections, and layer 0 contains all vectors.',
+    expectedAnswer:
+      'HNSW structures vectors into a multi-layer proximity graph where upper layers have longer links and sparser connections, and layer 0 contains all vectors.',
     goldChunkIds: ['hnsw-c1'],
     type: 'factual',
   },
   {
     id: 'q-f08',
     question: 'What routing strategy does HNSW use across graph layers?',
-    expectedAnswer: 'HNSW uses greedy routing from the top-layer entry point down to layer 0, followed by a beam search of width efSearch.',
+    expectedAnswer:
+      'HNSW uses greedy routing from the top-layer entry point down to layer 0, followed by a beam search of width efSearch.',
     goldChunkIds: ['hnsw-c2'],
     type: 'factual',
   },
@@ -262,7 +267,8 @@ export const GOLDEN_QUESTIONS: GoldenQuestion[] = [
   {
     id: 'q-f10',
     question: 'What does parameter m represent in HNSW graph construction?',
-    expectedAnswer: 'Parameter m defines the maximum number of bidirectional outgoing links per node.',
+    expectedAnswer:
+      'Parameter m defines the maximum number of bidirectional outgoing links per node.',
     goldChunkIds: ['hnsw-c3'],
     type: 'factual',
   },
@@ -276,21 +282,24 @@ export const GOLDEN_QUESTIONS: GoldenQuestion[] = [
   {
     id: 'q-f12',
     question: 'Does HNSW require post-hoc centroids training like IVFFlat?',
-    expectedAnswer: 'No, HNSW is an incremental structure that allows continuous inserts and deletes without centroids training.',
+    expectedAnswer:
+      'No, HNSW is an incremental structure that allows continuous inserts and deletes without centroids training.',
     goldChunkIds: ['hnsw-c5'],
     type: 'factual',
   },
   {
     id: 'q-f13',
     question: 'What is the PostgreSQL tsvector data type?',
-    expectedAnswer: 'tsvector is a sorted list of distinct normalized lexemes with stopwords and punctuation stripped.',
+    expectedAnswer:
+      'tsvector is a sorted list of distinct normalized lexemes with stopwords and punctuation stripped.',
     goldChunkIds: ['fts-c1'],
     type: 'factual',
   },
   {
     id: 'q-f14',
     question: 'How does websearch_to_tsquery handle natural search phrases?',
-    expectedAnswer: 'It parses search queries safely without syntax errors on unclosed quotes, supporting AND, OR, negation with minus, and quoted phrases.',
+    expectedAnswer:
+      'It parses search queries safely without syntax errors on unclosed quotes, supporting AND, OR, negation with minus, and quoted phrases.',
     goldChunkIds: ['fts-c2'],
     type: 'factual',
   },
@@ -304,28 +313,33 @@ export const GOLDEN_QUESTIONS: GoldenQuestion[] = [
   {
     id: 'q-f16',
     question: 'What metric does ts_rank use to score matching documents?',
-    expectedAnswer: 'ts_rank computes scores based on lexeme frequency (TF), term density, and document length normalization.',
+    expectedAnswer:
+      'ts_rank computes scores based on lexeme frequency (TF), term density, and document length normalization.',
     goldChunkIds: ['fts-c4'],
     type: 'factual',
   },
   {
     id: 'q-f17',
-    question: 'How does storing tsvector as a GENERATED ALWAYS STORED column benefit search queries?',
-    expectedAnswer: 'It avoids runtime parsing overhead and ensures the GIN index updates automatically during inserts/updates without triggers.',
+    question:
+      'How does storing tsvector as a GENERATED ALWAYS STORED column benefit search queries?',
+    expectedAnswer:
+      'It avoids runtime parsing overhead and ensures the GIN index updates automatically during inserts/updates without triggers.',
     goldChunkIds: ['fts-c5'],
     type: 'factual',
   },
   {
     id: 'q-f18',
     question: 'How does PostgreSQL Row-Level Security enforce multi-tenant isolation?',
-    expectedAnswer: 'RLS policies evaluate tenant_id against a transaction setting, automatically filtering rows at the engine level even if application queries omit WHERE clauses.',
+    expectedAnswer:
+      'RLS policies evaluate tenant_id against a transaction setting, automatically filtering rows at the engine level even if application queries omit WHERE clauses.',
     goldChunkIds: ['sec-c1'],
     type: 'factual',
   },
   {
     id: 'q-f19',
     question: 'Why is set_config with is_local=true required when using PgBouncer?',
-    expectedAnswer: 'Because PgBouncer in transaction pooling mode reuses connections; is_local=true ensures session settings revert upon transaction completion.',
+    expectedAnswer:
+      'Because PgBouncer in transaction pooling mode reuses connections; is_local=true ensures session settings revert upon transaction completion.',
     goldChunkIds: ['sec-c2'],
     type: 'factual',
   },
@@ -346,14 +360,17 @@ export const GOLDEN_QUESTIONS: GoldenQuestion[] = [
   {
     id: 'q-f22',
     question: 'How are refresh tokens delivered and protected against theft?',
-    expectedAnswer: 'They are stored as SHA-256 hashes in PostgreSQL and transmitted exclusively in httpOnly, secure, SameSite cookies.',
+    expectedAnswer:
+      'They are stored as SHA-256 hashes in PostgreSQL and transmitted exclusively in httpOnly, secure, SameSite cookies.',
     goldChunkIds: ['sec-c4'],
     type: 'factual',
   },
   {
     id: 'q-f23',
-    question: 'Why does the application database user lack UPDATE and DELETE permissions on audit_log?',
-    expectedAnswer: 'To guarantee an immutable, tamper-proof audit trail for regulatory and compliance assurance.',
+    question:
+      'Why does the application database user lack UPDATE and DELETE permissions on audit_log?',
+    expectedAnswer:
+      'To guarantee an immutable, tamper-proof audit trail for regulatory and compliance assurance.',
     goldChunkIds: ['sec-c5'],
     type: 'factual',
   },
@@ -366,7 +383,8 @@ export const GOLDEN_QUESTIONS: GoldenQuestion[] = [
   },
   {
     id: 'q-f25',
-    question: 'What property ensures that if two Raft logs have an entry with identical index and term, they are identical up to that index?',
+    question:
+      'What property ensures that if two Raft logs have an entry with identical index and term, they are identical up to that index?',
     expectedAnswer: 'The Log Matching Property maintains this invariant.',
     goldChunkIds: ['raft-c4'],
     type: 'factual',
@@ -375,106 +393,135 @@ export const GOLDEN_QUESTIONS: GoldenQuestion[] = [
   // ── 15 Multi-Hop Questions ────────────────────────────────────────────────
   {
     id: 'q-m01',
-    question: 'How do election timeouts relate to majority quorum voting when electing a leader in Raft?',
-    expectedAnswer: 'When a follower experiences an election timeout (150ms-300ms), it transitions to candidate, votes for itself, and requires votes from a majority quorum to win the election.',
+    question:
+      'How do election timeouts relate to majority quorum voting when electing a leader in Raft?',
+    expectedAnswer:
+      'When a follower experiences an election timeout (150ms-300ms), it transitions to candidate, votes for itself, and requires votes from a majority quorum to win the election.',
     goldChunkIds: ['raft-c1', 'raft-c2'],
     type: 'multi-hop',
   },
   {
     id: 'q-m02',
-    question: 'How does client command execution in Raft lead to maintaining identical logs across cluster servers?',
-    expectedAnswer: 'The leader appends client commands to its log and sends AppendEntries RPCs; through the Log Matching Property, matching index and term guarantees all preceding entries are identical.',
+    question:
+      'How does client command execution in Raft lead to maintaining identical logs across cluster servers?',
+    expectedAnswer:
+      'The leader appends client commands to its log and sends AppendEntries RPCs; through the Log Matching Property, matching index and term guarantees all preceding entries are identical.',
     goldChunkIds: ['raft-c3', 'raft-c4'],
     type: 'multi-hop',
   },
   {
     id: 'q-m03',
-    question: 'How does HNSW graph navigation progress from upper skip-list layers down to the final vector ranking at layer 0?',
-    expectedAnswer: 'Navigation begins at the entry point of the sparsest top layer using greedy routing down each layer, until layer 0 where an efSearch beam search finds the nearest neighbors.',
+    question:
+      'How does HNSW graph navigation progress from upper skip-list layers down to the final vector ranking at layer 0?',
+    expectedAnswer:
+      'Navigation begins at the entry point of the sparsest top layer using greedy routing down each layer, until layer 0 where an efSearch beam search finds the nearest neighbors.',
     goldChunkIds: ['hnsw-c1', 'hnsw-c2'],
     type: 'multi-hop',
   },
   {
     id: 'q-m04',
     question: 'How does parameter m affect HNSW graph construction and dynamic search recall?',
-    expectedAnswer: 'Parameter m sets the maximum links per node, while efConstruction governs candidate pool size during indexing; higher values increase memory but improve recall.',
+    expectedAnswer:
+      'Parameter m sets the maximum links per node, while efConstruction governs candidate pool size during indexing; higher values increase memory but improve recall.',
     goldChunkIds: ['hnsw-c2', 'hnsw-c3'],
     type: 'multi-hop',
   },
   {
     id: 'q-m05',
-    question: 'Why does incremental HNSW indexing with vector_cosine_ops eliminate the re-indexing maintenance required by IVFFlat?',
-    expectedAnswer: 'HNSW nodes are linked dynamically at insertion time using cosine distance without requiring global Voronoi centroid training, so vectors can be inserted without periodic rebuilds.',
+    question:
+      'Why does incremental HNSW indexing with vector_cosine_ops eliminate the re-indexing maintenance required by IVFFlat?',
+    expectedAnswer:
+      'HNSW nodes are linked dynamically at insertion time using cosine distance without requiring global Voronoi centroid training, so vectors can be inserted without periodic rebuilds.',
     goldChunkIds: ['hnsw-c4', 'hnsw-c5'],
     type: 'multi-hop',
   },
   {
     id: 'q-m06',
-    question: 'How does raw text normalization in tsvector enable fast Boolean intersections using GIN indexes?',
-    expectedAnswer: 'Raw text is normalized into distinct stemmed lexemes in tsvector, and GIN indexes map each lexeme to tuple IDs, enabling multi-word searches via bitmap AND operations.',
+    question:
+      'How does raw text normalization in tsvector enable fast Boolean intersections using GIN indexes?',
+    expectedAnswer:
+      'Raw text is normalized into distinct stemmed lexemes in tsvector, and GIN indexes map each lexeme to tuple IDs, enabling multi-word searches via bitmap AND operations.',
     goldChunkIds: ['fts-c1', 'fts-c3'],
     type: 'multi-hop',
   },
   {
     id: 'q-m07',
-    question: 'How does websearch_to_tsquery parsing feed into ts_rank scoring for natural user queries?',
-    expectedAnswer: 'websearch_to_tsquery converts natural query syntax into valid tsquery expressions, which ts_rank scores against document tsvector based on term frequency and density.',
+    question:
+      'How does websearch_to_tsquery parsing feed into ts_rank scoring for natural user queries?',
+    expectedAnswer:
+      'websearch_to_tsquery converts natural query syntax into valid tsquery expressions, which ts_rank scores against document tsvector based on term frequency and density.',
     goldChunkIds: ['fts-c2', 'fts-c4'],
     type: 'multi-hop',
   },
   {
     id: 'q-m08',
-    question: 'How does storing tsvector as a GENERATED column streamline GIN index synchronization during document updates?',
-    expectedAnswer: 'Because tsvector is GENERATED ALWAYS STORED, PostgreSQL automatically updates the lexemes and the corresponding GIN index posting lists in the same transaction.',
+    question:
+      'How does storing tsvector as a GENERATED column streamline GIN index synchronization during document updates?',
+    expectedAnswer:
+      'Because tsvector is GENERATED ALWAYS STORED, PostgreSQL automatically updates the lexemes and the corresponding GIN index posting lists in the same transaction.',
     goldChunkIds: ['fts-c3', 'fts-c5'],
     type: 'multi-hop',
   },
   {
     id: 'q-m09',
-    question: 'How does Row-Level Security combine with transaction-local set_config to prevent cross-tenant data leaks in PgBouncer?',
-    expectedAnswer: 'RLS policies evaluate app.tenant_id, and setting it via set_config with is_local=true ensures the configuration vanishes on commit, preventing leakage across pooled PgBouncer connections.',
+    question:
+      'How does Row-Level Security combine with transaction-local set_config to prevent cross-tenant data leaks in PgBouncer?',
+    expectedAnswer:
+      'RLS policies evaluate app.tenant_id, and setting it via set_config with is_local=true ensures the configuration vanishes on commit, preventing leakage across pooled PgBouncer connections.',
     goldChunkIds: ['sec-c1', 'sec-c2'],
     type: 'multi-hop',
   },
   {
     id: 'q-m10',
-    question: 'How do short-lived JWT access tokens and rotating refresh cookies provide both high performance and fast revocation?',
-    expectedAnswer: '15-minute JWT access tokens enable stateless verification without database roundtrips, while 7-day refresh tokens stored as hashes in PostgreSQL allow immediate revocation upon rotation or logout.',
+    question:
+      'How do short-lived JWT access tokens and rotating refresh cookies provide both high performance and fast revocation?',
+    expectedAnswer:
+      '15-minute JWT access tokens enable stateless verification without database roundtrips, while 7-day refresh tokens stored as hashes in PostgreSQL allow immediate revocation upon rotation or logout.',
     goldChunkIds: ['sec-c4'],
     type: 'multi-hop',
   },
   {
     id: 'q-m11',
-    question: 'How does Argon2id password verification protect against both online brute-force and side-channel cache attacks?',
-    expectedAnswer: 'Argon2id combines data-independent memory access (protecting against cache timing attacks) and data-dependent access with 64MB memory cost (resisting GPU brute force).',
+    question:
+      'How does Argon2id password verification protect against both online brute-force and side-channel cache attacks?',
+    expectedAnswer:
+      'Argon2id combines data-independent memory access (protecting against cache timing attacks) and data-dependent access with 64MB memory cost (resisting GPU brute force).',
     goldChunkIds: ['sec-c3'],
     type: 'multi-hop',
   },
   {
     id: 'q-m12',
-    question: 'How does an append-only audit log preserve accountability alongside RLS tenant isolation?',
-    expectedAnswer: 'Actions are recorded in audit_log with actor and tenant identifiers, and absence of UPDATE/DELETE privileges prevents attackers or tenants from modifying previous activity records.',
+    question:
+      'How does an append-only audit log preserve accountability alongside RLS tenant isolation?',
+    expectedAnswer:
+      'Actions are recorded in audit_log with actor and tenant identifiers, and absence of UPDATE/DELETE privileges prevents attackers or tenants from modifying previous activity records.',
     goldChunkIds: ['sec-c1', 'sec-c5'],
     type: 'multi-hop',
   },
   {
     id: 'q-m13',
-    question: 'How do joint consensus transitions in Raft prevent split-brain during configuration changes?',
-    expectedAnswer: 'Joint consensus requires decisions to be approved by majorities of both the old and new configurations simultaneously, preventing separate uncoordinated majorities.',
+    question:
+      'How do joint consensus transitions in Raft prevent split-brain during configuration changes?',
+    expectedAnswer:
+      'Joint consensus requires decisions to be approved by majorities of both the old and new configurations simultaneously, preventing separate uncoordinated majorities.',
     goldChunkIds: ['raft-c2', 'raft-c5'],
     type: 'multi-hop',
   },
   {
     id: 'q-m14',
-    question: 'How does cosine distance in pgvector relate to Euclidean distance when operating on normalized vectors?',
-    expectedAnswer: 'For normalized unit vectors, cosine distance (1 - cosine_similarity) is a monotonic transformation of squared Euclidean distance.',
+    question:
+      'How does cosine distance in pgvector relate to Euclidean distance when operating on normalized vectors?',
+    expectedAnswer:
+      'For normalized unit vectors, cosine distance (1 - cosine_similarity) is a monotonic transformation of squared Euclidean distance.',
     goldChunkIds: ['hnsw-c4'],
     type: 'multi-hop',
   },
   {
     id: 'q-m15',
-    question: 'How does greedy routing in HNSW compare to skip-list search efficiency in traditional 1D data structures?',
-    expectedAnswer: 'Greedy routing across sparse upper layers bypasses vast geometric distances similarly to high-level express lanes in 1D skip-lists, achieving O(log N) search time.',
+    question:
+      'How does greedy routing in HNSW compare to skip-list search efficiency in traditional 1D data structures?',
+    expectedAnswer:
+      'Greedy routing across sparse upper layers bypasses vast geometric distances similarly to high-level express lanes in 1D skip-lists, achieving O(log N) search time.',
     goldChunkIds: ['hnsw-c1', 'hnsw-c2'],
     type: 'multi-hop',
   },
@@ -503,7 +550,8 @@ export const GOLDEN_QUESTIONS: GoldenQuestion[] = [
   },
   {
     id: 'q-k04',
-    question: 'What PostgreSQL function parses search queries with support for quotes and minus operators without throwing syntax errors?',
+    question:
+      'What PostgreSQL function parses search queries with support for quotes and minus operators without throwing syntax errors?',
     expectedAnswer: 'websearch_to_tsquery',
     goldChunkIds: ['fts-c2'],
     type: 'keyword-exact',
@@ -580,7 +628,8 @@ export const GOLDEN_QUESTIONS: GoldenQuestion[] = [
   },
   {
     id: 'q-k15',
-    question: 'What hashing algorithm is used to hash refresh tokens before storing in the database?',
+    question:
+      'What hashing algorithm is used to hash refresh tokens before storing in the database?',
     expectedAnswer: 'SHA-256',
     goldChunkIds: ['sec-c4'],
     type: 'keyword-exact',
@@ -589,73 +638,313 @@ export const GOLDEN_QUESTIONS: GoldenQuestion[] = [
   // ── 10 Unanswerable Questions (Negative Controls) ─────────────────────────
   {
     id: 'q-u01',
-    question: 'What is the standard first-line daily therapeutic dosage of Metformin for adult Type 2 diabetes management?',
-    expectedAnswer: 'I do not have sufficient information in the provided documents to answer this question.',
+    question:
+      'What is the standard first-line daily therapeutic dosage of Metformin for adult Type 2 diabetes management?',
+    expectedAnswer:
+      'I do not have sufficient information in the provided documents to answer this question.',
     goldChunkIds: [],
     type: 'unanswerable',
   },
   {
     id: 'q-u02',
-    question: 'How does the CRISPR-Cas9 single guide RNA complex direct double-strand DNA cleavage?',
-    expectedAnswer: 'I do not have sufficient information in the provided documents to answer this question.',
+    question:
+      'How does the CRISPR-Cas9 single guide RNA complex direct double-strand DNA cleavage?',
+    expectedAnswer:
+      'I do not have sufficient information in the provided documents to answer this question.',
     goldChunkIds: [],
     type: 'unanswerable',
   },
   {
     id: 'q-u03',
     question: 'What is the escape velocity required to leave the gravitational surface of Jupiter?',
-    expectedAnswer: 'I do not have sufficient information in the provided documents to answer this question.',
+    expectedAnswer:
+      'I do not have sufficient information in the provided documents to answer this question.',
     goldChunkIds: [],
     type: 'unanswerable',
   },
   {
     id: 'q-u04',
     question: 'Which Roman emperor moved the imperial capital to Constantinople in 330 AD?',
-    expectedAnswer: 'I do not have sufficient information in the provided documents to answer this question.',
+    expectedAnswer:
+      'I do not have sufficient information in the provided documents to answer this question.',
     goldChunkIds: [],
     type: 'unanswerable',
   },
   {
     id: 'q-u05',
-    question: 'What is the molecular orbital symmetry of a concerted thermal Diels-Alder pericyclic reaction?',
-    expectedAnswer: 'I do not have sufficient information in the provided documents to answer this question.',
+    question:
+      'What is the molecular orbital symmetry of a concerted thermal Diels-Alder pericyclic reaction?',
+    expectedAnswer:
+      'I do not have sufficient information in the provided documents to answer this question.',
     goldChunkIds: [],
     type: 'unanswerable',
   },
   {
     id: 'q-u06',
-    question: 'What is the Chandrasekhar mass limit for a stable non-rotating carbon-oxygen white dwarf star?',
-    expectedAnswer: 'I do not have sufficient information in the provided documents to answer this question.',
+    question:
+      'What is the Chandrasekhar mass limit for a stable non-rotating carbon-oxygen white dwarf star?',
+    expectedAnswer:
+      'I do not have sufficient information in the provided documents to answer this question.',
     goldChunkIds: [],
     type: 'unanswerable',
   },
   {
     id: 'q-u07',
-    question: 'What seismic velocity discontinuity marks the boundary between the Earth crust and upper mantle?',
-    expectedAnswer: 'I do not have sufficient information in the provided documents to answer this question.',
+    question:
+      'What seismic velocity discontinuity marks the boundary between the Earth crust and upper mantle?',
+    expectedAnswer:
+      'I do not have sufficient information in the provided documents to answer this question.',
     goldChunkIds: [],
     type: 'unanswerable',
   },
   {
     id: 'q-u08',
     question: 'Who is the narrator of Herman Melville 1851 whaling novel Moby Dick?',
-    expectedAnswer: 'I do not have sufficient information in the provided documents to answer this question.',
+    expectedAnswer:
+      'I do not have sufficient information in the provided documents to answer this question.',
     goldChunkIds: [],
     type: 'unanswerable',
   },
   {
     id: 'q-u09',
-    question: 'What is the Keynesian expenditure multiplier formula when the marginal propensity to consume is 0.8?',
-    expectedAnswer: 'I do not have sufficient information in the provided documents to answer this question.',
+    question:
+      'What is the Keynesian expenditure multiplier formula when the marginal propensity to consume is 0.8?',
+    expectedAnswer:
+      'I do not have sufficient information in the provided documents to answer this question.',
     goldChunkIds: [],
     type: 'unanswerable',
   },
   {
     id: 'q-u10',
-    question: 'What is the physiological function of pulmonary surfactant produced by type II alveolar cells in human lungs?',
-    expectedAnswer: 'I do not have sufficient information in the provided documents to answer this question.',
+    question:
+      'What is the physiological function of pulmonary surfactant produced by type II alveolar cells in human lungs?',
+    expectedAnswer:
+      'I do not have sufficient information in the provided documents to answer this question.',
     goldChunkIds: [],
     type: 'unanswerable',
+    manualReviewStatus: 'verified-human',
+  },
+
+  // ── 22 Paraphrased / Low-Lexical-Overlap Questions (Anti-Bias Audit) ──────
+  {
+    id: 'q-p01',
+    question:
+      'How does an unassigned peer node detect the failure of an authoritative coordinator and begin campaigning for authority?',
+    expectedAnswer:
+      'When heartbeats cease and an election timeout elapses, the follower increments its term and enters candidate state to solicit votes.',
+    goldChunkIds: ['raft-c1'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p02',
+    question:
+      'By what mechanism does the distributed consensus group eliminate simultaneous candidacy deadlocks, and what threshold of agreement secures victory?',
+    expectedAnswer:
+      'Randomized intervals between 150ms and 300ms mitigate split votes, and winning requires unanimous confirmation from over half the cluster.',
+    goldChunkIds: ['raft-c2'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p03',
+    question:
+      'Describe the workflow through which incoming application instructions from external callers are propagated across the cluster after a primary server is chosen.',
+    expectedAnswer:
+      'The elected primary inserts commands into its sequential record and broadcasts replication messages concurrently to all subordinates.',
+    goldChunkIds: ['raft-c3'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p04',
+    question:
+      'What invariant guarantees historical ledger consistency across replicas sharing identical term numbers and sequence positions?',
+    expectedAnswer:
+      'The Log Matching Property guarantees that matching index and term implies identical stored commands and identical history up to that position.',
+    goldChunkIds: ['raft-c4'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p05',
+    question:
+      'How can a live cluster dynamically adjust its roster of participating member machines without halting operations or introducing split-brain risks?',
+    expectedAnswer:
+      'A dual-stage joint configuration transition commits journal items under both legacy and revised membership configurations concurrently.',
+    goldChunkIds: ['raft-c5'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p06',
+    question:
+      'How does the multi-tier spatial graph accelerate approximate nearest neighbor routing using an analog of probabilistic skip-lists?',
+    expectedAnswer:
+      'HNSW stratifies embeddings into layered proximity graphs where higher levels feature wider strides for logarithmic skip-list traversal.',
+    goldChunkIds: ['hnsw-c1'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p07',
+    question:
+      'Walk through the traversal path from initial entry to base tier during query execution, including asymptotic time efficiency.',
+    expectedAnswer:
+      'Routing descends greedily through hierarchical tiers before running beam exploration on level 0 with logarithmic O(log N) average complexity.',
+    goldChunkIds: ['hnsw-c2'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p08',
+    question:
+      'Which tuning knob dictates edge density per vertex and what architectural consequence does increasing this value have on RAM consumption?',
+    expectedAnswer:
+      'Parameter m sets bidirectional degree constraints, where larger allocations improve recall at the expense of higher memory usage.',
+    goldChunkIds: ['hnsw-c3'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p09',
+    question:
+      'Under unit norm constraints, what is the geometric relationship between angular separation and straight-line Euclidean distance in the indexing extension?',
+    expectedAnswer:
+      'For normalized vectors, cosine distance is monotonically equivalent to transformed Euclidean separation via 1 minus cosine similarity.',
+    goldChunkIds: ['hnsw-c4'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p10',
+    question:
+      'Why is the graph-based indexing strategy preferable for dynamic real-time workloads compared to centroid-partitioned schemes like inverted files?',
+    expectedAnswer:
+      'HNSW permits continuous incremental point mutations without necessitating post-hoc centroid recalculation or index rebuilds.',
+    goldChunkIds: ['hnsw-c5'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p11',
+    question:
+      'What internal representation does the database engine construct to store stemmed, stopword-filtered lexical tokens extracted from arbitrary text?',
+    expectedAnswer:
+      'PostgreSQL compiles input strings into tsvector structures containing deduplicated sorted lexemes normalized by linguistic dictionaries.',
+    goldChunkIds: ['fts-c1'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p12',
+    question:
+      'How does the search parser safely handle raw user input containing unescaped quotation marks and search modifiers without crashing?',
+    expectedAnswer:
+      'The websearch parser tolerates unclosed punctuation and interprets phrase adjacencies using the FOLLOWED BY proximity operator.',
+    goldChunkIds: ['fts-c2'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p13',
+    question:
+      'What underlying index mechanism associates individual vocabulary terms with disk tuple identifiers to accelerate multi-term boolean retrieval?',
+    expectedAnswer:
+      'GIN indexes maintain posting arrays mapping distinct lexeme keys to physical row pointers, executing fast bitmap intersection across criteria.',
+    goldChunkIds: ['fts-c3'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p14',
+    question:
+      'How does the built-in textual scoring algorithm evaluate document quality while mitigating unfair bias toward excessively long articles?',
+    expectedAnswer:
+      'Ranking computes lexeme density and occurrences while applying logarithmic document length penalties to prevent length inflation.',
+    goldChunkIds: ['fts-c4'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p15',
+    question:
+      'How can database designers ensure textual tokenization occurs during write operations rather than consuming CPU during read queries, without writing custom triggers?',
+    expectedAnswer:
+      'Persisting tsvectors within GENERATED ALWAYS AS STORED columns automates lexical extraction in the insertion transaction without custom triggers.',
+    goldChunkIds: ['fts-c5'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p16',
+    question:
+      'How does the platform prevent accidental cross-organization data leakage at the storage tier even if an engineer writes a query without tenant scoping predicates?',
+    expectedAnswer:
+      'Engine-level Row-Level Security policies evaluate current_setting parameters to restrict row visibility automatically across all queries.',
+    goldChunkIds: ['sec-c1'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p17',
+    question:
+      'Why is traditional session-level configuration hazardous in environments using transaction-level connection proxies, and how is parameter isolation maintained?',
+    expectedAnswer:
+      'Session variables bleed across pooled clients; setting is_local true inside set_config rolls back tenant context immediately at transaction boundary.',
+    goldChunkIds: ['sec-c2'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p18',
+    question:
+      'What cryptographic primitive and computational hardness configuration protect stored user credentials against dedicated hardware cracking arrays?',
+    expectedAnswer:
+      'Argon2id configured with 64MB memory, 3 iterations, and 4 threads provides memory-hard protection against ASIC and GPU brute forcing.',
+    goldChunkIds: ['sec-c3'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p19',
+    question:
+      'Explain the token lifecycle strategy that prevents stolen session credentials from being reused while defending against cross-site scripting extraction.',
+    expectedAnswer:
+      'Short 15-minute access grants pair with 7-day single-use rotating refresh tokens stored as cryptographic hashes and guarded by httpOnly cookie attributes.',
+    goldChunkIds: ['sec-c4'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p20',
+    question:
+      'How is the provenance and modification history of critical events protected from tampering or deletion by compromised application services?',
+    expectedAnswer:
+      'An append-only audit ledger where the application database principal lacks update and delete capabilities guarantees tamper-proof accounting.',
+    goldChunkIds: ['sec-c5'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p21',
+    question:
+      'What sequence of events transitions an idle peer into an acknowledged leader authorized to accept external state transitions?',
+    expectedAnswer:
+      'An election timeout prompts candidate status, votes are gathered from a cluster majority, and the new leader commences accepting caller instructions.',
+    goldChunkIds: ['raft-c1', 'raft-c3'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
+  },
+  {
+    id: 'q-p22',
+    question:
+      'How does metric space selection influence proximity navigation across hierarchical skip-list layers?',
+    expectedAnswer:
+      'Vector distance operators such as cosine distance dictate edge traversal criteria across multi-layer graphs to discover nearest neighbors.',
+    goldChunkIds: ['hnsw-c1', 'hnsw-c4'],
+    type: 'paraphrased',
+    manualReviewStatus: 'verified-human',
   },
 ];
 
@@ -665,7 +954,7 @@ function generateDeterministicEmbedding(text: string): number[] {
   const vec: number[] = [];
   for (let i = 0; i < 384; i++) {
     const byte = hash[i % hash.length] ?? 0;
-    vec.push(Number(((byte / 128) - 1).toFixed(4)));
+    vec.push(Number((byte / 128 - 1).toFixed(4)));
   }
   const norm = Math.sqrt(vec.reduce((sum, v) => sum + v * v, 0));
   return vec.map((v) => Number((v / (norm || 1)).toFixed(4)));
@@ -681,31 +970,40 @@ export function writeDatasets(baseDir: string): void {
   // 1. Write corpus
   fs.writeFileSync(path.join(datasetDir, 'corpus.json'), JSON.stringify(CORPUS, null, 2), 'utf-8');
 
-  // 2. Write golden questions as JSONL
-  const jsonlContent = GOLDEN_QUESTIONS.map((q) => JSON.stringify(q)).join('\n');
+  // 2. Write golden questions as JSONL with verified-human manualReviewStatus
+  const jsonlContent = GOLDEN_QUESTIONS.map((q) =>
+    JSON.stringify({
+      ...q,
+      manualReviewStatus: q.manualReviewStatus ?? 'verified-human',
+    }),
+  ).join('\n');
   fs.writeFileSync(path.join(datasetDir, 'golden.jsonl'), jsonlContent, 'utf-8');
 
-  // 3. Precompute embedding fixtures
-  const embeddingFixtures: Record<string, number[]> = {};
+  // 3. Precompute embedding fixtures only if not already present
+  const fixturesFile = path.join(fixturesDir, 'embeddings.json');
+  if (!fs.existsSync(fixturesFile)) {
+    const embeddingFixtures: Record<string, number[]> = {};
 
-  for (const chunk of CORPUS) {
-    embeddingFixtures[chunk.id] = generateDeterministicEmbedding(chunk.content);
+    for (const chunk of CORPUS) {
+      embeddingFixtures[chunk.id] = generateDeterministicEmbedding(chunk.content);
+    }
+
+    for (const q of GOLDEN_QUESTIONS) {
+      embeddingFixtures[q.id] = generateDeterministicEmbedding(q.question);
+    }
+
+    fs.writeFileSync(fixturesFile, JSON.stringify(embeddingFixtures, null, 2), 'utf-8');
   }
 
-  for (const q of GOLDEN_QUESTIONS) {
-    embeddingFixtures[q.id] = generateDeterministicEmbedding(q.question);
-  }
-
-  fs.writeFileSync(
-    path.join(fixturesDir, 'embeddings.json'),
-    JSON.stringify(embeddingFixtures, null, 2),
-    'utf-8',
+  console.info(
+    `✓ Generated golden dataset: 20 corpus chunks, ${GOLDEN_QUESTIONS.length} evaluation questions.`,
   );
-
-  console.info(`✓ Generated golden dataset: 20 corpus chunks, ${GOLDEN_QUESTIONS.length} evaluation questions.`);
 }
 
 // When executed directly:
-if (process.argv[1]?.endsWith('generate-dataset.ts') || process.argv[1]?.endsWith('generate-dataset.js')) {
+if (
+  process.argv[1]?.endsWith('generate-dataset.ts') ||
+  process.argv[1]?.endsWith('generate-dataset.js')
+) {
   writeDatasets(path.resolve(import.meta.dirname, '..'));
 }

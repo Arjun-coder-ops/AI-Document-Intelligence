@@ -76,7 +76,9 @@ export const DocumentsPage: React.FC = () => {
     try {
       const res = await api.uploadDocument(file);
       if (res.isDuplicate) {
-        setUploadSuccess(`Identical content detected: returned existing document ID ${res.documentId.slice(0, 8)}...`);
+        setUploadSuccess(
+          `Identical content detected: returned existing document ID ${res.documentId.slice(0, 8)}...`,
+        );
       } else {
         setUploadSuccess(`Document queued for asynchronous chunking and HNSW indexing!`);
       }
@@ -98,7 +100,9 @@ export const DocumentsPage: React.FC = () => {
     setDragActive(false);
 
     if (!canMutate) {
-      setUploadError('Viewer role does not have upload permissions. Contact a tenant administrator.');
+      setUploadError(
+        'Viewer role does not have upload permissions. Contact a tenant administrator.',
+      );
       return;
     }
 
@@ -119,13 +123,28 @@ export const DocumentsPage: React.FC = () => {
   return (
     <div style={{ padding: '32px 40px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
       {/* Page Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '28px',
+        }}
+      >
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '4px' }}>
+          <h1
+            style={{
+              fontSize: '1.75rem',
+              fontWeight: 700,
+              letterSpacing: '-0.02em',
+              marginBottom: '4px',
+            }}
+          >
             Document Knowledge Base
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            Upload PDFs to undergo structure-aware chunking, batch vector embedding, and full-text GIN indexing.
+            Upload PDFs to undergo structure-aware chunking, batch vector embedding, and full-text
+            GIN indexing.
           </p>
         </div>
 
@@ -195,11 +214,17 @@ export const DocumentsPage: React.FC = () => {
               marginBottom: '12px',
             }}
           >
-            {isUploading ? <Loader2 size={24} className="animate-spin" /> : <UploadCloud size={24} />}
+            {isUploading ? (
+              <Loader2 size={24} className="animate-spin" />
+            ) : (
+              <UploadCloud size={24} />
+            )}
           </div>
 
           <div style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '4px' }}>
-            {isUploading ? 'Streaming & Parsing PDF...' : 'Click to select or drag and drop PDF file'}
+            {isUploading
+              ? 'Streaming & Parsing PDF...'
+              : 'Click to select or drag and drop PDF file'}
           </div>
           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
             Streamed in chunks to object storage • Strict magic byte validation (%PDF-) • 20MB limit
@@ -261,7 +286,15 @@ export const DocumentsPage: React.FC = () => {
             justifyContent: 'space-between',
           }}
         >
-          <div style={{ fontSize: '0.9rem', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <div
+            style={{
+              fontSize: '0.9rem',
+              fontWeight: 600,
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+            }}
+          >
             <HardDrive size={16} color="var(--accent)" />
             <span>Indexed Corpus ({documents.length} files)</span>
           </div>
@@ -275,7 +308,14 @@ export const DocumentsPage: React.FC = () => {
         ) : documents.length === 0 ? (
           <div style={{ padding: '60px 20px', textAlign: 'center', color: 'var(--text-muted)' }}>
             <FileText size={36} style={{ margin: '0 auto 12px', opacity: 0.3 }} />
-            <div style={{ fontWeight: 600, fontSize: '1rem', color: 'var(--text-secondary)', marginBottom: '4px' }}>
+            <div
+              style={{
+                fontWeight: 600,
+                fontSize: '1rem',
+                color: 'var(--text-secondary)',
+                marginBottom: '4px',
+              }}
+            >
               No documents in this workspace yet
             </div>
             <div style={{ fontSize: '0.85rem' }}>
@@ -284,15 +324,29 @@ export const DocumentsPage: React.FC = () => {
           </div>
         ) : (
           <div style={{ overflowX: 'auto' }}>
-            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+            <table
+              style={{
+                width: '100%',
+                borderCollapse: 'collapse',
+                textAlign: 'left',
+                fontSize: '0.875rem',
+              }}
+            >
               <thead>
-                <tr style={{ borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
+                <tr
+                  style={{
+                    borderBottom: '1px solid var(--border-subtle)',
+                    color: 'var(--text-muted)',
+                  }}
+                >
                   <th style={{ padding: '12px 20px', fontWeight: 600 }}>DOCUMENT</th>
                   <th style={{ padding: '12px 20px', fontWeight: 600 }}>STATUS</th>
                   <th style={{ padding: '12px 20px', fontWeight: 600 }}>VERSION</th>
                   <th style={{ padding: '12px 20px', fontWeight: 600 }}>SIZE</th>
                   <th style={{ padding: '12px 20px', fontWeight: 600 }}>UPLOADED</th>
-                  <th style={{ padding: '12px 20px', fontWeight: 600, textAlign: 'right' }}>ACTIONS</th>
+                  <th style={{ padding: '12px 20px', fontWeight: 600, textAlign: 'right' }}>
+                    ACTIONS
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -308,8 +362,16 @@ export const DocumentsPage: React.FC = () => {
                       <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                         <FileCheck size={18} color="var(--accent)" />
                         <div>
-                          <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{doc.title || doc.filename}</div>
-                          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>
+                          <div style={{ fontWeight: 600, color: 'var(--text-primary)' }}>
+                            {doc.title || doc.filename}
+                          </div>
+                          <div
+                            style={{
+                              fontSize: '0.75rem',
+                              color: 'var(--text-muted)',
+                              fontFamily: 'var(--font-mono)',
+                            }}
+                          >
                             SHA: {doc.contentSha256.slice(0, 12)}...
                           </div>
                         </div>
@@ -351,7 +413,13 @@ export const DocumentsPage: React.FC = () => {
                       {formatBytes(doc.sizeBytes)}
                     </td>
 
-                    <td style={{ padding: '14px 20px', color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                    <td
+                      style={{
+                        padding: '14px 20px',
+                        color: 'var(--text-muted)',
+                        fontSize: '0.8rem',
+                      }}
+                    >
                       {new Date(doc.createdAt).toLocaleDateString()}
                     </td>
 
@@ -359,7 +427,11 @@ export const DocumentsPage: React.FC = () => {
                       {canMutate ? (
                         <button
                           onClick={() => {
-                            if (window.confirm(`Soft-delete document "${doc.title}" and purge chunks?`)) {
+                            if (
+                              window.confirm(
+                                `Soft-delete document "${doc.title}" and purge chunks?`,
+                              )
+                            ) {
                               deleteMutation.mutate(doc.id);
                             }
                           }}
@@ -371,7 +443,9 @@ export const DocumentsPage: React.FC = () => {
                           <Trash2 size={16} />
                         </button>
                       ) : (
-                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Read-Only</span>
+                        <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                          Read-Only
+                        </span>
                       )}
                     </td>
                   </tr>

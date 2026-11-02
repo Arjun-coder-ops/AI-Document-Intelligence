@@ -4,8 +4,14 @@ import { NoOpReranker, MockReranker, ListwiseLLMReranker, CohereReranker } from 
 describe('packages/rag: Reranker Implementations', () => {
   const docs = [
     { id: 'doc-1', content: 'PostgreSQL provides robust relational indexing and ACID guarantees.' },
-    { id: 'doc-2', content: 'Raft consensus enforces replicated log ordering with election timers.' },
-    { id: 'doc-3', content: 'HNSW builds multi-layer proximity graphs for approximate nearest neighbors.' },
+    {
+      id: 'doc-2',
+      content: 'Raft consensus enforces replicated log ordering with election timers.',
+    },
+    {
+      id: 'doc-3',
+      content: 'HNSW builds multi-layer proximity graphs for approximate nearest neighbors.',
+    },
   ];
 
   afterEach(() => {
@@ -92,7 +98,9 @@ describe('packages/rag: Reranker Implementations', () => {
         },
       } as unknown as Response);
 
-      await expect(reranker.rerank('query', docs, 2)).rejects.toThrow(/Cohere rerank failed with status 500/);
+      await expect(reranker.rerank('query', docs, 2)).rejects.toThrow(
+        /Cohere rerank failed with status 500/,
+      );
     });
   });
 });

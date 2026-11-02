@@ -10,11 +10,7 @@ export interface DatabaseQueryExecutor {
     limit: number,
     efSearch: number,
   ): Promise<RetrievedChunk[]>;
-  queryLexical(
-    tenantId: string,
-    queryText: string,
-    limit: number,
-  ): Promise<RetrievedChunk[]>;
+  queryLexical(tenantId: string, queryText: string, limit: number): Promise<RetrievedChunk[]>;
 }
 
 export interface RetrievalResult {

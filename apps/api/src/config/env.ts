@@ -6,9 +6,7 @@ dotenv.config();
 export const EnvSchema = z.object({
   PORT: z.coerce.number().default(8000),
   NODE_ENV: z.enum(['development', 'production', 'test']).default('development'),
-  DATABASE_URL: z
-    .string()
-    .default('postgresql://postgres:postgres@localhost:5432/docsage'),
+  DATABASE_URL: z.string().default('postgresql://postgres:postgres@localhost:5432/docsage'),
   DATABASE_URL_DIRECT: z.string().optional(),
   JWT_SECRET: z.string().default('docsage-super-secret-development-jwt-key-32chars-minimum'),
   JWT_ACCESS_EXPIRY: z.string().default('15m'),

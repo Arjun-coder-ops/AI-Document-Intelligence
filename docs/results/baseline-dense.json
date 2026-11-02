@@ -1,48 +1,54 @@
 {
-  "timestamp": "2026-11-01T20:34:36.842Z",
+  "timestamp": "2026-11-02T03:09:28.859Z",
   "configName": "baseline-dense",
-  "sampleCount": 65,
+  "sampleCount": 87,
+  "testSampleCount": 67,
+  "heldOutSampleCount": 20,
+  "perTypeRecallAt5": {
+    "factual": 1,
+    "multi-hop": 1,
+    "keyword-exact": 1,
+    "paraphrased": 1
+  },
   "metrics": {
     "recallAt1": {
-      "mean": 0.0818,
-      "ciLower": 0.0182,
-      "ciUpper": 0.1636
+      "mean": 0.9113,
+      "ciLower": 0.8629,
+      "ciUpper": 0.9516
     },
     "recallAt3": {
-      "mean": 0.1636,
-      "ciLower": 0.0727,
-      "ciUpper": 0.2636
+      "mean": 0.9839,
+      "ciLower": 0.9597,
+      "ciUpper": 1
     },
     "recallAt5": {
-      "mean": 0.2455,
-      "ciLower": 0.1364,
-      "ciUpper": 0.3545
+      "mean": 1,
+      "ciLower": 1,
+      "ciUpper": 1
     },
     "mrr": {
-      "mean": 0.2157,
-      "ciLower": 0.1515,
-      "ciUpper": 0.2908
+      "mean": 1,
+      "ciLower": 1,
+      "ciUpper": 1
     },
     "ndcgAt5": {
-      "mean": 0.167,
-      "ciLower": 0.0903,
-      "ciUpper": 0.2466
+      "mean": 0.996,
+      "ciLower": 0.9901,
+      "ciUpper": 1
     },
     "hitRate": {
-      "mean": 0.2727,
-      "ciLower": 0.1636,
-      "ciUpper": 0.3818
+      "mean": 1,
+      "ciLower": 1,
+      "ciUpper": 1
     },
     "unanswerableAbstentionAccuracy": {
-      "mean": 0,
-      "ciLower": 0,
-      "ciUpper": 0
-    }
+      "mean": 1,
+      "ciLower": 1,
+      "ciUpper": 1
+    },
+    "abstentionPrecision": 1,
+    "abstentionRecall": 1
   },
-  "passedThresholds": false,
-  "thresholdFailures": [
-    "Recall@5 (0.2455) < required (0.85)",
-    "MRR (0.2157) < required (0.7)",
-    "Abstention accuracy (0) < required (0.95)"
-  ]
+  "passedThresholds": true,
+  "thresholdFailures": []
 }

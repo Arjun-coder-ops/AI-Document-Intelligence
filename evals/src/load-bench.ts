@@ -30,7 +30,10 @@ interface LoadTestMetrics {
   }>;
 }
 
-export async function runLoadBenchmark(concurrentUsers = 50, durationSec = 5): Promise<LoadTestMetrics> {
+export async function runLoadBenchmark(
+  concurrentUsers = 50,
+  durationSec = 5,
+): Promise<LoadTestMetrics> {
   const latencies: number[] = [];
   const ttfts: number[] = [];
   let successful = 0;
@@ -104,15 +107,19 @@ export async function runLoadBenchmark(concurrentUsers = 50, durationSec = 5): P
     bottlenecksFoundAndFixed: [
       {
         bottleneck: 'HNSW vector index query latency spike at high concurrency',
-        rootCause: 'Default hnsw.ef_search = 100 performed redundant graph traversals under 50 concurrent searches',
+        rootCause:
+          'Default hnsw.ef_search = 100 performed redundant graph traversals under 50 concurrent searches',
         fix: 'Configured hnsw.ef_search = 40 via session setting; verified <0.5% recall difference on golden set',
         measuredImpact: 'p95 retrieval stage latency dropped from 82ms to 18ms (-78%)',
       },
       {
-        bottleneck: 'PostgreSQL connection pool exhaustion during concurrent ingestion & chat bursts',
-        rootCause: 'Fixed max pool size of 10 was saturated by simultaneous streaming uploads and chat transactions',
+        bottleneck:
+          'PostgreSQL connection pool exhaustion during concurrent ingestion & chat bursts',
+        rootCause:
+          'Fixed max pool size of 10 was saturated by simultaneous streaming uploads and chat transactions',
         fix: 'Separated direct migration connection from app pool; increased app pool to 25 with statement_timeout = 15s',
-        measuredImpact: 'Connection timeout errors reduced from 4.2% to 0.00% under 50 concurrent VUs',
+        measuredImpact:
+          'Connection timeout errors reduced from 4.2% to 0.00% under 50 concurrent VUs',
       },
     ],
   };
@@ -120,7 +127,9 @@ export async function runLoadBenchmark(concurrentUsers = 50, durationSec = 5): P
   const resultsPath = path.resolve(import.meta.dirname, '../../docs/results/load-test.json');
   fs.writeFileSync(resultsPath, JSON.stringify(result, null, 2), 'utf-8');
 
-  console.info(`✓ Load benchmark complete: ${total} requests, p50: ${result.latenciesMs.p50}ms, p95: ${result.latenciesMs.p95}ms, TTFT p95: ${result.ttftMs.p95}ms`);
+  console.info(
+    `✓ Load benchmark complete: ${total} requests, p50: ${result.latenciesMs.p50}ms, p95: ${result.latenciesMs.p95}ms, TTFT p95: ${result.ttftMs.p95}ms`,
+  );
   console.info(`  Saved results to docs/results/load-test.json`);
   return result;
 }

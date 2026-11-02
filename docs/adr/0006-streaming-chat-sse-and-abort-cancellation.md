@@ -1,11 +1,14 @@
 # ADR 0006: Server-Sent Events (SSE) and End-to-End Abort Cancellation
 
 ## Status
+
 Accepted
 
 ## Context
+
 Document Q&A interactions require streaming output tokens from the upstream LLM (Groq / Gemini / OpenAI) to the browser in real time to minimize perceived latency (Time To First Token, TTFT).
 Key production requirements:
+
 1. **Unidirectional Transport:** Generative chat responses stream tokens downstream from server to client over a single HTTP connection.
 2. **Cancellation on Disconnect:** Users frequently click "Stop generating", navigate away, or submit a new query mid-generation. Without upstream abort propagation, the backend continues consuming GPU cycles and token budget from the LLM provider, wasting cost.
 3. **Proxy Timeouts:** Corporate reverse proxies (NGINX, Cloudflare, AWS ALB) terminate idle HTTP connections after 30–60 seconds if no bytes are transferred during long multi-hop retrieval or thinking phases.
@@ -32,6 +35,7 @@ Key production requirements:
    - In `sendSSE()`, check `res.write(payload)`. If false (buffer full), wait for the `drain` event before writing subsequent tokens.
 
 ## Consequences
+
 - Zero wasted upstream LLM tokens on abandoned queries.
 - Clean error recovery mid-stream without crashing the HTTP server.
 - High connection resilience across proxies and mobile networks.

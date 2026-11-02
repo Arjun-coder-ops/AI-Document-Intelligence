@@ -7,6 +7,7 @@
 ---
 
 ### [0:00 - 0:20] Hook & Architectural Foundation
+
 - **Screen:** DocSage Authentication Screen (`/auth`).
 - **Spoken Narration:**
   > "Hi, I'm presenting **DocSage**, an enterprise multi-tenant document intelligence system.
@@ -17,6 +18,7 @@
 ---
 
 ### [0:20 - 0:45] Tenant Isolation (PostgreSQL Kernel RLS)
+
 - **Screen:** Navigation sidebar and Document Library (`/documents`).
 - **Spoken Narration:**
   > "Multi-tenancy is not an afterthought here—it's enforced at the PostgreSQL kernel level.
@@ -27,15 +29,16 @@
 ---
 
 ### [0:45 - 1:20] Streaming Chat, Verified Citations & Upstream Abort
+
 - **Screen:** Streaming Chat Interface (`/chat`).
 - **Spoken Narration:**
-  > "Now let's ask a complex technical query: *'How does PostgreSQL RLS enforce tenant isolation?'*
+  > "Now let's ask a complex technical query: _'How does PostgreSQL RLS enforce tenant isolation?'_
   > Watch the streaming response: our hybrid retriever combines dense HNSW vector search and lexical GIN search via Reciprocal Rank Fusion, followed by a Cross-Encoder reranker.
   > Notice the Time-to-First-Token badge: under 100 milliseconds.
   > Every factual claim includes a verified citation chip like `[1]`. Clicking this chip slides out our Evidence Drawer, highlighting the exact source document, page number, and chunk score.
   > If I click 'Stop Generating', an AbortController immediately terminates the upstream Groq LLM socket, saving GPU tokens."
 - **Action:**
-  1. Click the preset pill: *"How does PostgreSQL RLS enforce tenant isolation?"* and hit Send.
+  1. Click the preset pill: _"How does PostgreSQL RLS enforce tenant isolation?"_ and hit Send.
   2. Observe SSE token streaming and stage latency badges (`TTFT: 98ms`, `Total: 221ms`).
   3. Click inline citation tag `[1]`. The right evidence drawer slides out with the exact source chunk.
   4. Type a long prompt and click "Stop" mid-generation to showcase instant cancellation.
@@ -43,15 +46,17 @@
 ---
 
 ### [1:20 - 1:45] Relevance Cutoff & Hallucination Prevention
+
 - **Screen:** Chat Interface (`/chat`).
 - **Spoken Narration:**
   > "Unlike naive RAG systems that hallucinate when documents lack the answer, DocSage enforces a strict relevance threshold gate.
-  > If I ask: *'What was Acme Global's revenue in 1842?'*—a question absent from our documents—our pipeline detects a sub-threshold score and short-circuits before the LLM. It returns an immediate deterministic abstention with zero citations, achieving 100% abstention accuracy on our test suite."
+  > If I ask: _'What was Acme Global's revenue in 1842?'_—a question absent from our documents—our pipeline detects a sub-threshold score and short-circuits before the LLM. It returns an immediate deterministic abstention with zero citations, achieving 100% abstention accuracy on our test suite."
 - **Action:** Submit an unanswerable query. Observe instant rejection without LLM generation. Click the thumbs-up button on an accurate answer to show feedback collection.
 
 ---
 
 ### [1:45 - 2:00] Observability & Gated Golden Evaluation Matrix
+
 - **Screen:** Admin & Analytics Dashboard (`/admin`).
 - **Spoken Narration:**
   > "Finally, the Admin Dashboard exposes real-time Prometheus and OpenTelemetry metrics: monthly inference spend against budget, p95 stage latencies computed via PostgreSQL `percentile_cont`, and zero-citation review queries.

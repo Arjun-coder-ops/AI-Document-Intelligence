@@ -11,7 +11,7 @@ export class MockEmbeddingProvider implements EmbeddingProvider {
     for (let i = 0; i < this.dimension; i++) {
       // Deterministic float between -1 and 1
       const byte = hash[i % hash.length] ?? 0;
-      vec.push(Number(((byte / 128) - 1).toFixed(4)));
+      vec.push(Number((byte / 128 - 1).toFixed(4)));
     }
     // Normalize vector
     const norm = Math.sqrt(vec.reduce((sum, val) => sum + val * val, 0));

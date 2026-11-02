@@ -10,10 +10,7 @@ export function sanitizeXml(text: string): string {
     .replace(/'/g, '&apos;');
 }
 
-export function buildRAGPrompt(
-  query: string,
-  chunks: RetrievedChunk[],
-): FormattedPrompt {
+export function buildRAGPrompt(query: string, chunks: RetrievedChunk[]): FormattedPrompt {
   const contextChunks: PromptContextChunk[] = chunks.map((chunk, index) => ({
     citationIndex: index + 1, // 1-based index for [1], [2], etc.
     chunkId: chunk.id,

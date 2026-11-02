@@ -68,10 +68,16 @@ export class ErrorBoundary extends Component<Props, State> {
             <h1 style={{ fontSize: '1.25rem', fontWeight: 700, marginBottom: '8px' }}>
               Application Render Error
             </h1>
-            <p style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '20px' }}>
+            <p
+              style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '20px' }}
+            >
               {this.state.error?.message ?? 'An unexpected runtime error occurred.'}
             </p>
-            <button onClick={this.handleReload} className="btn btn-primary" style={{ margin: '0 auto' }}>
+            <button
+              onClick={this.handleReload}
+              className="btn btn-primary"
+              style={{ margin: '0 auto' }}
+            >
               <RefreshCw size={16} />
               <span>Reload Application</span>
             </button>

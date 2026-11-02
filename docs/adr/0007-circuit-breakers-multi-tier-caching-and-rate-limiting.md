@@ -1,12 +1,15 @@
 # ADR 0007: Circuit Breakers, Multi-Provider Fallbacks, and Multi-Tier Caching
 
 ## Status
+
 Accepted
 
 ## Context
+
 High-reliability RAG applications depend on external LLM and embedding APIs (Groq, OpenAI, Gemini, Cohere) that are subject to rate limiting (HTTP 429), intermittent outages (503/504), and variable latency spikes. Furthermore, uncontrolled user queries can rapidly exhaust tenant token budgets and compromise multi-tenant system stability.
 
 Key production requirements:
+
 1. **Upstream Fault Tolerance:** When an LLM provider encounters rate limits or service degradation, the system must not crash or leave user streams hanging.
 2. **Cost Control & Quota Management:** Per-user and per-tenant burst protection prevents noisy neighbors from exhausting API rate limits. Monthly token/cost budgets must be checked pre-flight.
 3. **Multi-Tier Caching:** Redundant queries must not repeatedly invoke expensive embedding models and LLMs. Document mutations must instantaneously invalidate query caches without corpus-wide recomputation.
@@ -22,7 +25,7 @@ Key production requirements:
 2. **Hierarchical Multi-Provider Fallback Chain:**
    - Primary Provider: Groq (ultra-low latency LLaMA 3.3).
    - Secondary Provider: Gemini / OpenAI (high availability fallback).
-   - Final Degradation: If all synthesis providers are degraded, return formatted retrieved passages with an explicit banner: *"AI synthesis unavailable (all upstream providers degraded). Here are the relevant passages from your documents"*.
+   - Final Degradation: If all synthesis providers are degraded, return formatted retrieved passages with an explicit banner: _"AI synthesis unavailable (all upstream providers degraded). Here are the relevant passages from your documents"_.
 
 3. **Multi-Tier Query & Semantic Caching:**
    - **Tier 1 (Exact Query Cache):** Keyed on `hash(tenant_id, corpus_version, query, config)`. $O(1)$ lookup for identical repeat queries.
@@ -40,6 +43,7 @@ Key production requirements:
    - `SIGTERM` / `SIGINT` lifecycle listeners stop accepting new connections and drain active HTTP and background worker tasks before process exit.
 
 ## Consequences
+
 - Guaranteed uptime and predictable response behavior under upstream third-party API outages.
 - Significant reduction in LLM inference costs and latency for repeat or semantically equivalent questions.
 - Multi-tenant fairness and strict budget guardrails.
