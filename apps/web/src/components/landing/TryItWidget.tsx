@@ -64,25 +64,24 @@ const SAMPLE_QUERIES: SampleQuery[] = [
 
 export const TryItWidget: React.FC = () => {
   const [selectedIdx, setSelectedIdx] = useState(0);
-  const [isRunning, setIsRunning] = useState(false);
   const current = SAMPLE_QUERIES[selectedIdx] ?? SAMPLE_QUERIES[0]!;
 
   const handleSelect = (idx: number) => {
-    setIsRunning(true);
     setSelectedIdx(idx);
-    setTimeout(() => {
-      setIsRunning(false);
-    }, 280);
   };
 
   return (
     <section style={{ padding: '64px 24px', maxWidth: '1200px', margin: '0 auto' }}>
       <div style={{ textAlign: 'center', marginBottom: '36px' }}>
+        <div style={{ marginBottom: '8px' }}>
+          <span className="badge badge-neutral">Recorded Example</span>
+        </div>
         <h2 className="font-serif" style={{ fontSize: '2.4rem', marginBottom: '12px' }}>
-          Interactive Try-It Sandbox
+          Recorded Architecture Examples
         </h2>
         <p style={{ color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
-          Test the retrieval pipeline and citation provenance engine in real time.
+          Pre-recorded query traces demonstrating dual-vector fusion, listwise reranking, and
+          verified citation provenance. (Interactive cloud sandbox currently in development).
         </p>
       </div>
 
@@ -143,111 +142,86 @@ export const TryItWidget: React.FC = () => {
             minHeight: '200px',
           }}
         >
-          {isRunning ? (
+          <div className="animate-fade-in" key={selectedIdx}>
+            {/* Answer text */}
             <div
               style={{
+                fontSize: '1rem',
+                lineHeight: 1.6,
+                color: 'var(--text-primary)',
+                marginBottom: '20px',
+              }}
+            >
+              {current.answer}
+            </div>
+
+            {/* Citations and Provenance */}
+            <div
+              style={{
+                borderTop: '1px solid var(--border-subtle)',
+                paddingTop: '16px',
                 display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                height: '160px',
-                gap: '12px',
-                color: 'var(--text-secondary)',
+                flexDirection: 'column',
+                gap: '8px',
               }}
             >
               <div
-                className="animate-spin"
                 style={{
-                  width: '20px',
-                  height: '20px',
-                  border: '2px solid var(--accent)',
-                  borderTopColor: 'transparent',
-                  borderRadius: '50%',
-                }}
-              />
-              <span>Executing Reciprocal Rank Fusion & Gemini rerank...</span>
-            </div>
-          ) : (
-            <div className="animate-fade-in">
-              {/* Answer text */}
-              <div
-                style={{
-                  fontSize: '1rem',
-                  lineHeight: 1.6,
-                  color: 'var(--text-primary)',
-                  marginBottom: '20px',
-                }}
-              >
-                {current.answer}
-              </div>
-
-              {/* Citations and Provenance */}
-              <div
-                style={{
-                  borderTop: '1px solid var(--border-subtle)',
-                  paddingTop: '16px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '8px',
-                }}
-              >
-                <div
-                  style={{
-                    fontSize: '0.75rem',
-                    fontWeight: 700,
-                    textTransform: 'uppercase',
-                    letterSpacing: '0.04em',
-                    color: 'var(--text-muted)',
-                  }}
-                >
-                  Verified Provenance & Citations
-                </div>
-                {current.citations.map((cite, cIdx) => (
-                  <div
-                    key={cIdx}
-                    style={{
-                      padding: '10px 14px',
-                      backgroundColor: 'var(--bg-card)',
-                      borderRadius: 'var(--radius-sm)',
-                      border: '1px solid var(--border-subtle)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'space-between',
-                      gap: '12px',
-                    }}
-                  >
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <FileCheck size={16} color="var(--accent)" />
-                      <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{cite.docTitle}</span>
-                      <span className="badge badge-neutral">Page {cite.page}</span>
-                    </div>
-                    <span className="badge badge-emerald">
-                      {(cite.score * 100).toFixed(1)}% match
-                    </span>
-                  </div>
-                ))}
-              </div>
-
-              {/* Execution telemetry */}
-              <div
-                style={{
-                  marginTop: '16px',
-                  display: 'flex',
-                  gap: '16px',
                   fontSize: '0.75rem',
+                  fontWeight: 700,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.04em',
                   color: 'var(--text-muted)',
                 }}
               >
-                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Clock size={13} />
-                  <span>Pipeline Latency: {current.latencyMs}ms</span>
-                </span>
-                <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                  <Sparkles size={13} />
-                  <span>Generated Tokens: {current.tokens}</span>
-                </span>
+                Verified Provenance & Citations
               </div>
+              {current.citations.map((cite, cIdx) => (
+                <div
+                  key={cIdx}
+                  style={{
+                    padding: '10px 14px',
+                    backgroundColor: 'var(--bg-card)',
+                    borderRadius: 'var(--radius-sm)',
+                    border: '1px solid var(--border-subtle)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '12px',
+                  }}
+                >
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <FileCheck size={16} color="var(--accent)" />
+                    <span style={{ fontSize: '0.85rem', fontWeight: 600 }}>{cite.docTitle}</span>
+                    <span className="badge badge-neutral">Page {cite.page}</span>
+                  </div>
+                  <span className="badge badge-emerald">
+                    {(cite.score * 100).toFixed(1)}% match
+                  </span>
+                </div>
+              ))}
             </div>
-          )}
+
+            {/* Execution telemetry */}
+            <div
+              style={{
+                marginTop: '16px',
+                display: 'flex',
+                gap: '16px',
+                fontSize: '0.75rem',
+                color: 'var(--text-muted)',
+              }}
+            >
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Clock size={13} />
+                <span>Pipeline Latency: {current.latencyMs}ms</span>
+              </span>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <Sparkles size={13} />
+                <span>Generated Tokens: {current.tokens}</span>
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </section>

@@ -19,4 +19,15 @@ describe('apps/web: Web App & Client', () => {
     client.setToken(null);
     expect(client.getToken()).toBeNull();
   });
+
+  it('ensures TryItWidget does not simulate live execution with setTimeout or claim real-time live inference', async () => {
+    const fs = await import('node:fs');
+    const path = await import('node:path');
+    const filePath = path.resolve(__dirname, 'components/landing/TryItWidget.tsx');
+    const content = fs.readFileSync(filePath, 'utf8');
+
+    expect(content).not.toContain('setTimeout');
+    expect(content).toContain('Recorded Example');
+    expect(content).not.toContain('in real time');
+  });
 });
