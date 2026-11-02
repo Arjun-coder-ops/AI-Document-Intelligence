@@ -75,6 +75,9 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Build Monorepo Workspaces
+        run: npm run build
+
       - name: Initialize Database & Run Migrations
         env:
           DATABASE_URL_DIRECT: postgresql://postgres:postgres@localhost:5432/docsage_test
@@ -111,6 +114,7 @@ jobs:
         run: npm run test:coverage
 
       - name: Upload Coverage Artifacts
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-report
