@@ -528,4 +528,3 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `npm run test:coverage` -> 31 test files, 163 tests passed, coverage >= 80% (VERIFIED).
   - `npm run eval:retrieval` -> Passed CI regression gate; Recall@5 = 1.0000, MRR = 0.9677, Abstention = 1.0000 (VERIFIED).
 - **Next Up:** Phase 5 — UI Redesign via Stitch MCP (Design system, warm paper theme, Fraunces + Instrument Sans, motion landing page, product app shell).
-
