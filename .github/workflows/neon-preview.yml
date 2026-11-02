@@ -28,7 +28,7 @@ jobs:
       - name: Create Ephemeral Neon Branch
         if: github.event.action != 'closed' && env.NEON_API_KEY != '' && env.NEON_PROJECT_ID != ''
         id: create-branch
-        uses: neondatabase/create-branch-action@v5
+        uses: neondatabase/create-branch-action@v6
         with:
           project_id: ${{ secrets.NEON_PROJECT_ID }}
           parent: main
