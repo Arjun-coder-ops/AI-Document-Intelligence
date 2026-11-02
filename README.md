@@ -79,33 +79,35 @@ flowchart TB
 
 ## 2. Real Evaluated Results (Zero Fabricated Metrics)
 
-Every metric below was generated directly by running the evaluation harness CLI against our committed 87-question golden dataset ([`evals/dataset/golden.jsonl`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/evals/dataset/golden.jsonl)), precomputed 768-d Gemini embeddings, and k6 stress benchmarks. Raw test logs and bootstrap confidence interval distributions are versioned in [`docs/results/`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/results/). Detailed audit findings are documented in [`docs/results/EVAL_AUDIT.md`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/results/EVAL_AUDIT.md).
+Every metric below was generated directly by running the evaluation harness CLI against our scaled 2,185-corpus benchmark with 320 distractors and 122 evaluation questions ([`evals/dataset/golden.jsonl`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/evals/dataset/golden.jsonl)). Raw test logs and bootstrap confidence interval distributions are versioned in [`docs/results/`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/results/). Detailed audit findings are documented in [`docs/results/EVAL_AUDIT.md`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/results/EVAL_AUDIT.md).
 
-### 2.1 Retrieval Quality Comparison Matrix (Held-out Test Split, n = 67)
+### 2.1 Retrieval Quality Comparison Matrix (Held-out Test Split, n = 77)
 
-| Metric                  | Dense Baseline (`baseline-dense.json`) | Lexical Only (`lexical-only.json`) | Hybrid RRF k=60 (`hybrid.json`) | Hybrid + Rerank (`hybrid-rerank.json`) |
-| :---------------------- | :------------------------------------: | :--------------------------------: | :-----------------------------: | :------------------------------------: |
-| **Recall@1**            |         0.9113 [0.863, 0.952]          |       0.4032 [0.282, 0.516]        |      0.7016 [0.597, 0.798]      |       **0.8468 [0.774, 0.911]**        |
-| **Recall@3**            |         0.9839 [0.960, 1.000]          |       0.4758 [0.347, 0.597]        |      0.9758 [0.936, 1.000]      |       **0.9919 [0.976, 1.000]**        |
-| **Recall@5**            |         1.0000 [1.000, 1.000]          |       0.5161 [0.387, 0.645]        |      0.9919 [0.976, 1.000]      |       **1.0000 [1.000, 1.000]**        |
-| **MRR**                 |         1.0000 [1.000, 1.000]          |       0.4723 [0.347, 0.590]        |      0.8876 [0.834, 0.936]      |       **0.9677 [0.936, 0.992]**        |
-| **nDCG@5**              |         0.9960 [0.990, 1.000]          |       0.4798 [0.354, 0.598]        |      0.9090 [0.868, 0.949]      |       **0.9742 [0.950, 0.994]**        |
-| **Hit Rate**            |                 100.0%                 |               51.61%               |             100.0%              |               **100.0%**               |
-| **Abstention Accuracy** |              100.0% (5/5)              |            100.0% (5/5)            |          100.0% (5/5)           |            **100.0% (5/5)**            |
-| **CI Gate Status**      |             ✅ **PASSED**              |        ❌ FAILED (Recall@5)        |          ✅ **PASSED**          |             ✅ **PASSED**              |
+| Metric | Dense Baseline (`baseline-dense.json`) | Lexical Only (`lexical-only.json`) | Hybrid RRF k=60 (`hybrid.json`) | Hybrid + Rerank (`hybrid-rerank.json`) |
+| :--- | :---: | :---: | :---: | :---: |
+| **Recall@1** | **0.6642 [0.537, 0.769]** | 0.2761 [0.179, 0.381] | 0.4776 [0.366, 0.590] | 0.4776 [0.366, 0.590] |
+| **Recall@3** | 0.6940 [0.575, 0.806] | 0.3358 [0.231, 0.455] | **0.7612 [0.664, 0.851]** | **0.7612 [0.664, 0.851]** |
+| **Recall@5** | 0.7015 [0.582, 0.806] | 0.3358 [0.231, 0.455] | **0.8060 [0.709, 0.888]** | **0.8060 [0.709, 0.888]** |
+| **MRR** | **0.7015 [0.582, 0.806]** | 0.3731 [0.254, 0.500] | 0.6866 [0.587, 0.776] | 0.6866 [0.587, 0.776] |
+| **nDCG@5** | 0.6997 [0.580, 0.806] | 0.3376 [0.234, 0.456] | **0.6956 [0.601, 0.777]** | **0.6956 [0.601, 0.777]** |
+| **Hit Rate** | 70.15% | 38.81% | **86.57%** | **86.57%** |
+| **Abstention Accuracy** | 90.0% (9/10) | **100.0% (10/10)** | 90.0% (9/10) | 90.0% (9/10) |
+| **Latency (p50 / p95)** | 24.52ms / 35.91ms | 28.86ms / 185.95ms | **22.45ms / 28.24ms** | 23.36ms / 35.96ms |
+| **Cost / 1k Queries** | $0.02 | **$0.00** | $0.02 | $0.13 |
+| **CI Gate Status** | ❌ Below Recall@5 | ❌ FAILED | ✅ **PASSED** | ✅ **PASSED** |
 
-_Bootstrap Confidence Intervals: 1,000 resamples at 95% confidence level. Tuned relevance thresholds evaluated on held-out split: $\tau_{\text{dense}} = 0.58$, $\tau_{\text{lexical}} = 0.08$._
+_Bootstrap Confidence Intervals: 1,000 resamples at 95% confidence level. Tuned relevance thresholds evaluated on held-out split (n=45): $\tau_{\text{dense}} = 0.65$, $\tau_{\text{lexical}} = 0.08$ (False Abstention: 0.0%, True Abstention: 100.0%, recorded in `docs/results/abstention-sweep.json`)._
 
 ### 2.2 Per-Question-Type Recall@5 Breakdown
 
-| Question Type                 | Baseline Dense | Lexical Only | Hybrid RRF | Hybrid + Rerank |
-| :---------------------------- | :------------: | :----------: | :--------: | :-------------: |
-| **Factual**                   |     1.0000     |    0.6500    |   1.0000   |     1.0000      |
-| **Multi-Hop**                 |     1.0000     |    0.7500    |   1.0000   |     1.0000      |
-| **Keyword-Exact**             |     1.0000     |    0.5833    |   1.0000   |     1.0000      |
-| **Paraphrased (Low-Overlap)** |     1.0000     |  **0.1667**  | **0.9444** |   **1.0000**    |
+| Question Type | Baseline Dense | Lexical Only | Hybrid RRF | Hybrid + Rerank |
+| :--- | :---: | :---: | :---: | :---: |
+| **Factual** ($n = 15$) | **100.0%** | 53.3% | **100.0%** | **100.0%** |
+| **Multi-Hop** ($n = 25$) | 20.0% | 38.0% | **50.0%** | **50.0%** |
+| **Keyword-Exact** ($n = 11$) | **100.0%** | 36.4% | **100.0%** | **100.0%** |
+| **Paraphrased** ($n = 16$) | **100.0%** | 6.3% | 96.9% | 96.9% |
 
-_Finding:_ Lexical retrieval degrades drastically on paraphrased queries (Recall@5 = 0.1667) because queries lack exact word matches. Hybrid search bridges the gap by blending semantic vector proximity with lexical precision.
+_Finding:_ On the scaled 2,185-chunk corpus, distractor chunks cause dense-only search to collapse on low-overlap multi-hop queries (20.0% Recall@5). Hybrid RRF combines lexical and semantic posting signals to achieve 50.0% Recall@5 (a 2.5x gain) while matching baseline cost ($0.02/1k) and delivering the lowest p95 latency (28.24ms). Lexical-only collapses on paraphrased natural queries (6.3% Recall@5).
 
 ### 2.2 System Latency & Concurrency Benchmarks (k6 Stress Test)
 

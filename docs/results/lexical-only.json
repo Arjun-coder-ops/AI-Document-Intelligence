@@ -1,57 +1,63 @@
 {
-  "timestamp": "2026-11-02T06:27:09.466Z",
+  "timestamp": "2026-11-02T16:15:12.032Z",
   "configName": "lexical-only",
-  "sampleCount": 87,
-  "testSampleCount": 67,
-  "heldOutSampleCount": 20,
+  "sampleCount": 122,
+  "testSampleCount": 77,
+  "heldOutSampleCount": 45,
   "perTypeRecallAt5": {
-    "factual": 0.65,
-    "multi-hop": 0.75,
-    "keyword-exact": 0.5833,
-    "paraphrased": 0.1667
+    "factual": 0.5333,
+    "multi-hop": 0.38,
+    "keyword-exact": 0.3636,
+    "paraphrased": 0.0625
   },
   "metrics": {
     "recallAt1": {
-      "mean": 0.4032,
-      "ciLower": 0.2823,
-      "ciUpper": 0.5161
+      "mean": 0.2761,
+      "ciLower": 0.1791,
+      "ciUpper": 0.3806
     },
     "recallAt3": {
-      "mean": 0.4758,
-      "ciLower": 0.3468,
-      "ciUpper": 0.5968
+      "mean": 0.3358,
+      "ciLower": 0.2313,
+      "ciUpper": 0.4552
     },
     "recallAt5": {
-      "mean": 0.5161,
-      "ciLower": 0.3871,
-      "ciUpper": 0.6452
+      "mean": 0.3358,
+      "ciLower": 0.2313,
+      "ciUpper": 0.4552
     },
     "mrr": {
-      "mean": 0.4723,
-      "ciLower": 0.3465,
-      "ciUpper": 0.5901
+      "mean": 0.3731,
+      "ciLower": 0.2537,
+      "ciUpper": 0.5
     },
     "ndcgAt5": {
-      "mean": 0.4798,
-      "ciLower": 0.354,
-      "ciUpper": 0.5978
+      "mean": 0.3376,
+      "ciLower": 0.2343,
+      "ciUpper": 0.4558
     },
     "hitRate": {
-      "mean": 0.5161,
-      "ciLower": 0.3871,
-      "ciUpper": 0.6452
+      "mean": 0.3881,
+      "ciLower": 0.2687,
+      "ciUpper": 0.5075
     },
     "unanswerableAbstentionAccuracy": {
       "mean": 1,
       "ciLower": 1,
       "ciUpper": 1
     },
-    "abstentionPrecision": 0.1429,
+    "abstentionPrecision": 0.2326,
     "abstentionRecall": 1
   },
+  "latencyMs": {
+    "p50": 28.86,
+    "p95": 185.95,
+    "mean": 59.39
+  },
+  "costPer1kQueries": 0,
   "passedThresholds": false,
   "thresholdFailures": [
-    "Recall@5 (0.5161) < required (0.85)",
-    "MRR (0.4723) < required (0.7)"
+    "Recall@5 (0.3358) < required (0.8)",
+    "MRR (0.3731) < required (0.65)"
   ]
 }

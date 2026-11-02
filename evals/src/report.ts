@@ -15,6 +15,8 @@ export interface EvaluationCollector {
   answerableAbstained: number;
   unanswerableTotal: number;
   perTypeRecall: Record<string, number[]>;
+  latencies?: number[];
+  estimatedCostPer1k?: number;
 }
 
 export function compileExperimentResult(
@@ -87,6 +89,15 @@ export function compileExperimentResult(
     );
   }
 
+  let latencyMs: { p50: number; p95: number; mean: number } | undefined;
+  if (collector.latencies && collector.latencies.length > 0) {
+    const sorted = [...collector.latencies].sort((a, b) => a - b);
+    const p50 = sorted[Math.floor(sorted.length * 0.5)] ?? 0;
+    const p95 = sorted[Math.floor(sorted.length * 0.95)] ?? 0;
+    const mean = Number((sorted.reduce((a, b) => a + b, 0) / sorted.length).toFixed(2));
+    latencyMs = { p50, p95, mean };
+  }
+
   return {
     timestamp: new Date().toISOString(),
     configName,
@@ -105,6 +116,8 @@ export function compileExperimentResult(
       abstentionPrecision,
       abstentionRecall,
     },
+    latencyMs,
+    costPer1kQueries: collector.estimatedCostPer1k ?? 0,
     passedThresholds: thresholdFailures.length === 0,
     thresholdFailures,
   };

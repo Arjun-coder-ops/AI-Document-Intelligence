@@ -43,6 +43,14 @@ export interface RetrievalEvalReport {
     abstentionPrecision?: number;
     abstentionRecall?: number;
   };
+  latencyMs?:
+    | {
+        p50: number;
+        p95: number;
+        mean: number;
+      }
+    | undefined;
+  costPer1kQueries?: number | undefined;
   passedThresholds: boolean;
   thresholdFailures: string[];
 }

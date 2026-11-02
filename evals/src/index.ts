@@ -77,9 +77,11 @@ export async function runCLI(): Promise<void> {
   // Print Markdown Comparison Table
   console.info('\n### Retrieval Experiment Results Matrix (95% Bootstrap Confidence Intervals)');
   console.info(
-    '| Strategy | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 | Hit Rate | Abstention |',
+    '| Strategy | Recall@1 | Recall@3 | Recall@5 | MRR | nDCG@5 | Hit Rate | Abstention | Latency (p50/p95) | Cost/1k |',
   );
-  console.info('| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |');
+  console.info(
+    '| :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- | :--- |',
+  );
 
   for (const [name, r] of Object.entries(results)) {
     const m = r.metrics;
@@ -90,13 +92,30 @@ export async function runCLI(): Promise<void> {
     const ndcg = `${m.ndcgAt5.mean} [${m.ndcgAt5.ciLower}, ${m.ndcgAt5.ciUpper}]`;
     const hit = `${m.hitRate.mean}`;
     const abs = `${m.unanswerableAbstentionAccuracy.mean}`;
-    console.info(`| **${name}** | ${r1} | ${r3} | ${r5} | ${mrr} | ${ndcg} | ${hit} | ${abs} |`);
+    const lat = r.latencyMs ? `${r.latencyMs.p50}ms / ${r.latencyMs.p95}ms` : 'N/A';
+    const cost = r.costPer1kQueries !== undefined ? `$${r.costPer1kQueries.toFixed(2)}` : 'N/A';
+    console.info(
+      `| **${name}** | ${r1} | ${r3} | ${r5} | ${mrr} | ${ndcg} | ${hit} | ${abs} | ${lat} | ${cost} |`,
+    );
   }
 
-  // Verification Gate against Thresholds for hybrid-rerank
-  const primaryReport = results['hybrid-rerank'];
+  // Print Per-Question-Type Recall@5 Breakdown
+  console.info('\n### Per-Question-Type Recall@5 Breakdown');
+  console.info('| Strategy | Factual | Multi-Hop | Keyword-Exact | Paraphrased |');
+  console.info('| :--- | :--- | :--- | :--- | :--- |');
+  for (const [name, r] of Object.entries(results)) {
+    const pt = r.perTypeRecallAt5 ?? {};
+    const f = pt['factual'] !== undefined ? `${(pt['factual'] * 100).toFixed(1)}%` : 'N/A';
+    const mh = pt['multi-hop'] !== undefined ? `${(pt['multi-hop'] * 100).toFixed(1)}%` : 'N/A';
+    const k = pt['keyword-exact'] !== undefined ? `${(pt['keyword-exact'] * 100).toFixed(1)}%` : 'N/A';
+    const p = pt['paraphrased'] !== undefined ? `${(pt['paraphrased'] * 100).toFixed(1)}%` : 'N/A';
+    console.info(`| **${name}** | ${f} | ${mh} | ${k} | ${p} |`);
+  }
+
+  // Verification Gate against Thresholds for primary strategy
+  const primaryReport = results['hybrid-rerank'] ?? results['hybrid'];
   if (!primaryReport) {
-    console.error('Error: hybrid-rerank experiment missing from results');
+    console.error('Error: primary experiment missing from results');
     process.exit(1);
   }
 

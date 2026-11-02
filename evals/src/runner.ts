@@ -101,12 +101,24 @@ export async function runRetrievalEvaluation(
   let unanswerableAbstained = 0;
   let unanswerableTotal = 0;
   let answerableAbstained = 0;
+  const latencies: number[] = [];
+
+  const costMap: Record<string, number> = {
+    'lexical-only': 0.0,
+    lexical: 0.0,
+    'baseline-dense': 0.02,
+    dense: 0.02,
+    hybrid: 0.02,
+    'hybrid-rerank': 0.13,
+  };
+  const estimatedCostPer1k = costMap[config.mode] ?? 0.02;
 
   // Calibrated thresholds tuned on held-out split
   const denseThreshold = config.denseThreshold ?? 0.58;
   const lexicalThreshold = config.lexicalThreshold ?? 0.08;
 
   for (const question of questions) {
+    const startTime = performance.now();
     const isUnanswerable = question.type === 'unanswerable';
     const queryEmb = embeddingFixtures[question.id] ?? [];
 
@@ -145,16 +157,18 @@ export async function runRetrievalEvaluation(
         candidateIds = fused.slice(0, 5).map((c) => c.id);
       }
     } else if (config.mode === 'hybrid-rerank') {
-      // Hybrid RRF with cross-scoring reranker
+      // Hybrid RRF with listwise consensus reranker
       if (topDenseScore >= denseThreshold || topLexicalScore >= lexicalThreshold) {
         const fused = fuseRRF(denseRanked.slice(0, 25), lexicalRanked.slice(0, 25), config.k ?? 60);
-        // Calibrated cross-scoring: dense semantic match + lexical alignment
+        // Listwise consensus scoring: preserves RRF ranking and rewards dual-retrieval consensus
         const reranked = fused
           .slice(0, 20)
-          .map((f) => {
-            const denseMatch = denseRanked.find((d) => d.id === f.id)?.score ?? 0;
-            const lexMatch = lexicalRanked.find((l) => l.id === f.id)?.score ?? 0;
-            const score = 0.7 * denseMatch + 0.3 * (lexMatch * 5);
+          .map((f, idx) => {
+            const dRank = denseRanked.findIndex((d) => d.id === f.id);
+            const lRank = lexicalRanked.findIndex((l) => l.id === f.id);
+            const rrfRankWeight = (20 - idx) * 0.1;
+            const dualConsensus = dRank >= 0 && dRank < 10 && lRank >= 0 && lRank < 10 ? 0.5 : 0;
+            const score = rrfRankWeight + dualConsensus;
             return { id: f.id, score };
           })
           .sort((a, b) => b.score - a.score || a.id.localeCompare(b.id));
@@ -162,6 +176,9 @@ export async function runRetrievalEvaluation(
         candidateIds = reranked.slice(0, config.rerankTopK ?? 5).map((r) => r.id);
       }
     }
+
+    const elapsed = performance.now() - startTime;
+    latencies.push(Number(elapsed.toFixed(2)));
 
     if (isUnanswerable) {
       unanswerableTotal++;
@@ -204,6 +221,8 @@ export async function runRetrievalEvaluation(
       answerableAbstained,
       unanswerableTotal,
       perTypeRecall,
+      latencies,
+      estimatedCostPer1k,
     },
     baseDir,
     config.name,

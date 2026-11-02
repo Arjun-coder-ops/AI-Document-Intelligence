@@ -1,54 +1,62 @@
 {
-  "timestamp": "2026-11-02T06:27:09.422Z",
+  "timestamp": "2026-11-02T16:15:07.326Z",
   "configName": "baseline-dense",
-  "sampleCount": 87,
-  "testSampleCount": 67,
-  "heldOutSampleCount": 20,
+  "sampleCount": 122,
+  "testSampleCount": 77,
+  "heldOutSampleCount": 45,
   "perTypeRecallAt5": {
     "factual": 1,
-    "multi-hop": 1,
+    "multi-hop": 0.2,
     "keyword-exact": 1,
     "paraphrased": 1
   },
   "metrics": {
     "recallAt1": {
-      "mean": 0.9113,
-      "ciLower": 0.8629,
-      "ciUpper": 0.9516
+      "mean": 0.6642,
+      "ciLower": 0.5373,
+      "ciUpper": 0.7687
     },
     "recallAt3": {
-      "mean": 0.9839,
-      "ciLower": 0.9597,
-      "ciUpper": 1
+      "mean": 0.694,
+      "ciLower": 0.5746,
+      "ciUpper": 0.806
     },
     "recallAt5": {
-      "mean": 1,
-      "ciLower": 1,
-      "ciUpper": 1
+      "mean": 0.7015,
+      "ciLower": 0.5821,
+      "ciUpper": 0.806
     },
     "mrr": {
-      "mean": 1,
-      "ciLower": 1,
-      "ciUpper": 1
+      "mean": 0.7015,
+      "ciLower": 0.5821,
+      "ciUpper": 0.806
     },
     "ndcgAt5": {
-      "mean": 0.996,
-      "ciLower": 0.9901,
-      "ciUpper": 1
+      "mean": 0.6997,
+      "ciLower": 0.5803,
+      "ciUpper": 0.806
     },
     "hitRate": {
-      "mean": 1,
-      "ciLower": 1,
-      "ciUpper": 1
+      "mean": 0.7015,
+      "ciLower": 0.5821,
+      "ciUpper": 0.806
     },
     "unanswerableAbstentionAccuracy": {
-      "mean": 1,
-      "ciLower": 1,
+      "mean": 0.9,
+      "ciLower": 0.7,
       "ciUpper": 1
     },
-    "abstentionPrecision": 1,
-    "abstentionRecall": 1
+    "abstentionPrecision": 0.3103,
+    "abstentionRecall": 0.9
   },
-  "passedThresholds": true,
-  "thresholdFailures": []
+  "latencyMs": {
+    "p50": 24.52,
+    "p95": 35.91,
+    "mean": 25.81
+  },
+  "costPer1kQueries": 0.02,
+  "passedThresholds": false,
+  "thresholdFailures": [
+    "Recall@5 (0.7015) < required (0.8)"
+  ]
 }
