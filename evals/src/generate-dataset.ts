@@ -42,24 +42,41 @@ export function writeDatasets(baseDir: string): void {
   ).join('\n');
   fs.writeFileSync(path.join(datasetDir, 'golden.jsonl'), jsonlContent + '\n', 'utf-8');
 
-  // 3. Precompute embedding fixtures only if not already present
+  // 3. Precompute embedding fixtures for all chunks and questions
   const fixturesFile = path.join(fixturesDir, 'embeddings.json');
-  if (!fs.existsSync(fixturesFile)) {
-    const embeddingFixtures: Record<string, number[]> = {};
+  let embeddingFixtures: Record<string, number[]> = {};
+  if (fs.existsSync(fixturesFile)) {
+    try {
+      embeddingFixtures = JSON.parse(fs.readFileSync(fixturesFile, 'utf-8')) as Record<
+        string,
+        number[]
+      >;
+    } catch {
+      embeddingFixtures = {};
+    }
+  }
 
-    for (const chunk of CORPUS) {
+  let updated = false;
+  for (const chunk of CORPUS) {
+    if (!embeddingFixtures[chunk.id] || embeddingFixtures[chunk.id]?.length === 0) {
       embeddingFixtures[chunk.id] = generateDeterministicEmbedding(chunk.content);
+      updated = true;
     }
+  }
 
-    for (const q of GOLDEN_QUESTIONS) {
+  for (const q of GOLDEN_QUESTIONS) {
+    if (!embeddingFixtures[q.id] || embeddingFixtures[q.id]?.length === 0) {
       embeddingFixtures[q.id] = generateDeterministicEmbedding(q.question);
+      updated = true;
     }
+  }
 
+  if (updated || !fs.existsSync(fixturesFile)) {
     fs.writeFileSync(fixturesFile, JSON.stringify(embeddingFixtures, null, 2) + '\n', 'utf-8');
   }
 
   console.info(
-    `✓ Generated golden dataset: 20 corpus chunks, ${GOLDEN_QUESTIONS.length} evaluation questions.`,
+    `✓ Generated golden dataset: ${CORPUS.length} corpus chunks, ${GOLDEN_QUESTIONS.length} evaluation questions.`,
   );
 }
 

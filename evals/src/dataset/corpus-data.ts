@@ -1,6 +1,24 @@
+import fs from 'fs';
+import path from 'path';
 import type { CorpusChunk } from '../types.js';
 
-export const CORPUS: CorpusChunk[] = [
+function loadCorpus(): CorpusChunk[] {
+  const jsonPath = path.resolve(import.meta.dirname, '../../dataset/corpus.json');
+  if (fs.existsSync(jsonPath)) {
+    try {
+      const raw = fs.readFileSync(jsonPath, 'utf-8');
+      const parsed = JSON.parse(raw) as CorpusChunk[];
+      if (Array.isArray(parsed) && parsed.length >= 2000) {
+        return parsed;
+      }
+    } catch {
+      // Fallback to in-code corpus if file read fails
+    }
+  }
+  return FALLBACK_CORPUS;
+}
+
+const FALLBACK_CORPUS: CorpusChunk[] = [
   // ── Document 1: Raft Consensus ──────────────────────────────────────────────
   {
     id: 'raft-c1',
@@ -189,3 +207,6 @@ export const CORPUS: CorpusChunk[] = [
     tokens: 45,
   },
 ];
+
+export const CORPUS: CorpusChunk[] = loadCorpus();
+
