@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Activity } from 'lucide-react';
+import { SectionHeader } from './SectionHeader.js';
 
 interface MetricBar {
   label: string;
@@ -46,21 +47,12 @@ export const BenchmarkVisualizer: React.FC = () => {
 
   return (
     <section style={{ padding: '64px 24px', maxWidth: '1200px', margin: '0 auto' }}>
-      <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-        <div
-          className="badge badge-emerald"
-          style={{ marginBottom: '12px', display: 'inline-flex' }}
-        >
-          <Activity size={13} />
-          <span>Production Benchmarks</span>
-        </div>
-        <h2 className="font-serif" style={{ fontSize: '2.4rem', marginBottom: '12px' }}>
-          Empirical Retrieval Visualizer
-        </h2>
-        <p style={{ color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
-          Visual performance comparison across lexical, dense, and hybrid reranked configurations.
-        </p>
-      </div>
+      <SectionHeader
+        badgeIcon={<Activity size={13} />}
+        badgeText="Production Benchmarks"
+        title="Empirical Retrieval Visualizer"
+        description="Visual performance comparison across lexical, dense, and hybrid reranked configurations."
+      />
 
       <div className="card" style={{ padding: '32px', boxShadow: 'var(--shadow-md)' }}>
         {/* Metric toggles */}

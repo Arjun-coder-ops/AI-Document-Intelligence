@@ -30,6 +30,41 @@ const refreshCookieOptions = {
   maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
 };
 
+async function sendAuthSuccessResponse(
+  res: Response,
+  user: { id: string; tenantId: string; email: string; role: 'admin' | 'member' | 'viewer' },
+  statusCode = 200,
+): Promise<void> {
+  const accessToken = createAccessToken({
+    sub: user.id,
+    tenantId: user.tenantId,
+    email: user.email,
+    role: user.role,
+  });
+
+  const { token: rawRefreshToken, tokenHash, expiresAt } = generateRefreshToken();
+
+  await db.insert(refreshTokens).values({
+    userId: user.id,
+    tokenHash,
+    expiresAt,
+  });
+
+  res.cookie('refreshToken', rawRefreshToken, refreshCookieOptions);
+
+  const response: AuthResponse = {
+    accessToken,
+    user: {
+      id: user.id,
+      tenantId: user.tenantId,
+      email: user.email,
+      role: user.role,
+    },
+  };
+
+  res.status(statusCode).json(response);
+}
+
 // ─── POST /auth/register ──────────────────────────────────────────────────────
 authRouter.post('/register', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const parseResult = RegisterRequestSchema.safeParse(req.body);
@@ -87,37 +122,7 @@ authRouter.post('/register', async (req: AuthenticatedRequest, res: Response): P
     return { tenant: t, user: u };
   });
 
-  const { user } = newTenant;
-
-  // Generate tokens
-  const accessToken = createAccessToken({
-    sub: user.id,
-    tenantId: user.tenantId,
-    email: user.email,
-    role: user.role,
-  });
-
-  const { token: rawRefreshToken, tokenHash, expiresAt } = generateRefreshToken();
-
-  await db.insert(refreshTokens).values({
-    userId: user.id,
-    tokenHash,
-    expiresAt,
-  });
-
-  res.cookie('refreshToken', rawRefreshToken, refreshCookieOptions);
-
-  const response: AuthResponse = {
-    accessToken,
-    user: {
-      id: user.id,
-      tenantId: user.tenantId,
-      email: user.email,
-      role: user.role,
-    },
-  };
-
-  res.status(201).json(response);
+  await sendAuthSuccessResponse(res, newTenant.user, 201);
 });
 
 // ─── POST /auth/login ─────────────────────────────────────────────────────────
@@ -159,34 +164,7 @@ authRouter.post(
       });
     });
 
-    const accessToken = createAccessToken({
-      sub: user.id,
-      tenantId: user.tenantId,
-      email: user.email,
-      role: user.role,
-    });
-
-    const { token: rawRefreshToken, tokenHash, expiresAt } = generateRefreshToken();
-
-    await db.insert(refreshTokens).values({
-      userId: user.id,
-      tokenHash,
-      expiresAt,
-    });
-
-    res.cookie('refreshToken', rawRefreshToken, refreshCookieOptions);
-
-    const response: AuthResponse = {
-      accessToken,
-      user: {
-        id: user.id,
-        tenantId: user.tenantId,
-        email: user.email,
-        role: user.role,
-      },
-    };
-
-    res.status(200).json(response);
+    await sendAuthSuccessResponse(res, user, 200);
   },
 );
 

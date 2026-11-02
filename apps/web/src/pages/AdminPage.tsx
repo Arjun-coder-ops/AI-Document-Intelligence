@@ -10,9 +10,9 @@ import {
   TrendingUp,
   CheckCircle2,
   BarChart2,
-  RefreshCw,
 } from 'lucide-react';
 import { KPICard } from '../components/KPICard.js';
+import { PageHeader } from '../components/PageHeader.js';
 
 export const AdminPage: React.FC = () => {
   const {
@@ -26,41 +26,13 @@ export const AdminPage: React.FC = () => {
 
   return (
     <div style={{ padding: '32px 40px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
-      {/* Page Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: '28px',
-        }}
-      >
-        <div>
-          <h1
-            style={{
-              fontSize: '1.75rem',
-              fontWeight: 700,
-              letterSpacing: '-0.02em',
-              marginBottom: '4px',
-            }}
-          >
-            Tenant Analytics & Observability
-          </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            Real-time inference costs, p95 stage latencies via PostgreSQL percentile_cont, and
-            golden dataset feedback.
-          </p>
-        </div>
-
-        <button
-          onClick={() => void refetch()}
-          className="btn btn-secondary"
-          disabled={isRefetching}
-        >
-          <RefreshCw size={15} className={isRefetching ? 'animate-spin' : ''} />
-          <span>Refresh Analytics</span>
-        </button>
-      </div>
+      <PageHeader
+        title="Tenant Analytics & Observability"
+        description="Real-time inference costs, p95 stage latencies via PostgreSQL percentile_cont, and golden dataset feedback."
+        buttonText="Refresh Analytics"
+        onRefresh={() => void refetch()}
+        isRefetching={isRefetching}
+      />
 
       {/* KPI Stat Cards Grid */}
       <div

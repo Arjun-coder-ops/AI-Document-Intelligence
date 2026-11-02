@@ -1,5 +1,6 @@
 import React from 'react';
 import { BarChart3, CheckCircle2 } from 'lucide-react';
+import { SectionHeader } from './SectionHeader.js';
 
 interface MethodMetrics {
   name: string;
@@ -54,22 +55,12 @@ export const ComparisonMatrix: React.FC = () => {
 
   return (
     <section style={{ padding: '64px 24px', maxWidth: '1200px', margin: '0 auto' }}>
-      <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-        <div
-          className="badge badge-emerald"
-          style={{ marginBottom: '12px', display: 'inline-flex' }}
-        >
-          <BarChart3 size={13} />
-          <span>Empirical Evaluation Results</span>
-        </div>
-        <h2 className="font-serif" style={{ fontSize: '2.4rem', marginBottom: '12px' }}>
-          Retrieval Comparison Matrix
-        </h2>
-        <p style={{ color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
-          Exact empirical metrics verified on golden dataset
-          (docs/results/retrieval-comparison.json) with 1,000 bootstrap iterations.
-        </p>
-      </div>
+      <SectionHeader
+        badgeIcon={<BarChart3 size={13} />}
+        badgeText="Empirical Evaluation Results"
+        title="Retrieval Comparison Matrix"
+        description="Exact empirical metrics verified on golden dataset (docs/results/retrieval-comparison.json) with 1,000 bootstrap iterations."
+      />
 
       <div
         className="card"

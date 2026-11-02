@@ -1,18 +1,27 @@
 import type { MetricConfidenceInterval } from './types.js';
 
-export function calculateRecallAtK(
+function getTopKHits(
   goldChunkIds: string[],
   retrievedChunkIds: string[],
   k: number,
-): number {
-  if (goldChunkIds.length === 0) return 1.0;
+): { hits: number; total: number } {
+  if (goldChunkIds.length === 0) return { hits: 0, total: 0 };
   const topK = retrievedChunkIds.slice(0, k);
   const goldSet = new Set(goldChunkIds);
   let hits = 0;
   for (const id of topK) {
     if (goldSet.has(id)) hits++;
   }
-  return hits / goldChunkIds.length;
+  return { hits, total: goldChunkIds.length };
+}
+
+export function calculateRecallAtK(
+  goldChunkIds: string[],
+  retrievedChunkIds: string[],
+  k: number,
+): number {
+  const { hits, total } = getTopKHits(goldChunkIds, retrievedChunkIds, k);
+  return total === 0 ? 1.0 : hits / total;
 }
 
 export function calculateMRR(goldChunkIds: string[], retrievedChunkIds: string[]): number {
@@ -58,10 +67,8 @@ export function calculateHitRate(
   retrievedChunkIds: string[],
   k: number,
 ): number {
-  if (goldChunkIds.length === 0) return 1.0;
-  const topK = retrievedChunkIds.slice(0, k);
-  const goldSet = new Set(goldChunkIds);
-  return topK.some((id) => goldSet.has(id)) ? 1.0 : 0.0;
+  const { hits, total } = getTopKHits(goldChunkIds, retrievedChunkIds, k);
+  return total === 0 ? 1.0 : hits > 0 ? 1.0 : 0.0;
 }
 
 /**

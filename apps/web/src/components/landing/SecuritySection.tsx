@@ -1,5 +1,6 @@
 import React from 'react';
 import { Shield, Lock, Database, KeyRound } from 'lucide-react';
+import { SectionHeader } from './SectionHeader.js';
 
 export const SecuritySection: React.FC = () => {
   const securityPillars = [
@@ -25,21 +26,12 @@ export const SecuritySection: React.FC = () => {
 
   return (
     <section style={{ padding: '64px 24px', maxWidth: '1200px', margin: '0 auto' }}>
-      <div style={{ textAlign: 'center', marginBottom: '36px' }}>
-        <div
-          className="badge badge-emerald"
-          style={{ marginBottom: '12px', display: 'inline-flex' }}
-        >
-          <Shield size={13} />
-          <span>Enterprise Defense-in-Depth</span>
-        </div>
-        <h2 className="font-serif" style={{ fontSize: '2.4rem', marginBottom: '12px' }}>
-          Zero-Trust Multi-Tenant Isolation
-        </h2>
-        <p style={{ color: 'var(--text-secondary)', maxWidth: '640px', margin: '0 auto' }}>
-          Hardware and database-enforced boundaries eliminate cross-tenant data leakage risks.
-        </p>
-      </div>
+      <SectionHeader
+        badgeIcon={<Shield size={13} />}
+        badgeText="Enterprise Defense-in-Depth"
+        title="Zero-Trust Multi-Tenant Isolation"
+        description="Hardware and database-enforced boundaries eliminate cross-tenant data leakage risks."
+      />
 
       <div
         style={{

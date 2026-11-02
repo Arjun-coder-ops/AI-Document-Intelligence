@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { fuseRRF } from '@docsage/rag';
+import { fuseRRF, extractQueryTokens, extractDocumentTokens } from '@docsage/rag';
 import { calculateRecallAtK, calculateMRR, calculateNDCGAtK, calculateHitRate } from './metrics.js';
 import type { GoldenQuestion, CorpusChunk, RetrievalEvalReport } from './types.js';
 import { CORPUS, GOLDEN_QUESTIONS, writeDatasets } from './generate-dataset.js';
@@ -49,52 +49,10 @@ export function computeCosineSimilarity(a: number[], b: number[]): number {
 }
 
 export function computeLexicalScore(query: string, content: string): number {
-  const stopwords = new Set([
-    'what',
-    'is',
-    'the',
-    'in',
-    'for',
-    'of',
-    'to',
-    'a',
-    'an',
-    'and',
-    'or',
-    'by',
-    'on',
-    'with',
-    'at',
-    'how',
-    'does',
-    'do',
-    'are',
-    'from',
-    'as',
-    'that',
-    'this',
-    'their',
-    'when',
-    'which',
-    'where',
-  ]);
-
-  const queryTokens = new Set(
-    query
-      .toLowerCase()
-      .replace(/[^a-z0-9\s]/g, '')
-      .split(/\s+/)
-      .filter((t) => t.length > 2 && !stopwords.has(t)),
-  );
-
+  const queryTokens = extractQueryTokens(query);
   if (queryTokens.size === 0) return 0;
 
-  const contentTokens = content
-    .toLowerCase()
-    .replace(/[^a-z0-9\s]/g, '')
-    .split(/\s+/)
-    .filter(Boolean);
-
+  const contentTokens = extractDocumentTokens(content);
   let matches = 0;
   for (const token of contentTokens) {
     if (queryTokens.has(token)) matches++;

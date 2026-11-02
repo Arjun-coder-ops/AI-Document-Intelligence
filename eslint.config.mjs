@@ -48,7 +48,8 @@ export default tseslint.config(
           patterns: [
             {
               group: ['*packages/db/**', '**/packages/db/**'],
-              message: 'Architecture violation: packages/rag cannot import database packages or paths.',
+              message:
+                'Architecture violation: packages/rag cannot import database packages or paths.',
             },
             {
               group: ['express', 'express/**'],

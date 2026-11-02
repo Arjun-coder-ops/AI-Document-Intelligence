@@ -17,6 +17,54 @@ export class NoOpReranker implements Reranker {
   }
 }
 
+export const STOPWORDS = new Set([
+  'what',
+  'is',
+  'the',
+  'in',
+  'for',
+  'of',
+  'to',
+  'a',
+  'an',
+  'and',
+  'or',
+  'by',
+  'on',
+  'with',
+  'at',
+  'how',
+  'does',
+  'do',
+  'are',
+  'from',
+  'as',
+  'that',
+  'this',
+  'their',
+  'when',
+  'which',
+  'where',
+]);
+
+export function extractQueryTokens(query: string): Set<string> {
+  return new Set(
+    query
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, '')
+      .split(/\s+/)
+      .filter((tok) => tok.length > 2 && !STOPWORDS.has(tok)),
+  );
+}
+
+export function extractDocumentTokens(content: string): string[] {
+  return content
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '')
+    .split(/\s+/)
+    .filter(Boolean);
+}
+
 export class MockReranker implements Reranker {
   readonly name = 'mock-lexical';
 
@@ -26,50 +74,10 @@ export class MockReranker implements Reranker {
     topK: number,
   ): Promise<Array<{ id: string; score: number }>> {
     await Promise.resolve();
-    const stopwords = new Set([
-      'what',
-      'is',
-      'the',
-      'in',
-      'for',
-      'of',
-      'to',
-      'a',
-      'an',
-      'and',
-      'or',
-      'by',
-      'on',
-      'with',
-      'at',
-      'how',
-      'does',
-      'do',
-      'are',
-      'from',
-      'as',
-      'that',
-      'this',
-      'their',
-      'when',
-      'which',
-      'where',
-    ]);
-
-    const queryTokens = new Set(
-      query
-        .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, '')
-        .split(/\s+/)
-        .filter((tok) => tok.length > 2 && !stopwords.has(tok)),
-    );
+    const queryTokens = extractQueryTokens(query);
 
     const scored = documents.map((doc) => {
-      const docTokens = doc.content
-        .toLowerCase()
-        .replace(/[^a-z0-9\s]/g, '')
-        .split(/\s+/)
-        .filter(Boolean);
+      const docTokens = extractDocumentTokens(doc.content);
 
       let matchCount = 0;
       for (const tok of docTokens) {

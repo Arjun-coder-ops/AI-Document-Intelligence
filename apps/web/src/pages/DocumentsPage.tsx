@@ -2,9 +2,10 @@ import React, { useState, useRef } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api, type DocumentRecord } from '../api/client.js';
 import { useAuth } from '../context/AuthContext.js';
-import { FileText, CheckCircle2, AlertCircle, Loader2, RefreshCw, HardDrive } from 'lucide-react';
+import { FileText, CheckCircle2, AlertCircle, Loader2, HardDrive } from 'lucide-react';
 import { UploadDropzone } from '../components/UploadDropzone.js';
 import { DocumentTable } from '../components/DocumentTable.js';
+import { PageHeader } from '../components/PageHeader.js';
 
 export const DocumentsPage: React.FC = () => {
   const { user } = useAuth();
@@ -94,41 +95,13 @@ export const DocumentsPage: React.FC = () => {
 
   return (
     <div style={{ padding: '32px 40px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          marginBottom: '28px',
-        }}
-      >
-        <div>
-          <h1
-            style={{
-              fontSize: '1.75rem',
-              fontWeight: 700,
-              letterSpacing: '-0.02em',
-              marginBottom: '4px',
-            }}
-          >
-            Document Management
-          </h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            Upload PDFs to automatically generate recursive text chunks, 768-d Gemini embeddings,
-            and PostgreSQL GIN full-text vectors.
-          </p>
-        </div>
-
-        <button
-          onClick={() => void refetch()}
-          className="btn btn-secondary"
-          disabled={isRefetching}
-        >
-          <RefreshCw size={15} className={isRefetching ? 'animate-spin' : ''} />
-          <span>Sync Corpus</span>
-        </button>
-      </div>
+      <PageHeader
+        title="Document Management"
+        description="Upload PDFs to automatically generate recursive text chunks, 768-d Gemini embeddings, and PostgreSQL GIN full-text vectors."
+        buttonText="Sync Corpus"
+        onRefresh={() => void refetch()}
+        isRefetching={isRefetching}
+      />
 
       {/* Upload Dropzone */}
       <UploadDropzone
