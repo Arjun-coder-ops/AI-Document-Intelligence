@@ -30,7 +30,7 @@
 
 ### Bullet 5: Asynchronous Ingestion & CI/CD Regression Gating
 
-- **Constructed an asynchronous, crash-safe ingestion pipeline** using `pg-boss` with SHA-256 deduplication and disk-streamed PDF magic byte validation, backed by an automated GitHub Actions CI pipeline enforcing an **81.77% code coverage gate (142 tests)** and deterministic offline retrieval regression checks that block PR merges if Recall@5 drops below 0.85 or MRR drops below 0.70.
+- **Constructed an asynchronous, crash-safe ingestion pipeline** using `pg-boss` with SHA-256 deduplication and disk-streamed PDF magic byte validation, backed by an automated GitHub Actions CI pipeline enforcing an **82.51% code coverage gate (163 tests across 31 test files)** and deterministic offline retrieval regression checks that block PR merges if Recall@5 drops below 0.85 or MRR drops below 0.70.
 
 ---
 
@@ -49,6 +49,6 @@
 | **End-to-End Latency**       | p50 Total Latency              | **221 ms**                          | `docs/results/load-test.json`     |
 | **End-to-End Latency**       | p95 Total Latency              | **250 ms**                          | `docs/results/load-test.json`     |
 | **HNSW Optimization**        | Retrieval Stage Latency        | **18 ms (down from 82ms)**          | `docs/results/load-test.json`     |
-| **Test Suite Health**        | Passing Tests                  | **142 tests (29 files)**            | `npm test`                        |
-| **Code Coverage Gate**       | Overall Line Coverage          | **81.77% (Threshold: 80%)**         | `npm run test:coverage`           |
+| **Test Suite Health**        | Passing Tests                  | **163 tests (31 files)**            | `npm test`                        |
+| **Code Coverage Gate**       | Overall Line Coverage          | **82.51% (Threshold: 80%)**         | `npm run test:coverage`           |
 | **RAG Core Coverage**        | `packages/rag` Line Coverage   | **95.06% (Threshold: 80%)**         | `npm run test:coverage`           |

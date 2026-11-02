@@ -46,7 +46,7 @@ flowchart TB
     subgraph RAGCore["Core Engine (@docsage/rag)"]
         Hybrid["Hybrid Search (Dense Top-25 + Lexical Top-25)"]
         RRF["Reciprocal Rank Fusion (k=60)"]
-        Rerank["Cross-Encoder Reranker Interface (Cohere/Mock)"]
+        Rerank["Listwise Reranker (Gemini 1.5 Flash / Mock)"]
         Gate["Relevance Cutoff Gate (Score >= 0.015)"]
         PromptSec["Canary Sandbox & Prompt Injection Defuser"]
         CitationVer["Strict Citation Attribution Verifier [n]"]
@@ -159,6 +159,7 @@ During load testing and retrieval evaluation, two critical bottlenecks were iden
 | [**0008**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0008-security-hardening-and-prompt-injection-defenses.md)      | Canary Sandbox + Instruction Defuser           | LLM-based guardrail agents                     | Regex defusing and canary tokens operate in sub-millisecond time without incurring additional LLM latency or costs.         |
 | [**0009**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0009-observability-architecture-and-metrics.md)                | OpenTelemetry Spans + Prometheus `/metrics`    | Proprietary APMs (Datadog, New Relic)          | Vendor-neutral OpenTelemetry standards ensure zero lock-in and seamless compatibility with Grafana Cloud.                   |
 | [**0010**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0010-deployment-target-and-continuous-delivery.md)             | Multi-Stage Containers on Fly.io / GHCR        | Bare VPS, Kubernetes (EKS)                     | Docker multi-stage builds yield lightweight (<150MB) container runtimes with reproducible build layers.                     |
+| [**0011**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0011-gemini-fallback-and-embeddings.md)                        | Gemini Fallback LLM & 768-d Embeddings         | OpenAI gpt-4o-mini & text-embedding-3-small    | Eliminates vendor sprawl, lowers latency, leverages Gemini 1.5 Flash 1M context with zero OpenAI dependencies.              |
 
 ---
 
@@ -292,14 +293,20 @@ Run verification suites locally:
 # Static analysis & zero-floating-promise verification
 npm run lint
 
-# TypeScript strict type checking across all 7 workspaces
+# TypeScript strict type checking across all workspaces
 npm run typecheck
 
-# Full Vitest suite (142 unit, contract, and RLS integration tests)
+# Full Vitest suite (163 unit, contract, and RLS integration tests across 31 test files)
 npm test
 
 # Test coverage report (enforces >= 80% line gate)
 npm run test:coverage
+
+# Dead code and unlisted dependency verification (zero dead code)
+npm run knip
+
+# Copy-paste code duplication threshold check (< 3.0%)
+npm run jscpd
 
 # Deterministic offline retrieval regression check against thresholds.json
 npm run eval:retrieval
