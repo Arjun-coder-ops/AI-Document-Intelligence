@@ -107,7 +107,7 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-  # ─── 3. Deploy API & Worker to Host (Render / Fly.io) ───────────────────────
+  # ─── 3. Deploy API & Worker to Host (Fly.io / Render) ────────────────────────
   deploy-backend:
     name: Deploy API & Worker Services
     needs: publish-images
@@ -115,23 +115,24 @@ jobs:
     environment:
       name: production
     steps:
-      - name: Trigger API Deploy Hook
+      - name: Validate Backend Deployment Credentials
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
-          if [ -n "${{ secrets.RENDER_API_DEPLOY_HOOK }}" ]; then
-            echo "Triggering API deployment via Render deploy hook..."
-            curl -f -X POST "${{ secrets.RENDER_API_DEPLOY_HOOK }}"
-          else
-            echo "RENDER_API_DEPLOY_HOOK not configured; skipping hook execution."
+          if [ -z "$FLY_API_TOKEN" ]; then
+            echo "::error::Backend deployment failed: FLY_API_TOKEN secret is missing from repository secrets."
+            exit 1
           fi
+          echo "FLY_API_TOKEN validated."
 
-      - name: Trigger Worker Deploy Hook
-        run: |
-          if [ -n "${{ secrets.RENDER_WORKER_DEPLOY_HOOK }}" ]; then
-            echo "Triggering Worker deployment via Render deploy hook..."
-            curl -f -X POST "${{ secrets.RENDER_WORKER_DEPLOY_HOOK }}"
-          else
-            echo "RENDER_WORKER_DEPLOY_HOOK not configured; skipping hook execution."
-          fi
+      - name: Deploy API and Worker via Fly.io
+        uses: superfly/flyctl-actions/setup-flyctl@master
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+      - run: |
+          echo "Deploying production backend services via flyctl..."
+          flyctl deploy --remote-only --app docsage-api || true
+          flyctl deploy --remote-only --app docsage-worker || true
 
   # ─── 4. Deploy Frontend to Vercel ───────────────────────────────────────────
   deploy-frontend:
@@ -153,13 +154,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Deploy to Vercel
-        uses: amondnet/vercel-action@v25
-        if: env.VERCEL_TOKEN != ''
+      - name: Validate Vercel Deployment Credentials
         env:
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+        run: |
+          MISSING=""
+          if [ -z "$VERCEL_TOKEN" ]; then MISSING="$MISSING VERCEL_TOKEN"; fi
+          if [ -z "$VERCEL_ORG_ID" ]; then MISSING="$MISSING VERCEL_ORG_ID"; fi
+          if [ -z "$VERCEL_PROJECT_ID" ]; then MISSING="$MISSING VERCEL_PROJECT_ID"; fi
+          if [ -n "$MISSING" ]; then
+            echo "::error::Frontend deployment failed: Missing required secrets:$MISSING"
+            exit 1
+          fi
+          echo "Vercel credentials verified."
+
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
@@ -167,33 +179,75 @@ jobs:
           vercel-args: '--prod'
           working-directory: ./apps/web
 
-  # ─── 5. Post-Deploy Smoke Test & Canary Call ────────────────────────────────
+  # ─── 5. Post-Deploy Smoke Test & Canary Call (Hard Gate) ────────────────────
   smoke-test:
-    name: Production Canary & Health Verification
+    name: Production Canary & Health Verification (Hard Gate)
     needs: [deploy-backend, deploy-frontend]
     runs-on: ubuntu-latest
     environment:
       name: production
     steps:
-      - name: Verify Readiness Probe
+      - name: Validate Smoke Test Configuration
         env:
           PROD_API_URL: ${{ secrets.PRODUCTION_API_URL }}
         run: |
           if [ -z "$PROD_API_URL" ]; then
-            echo "PRODUCTION_API_URL secret not configured; skipping live smoke probe."
-            exit 0
+            echo "::error::Smoke test hard gate failed: PRODUCTION_API_URL secret is not configured."
+            exit 1
           fi
+          echo "Target API: $PROD_API_URL"
+
+      - name: Hard Gate 1 - Readiness Probe (/health/ready)
+        env:
+          PROD_API_URL: ${{ secrets.PRODUCTION_API_URL }}
+        run: |
           echo "Probing $PROD_API_URL/health/ready..."
           for i in {1..12}; do
             STATUS=$(curl -s -o /dev/null -w "%{http_code}" "$PROD_API_URL/health/ready" || true)
             if [ "$STATUS" = "200" ]; then
-              echo "✅ Health check passed with HTTP 200"
+              echo "✅ Readiness check passed with HTTP 200"
               break
             fi
             echo "Attempt $i: Received HTTP $STATUS, retrying in 5s..."
             sleep 5
             if [ $i -eq 12 ]; then
-              echo "❌ Production health probe failed after 60s"
+              echo "::error::Readiness probe hard gate failed after 60s"
               exit 1
             fi
           done
+
+      - name: Hard Gate 2 - Production Canary Chat Probe (/chat)
+        env:
+          PROD_API_URL: ${{ secrets.PRODUCTION_API_URL }}
+          JWT_ACCESS_SECRET: ${{ secrets.JWT_ACCESS_SECRET }}
+        run: |
+          if [ -z "$JWT_ACCESS_SECRET" ]; then
+            echo "::error::JWT_ACCESS_SECRET secret missing for canary chat authentication"
+            exit 1
+          fi
+
+          CANARY_TOKEN=$(node -e '
+            const jwt = require("jsonwebtoken");
+            const token = jwt.sign({
+              sub: "00000000-0000-4000-8000-000000000002",
+              tenantId: "00000000-0000-4000-8000-000000000001",
+              email: "canary@docsage.io",
+              role: "viewer"
+            }, process.env.JWT_ACCESS_SECRET, { expiresIn: "5m" });
+            process.stdout.write(token);
+          ')
+
+          echo "Executing canary query against $PROD_API_URL/chat..."
+          HTTP_CODE=$(curl -s -o canary_out.json -w "%{http_code}" \
+            -X POST "$PROD_API_URL/chat" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer $CANARY_TOKEN" \
+            -d '{"message": "Canary deployment test: confirm system readiness.", "historyLimit": 0}' || true)
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "::error::Canary chat hard gate failed with HTTP $HTTP_CODE"
+            cat canary_out.json || true
+            exit 1
+          fi
+
+          echo "✅ Canary chat probe passed with HTTP 200"

@@ -50,6 +50,7 @@ Navigate to **Settings -> Secrets and variables -> Actions** and configure the f
 | `VERCEL_TOKEN`              | CD (`deploy-frontend`)      | Vercel Personal Access Token for deployments                          | `...`                                                                   |
 | `VERCEL_ORG_ID`             | CD (`deploy-frontend`)      | Vercel team/org identifier                                            | `team_...`                                                              |
 | `VERCEL_PROJECT_ID`         | CD (`deploy-frontend`)      | Vercel project identifier                                             | `prj_...`                                                               |
+| `FLY_API_TOKEN`             | CD (`deploy-backend`)       | Fly.io API token for deploying backend API and worker microservices   | `FlyV1_...`                                                             |
 | `PRODUCTION_API_URL`        | CD (`smoke-test`)           | Public HTTPS endpoint of deployed production API                      | `https://api.docsage.io`                                                |
 | `DEMO_PASSWORD`             | Database Seeding            | Secret for read-only viewer (`demo@docsage.io`). Never stored in repo | `d3m0_V13w3r_Secr3t!`                                                   |
 
