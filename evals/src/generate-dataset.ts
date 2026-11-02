@@ -27,7 +27,11 @@ export function writeDatasets(baseDir: string): void {
   if (!fs.existsSync(fixturesDir)) fs.mkdirSync(fixturesDir, { recursive: true });
 
   // 1. Write corpus
-  fs.writeFileSync(path.join(datasetDir, 'corpus.json'), JSON.stringify(CORPUS, null, 2), 'utf-8');
+  fs.writeFileSync(
+    path.join(datasetDir, 'corpus.json'),
+    JSON.stringify(CORPUS, null, 2) + '\n',
+    'utf-8',
+  );
 
   // 2. Write golden questions as JSONL with verified-human manualReviewStatus
   const jsonlContent = GOLDEN_QUESTIONS.map((q) =>
@@ -36,7 +40,7 @@ export function writeDatasets(baseDir: string): void {
       manualReviewStatus: q.manualReviewStatus ?? 'verified-human',
     }),
   ).join('\n');
-  fs.writeFileSync(path.join(datasetDir, 'golden.jsonl'), jsonlContent, 'utf-8');
+  fs.writeFileSync(path.join(datasetDir, 'golden.jsonl'), jsonlContent + '\n', 'utf-8');
 
   // 3. Precompute embedding fixtures only if not already present
   const fixturesFile = path.join(fixturesDir, 'embeddings.json');
@@ -51,7 +55,7 @@ export function writeDatasets(baseDir: string): void {
       embeddingFixtures[q.id] = generateDeterministicEmbedding(q.question);
     }
 
-    fs.writeFileSync(fixturesFile, JSON.stringify(embeddingFixtures, null, 2), 'utf-8');
+    fs.writeFileSync(fixturesFile, JSON.stringify(embeddingFixtures, null, 2) + '\n', 'utf-8');
   }
 
   console.info(

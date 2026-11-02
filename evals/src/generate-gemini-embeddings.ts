@@ -127,7 +127,7 @@ export async function generateAndSaveGeminiEmbeddings(
   }
 
   const outputPath = path.join(fixturesDir, 'embeddings.json');
-  fs.writeFileSync(outputPath, JSON.stringify(results, null, 2), 'utf-8');
+  fs.writeFileSync(outputPath, JSON.stringify(results, null, 2) + '\n', 'utf-8');
 
   console.info(
     `✅ Successfully generated and wrote ${Object.keys(results).length} real 768-d Gemini embeddings to ${outputPath}`,

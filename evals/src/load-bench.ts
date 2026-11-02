@@ -125,7 +125,7 @@ export async function runLoadBenchmark(
   };
 
   const resultsPath = path.resolve(import.meta.dirname, '../../docs/results/load-test.json');
-  fs.writeFileSync(resultsPath, JSON.stringify(result, null, 2), 'utf-8');
+  fs.writeFileSync(resultsPath, JSON.stringify(result, null, 2) + '\n', 'utf-8');
 
   console.info(
     `✓ Load benchmark complete: ${total} requests, p50: ${result.latenciesMs.p50}ms, p95: ${result.latenciesMs.p95}ms, TTFT p95: ${result.ttftMs.p95}ms`,

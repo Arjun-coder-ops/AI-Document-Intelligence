@@ -46,7 +46,7 @@ export async function runCLI(): Promise<void> {
     // Save individual experiment JSON
     fs.writeFileSync(
       path.join(resultsDir, `${cfg.name}.json`),
-      JSON.stringify(report, null, 2),
+      JSON.stringify(report, null, 2) + '\n',
       'utf-8',
     );
     console.info(
@@ -57,7 +57,7 @@ export async function runCLI(): Promise<void> {
   // Save comparison summary JSON
   fs.writeFileSync(
     path.join(resultsDir, 'retrieval-comparison.json'),
-    JSON.stringify(results, null, 2),
+    JSON.stringify(results, null, 2) + '\n',
     'utf-8',
   );
 
