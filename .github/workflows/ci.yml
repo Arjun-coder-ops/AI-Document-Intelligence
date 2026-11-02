@@ -81,7 +81,7 @@ jobs:
         run: |
           # Apply schema migrations as postgres owner
           npm --workspace=@docsage/db run db:migrate || true
-          
+
           # Create non-BYPASSRLS app_user role for API isolation testing
           psql "postgresql://postgres:postgres@localhost:5432/docsage_test" -c "
             DO \$\$

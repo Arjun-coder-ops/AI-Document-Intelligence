@@ -57,7 +57,7 @@ async function getQueryEmbedding(query: string): Promise<number[]> {
   const vec: number[] = [];
   for (let i = 0; i < 384; i++) {
     const byte = hash[i % hash.length] ?? 0;
-    vec.push(Number(((byte / 128) - 1).toFixed(4)));
+    vec.push(Number((byte / 128 - 1).toFixed(4)));
   }
   const norm = Math.sqrt(vec.reduce((sum, val) => sum + val * val, 0));
   return vec.map((val) => Number((val / (norm || 1)).toFixed(4)));
@@ -370,9 +370,18 @@ chatRouter.post(
         stageLatencyHistogram.observe({ stage: 'llm_ttft' }, ttftRecorded / 1000);
       }
       stageLatencyHistogram.observe({ stage: 'llm_total' }, totalDuration / 1000);
-      tokensCounter.inc({ tenant_id: user.tenantId, model: llmProvider.modelName, token_type: 'prompt' }, promptTokens);
-      tokensCounter.inc({ tenant_id: user.tenantId, model: llmProvider.modelName, token_type: 'completion' }, completionTokens);
-      costCounter.inc({ tenant_id: user.tenantId, model: llmProvider.modelName }, costEstimateNumber);
+      tokensCounter.inc(
+        { tenant_id: user.tenantId, model: llmProvider.modelName, token_type: 'prompt' },
+        promptTokens,
+      );
+      tokensCounter.inc(
+        { tenant_id: user.tenantId, model: llmProvider.modelName, token_type: 'completion' },
+        completionTokens,
+      );
+      costCounter.inc(
+        { tenant_id: user.tenantId, model: llmProvider.modelName },
+        costEstimateNumber,
+      );
 
       // 14. Emit Done Event
       const donePayload: SSEEventDone = {

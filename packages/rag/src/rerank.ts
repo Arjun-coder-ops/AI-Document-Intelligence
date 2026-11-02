@@ -26,8 +26,33 @@ export class MockReranker implements Reranker {
   ): Promise<Array<{ id: string; score: number }>> {
     await Promise.resolve();
     const stopwords = new Set([
-      'what', 'is', 'the', 'in', 'for', 'of', 'to', 'a', 'an', 'and', 'or', 'by', 'on', 'with', 'at',
-      'how', 'does', 'do', 'are', 'from', 'as', 'that', 'this', 'their', 'when', 'which', 'where',
+      'what',
+      'is',
+      'the',
+      'in',
+      'for',
+      'of',
+      'to',
+      'a',
+      'an',
+      'and',
+      'or',
+      'by',
+      'on',
+      'with',
+      'at',
+      'how',
+      'does',
+      'do',
+      'are',
+      'from',
+      'as',
+      'that',
+      'this',
+      'their',
+      'when',
+      'which',
+      'where',
     ]);
 
     const queryTokens = new Set(
@@ -51,7 +76,8 @@ export class MockReranker implements Reranker {
       }
 
       // Jaccard-like overlap
-      const overlapScore = queryTokens.size > 0 ? matchCount / (queryTokens.size + docTokens.length * 0.1) : 0;
+      const overlapScore =
+        queryTokens.size > 0 ? matchCount / (queryTokens.size + docTokens.length * 0.1) : 0;
 
       return {
         id: doc.id,
@@ -67,9 +93,7 @@ export class MockReranker implements Reranker {
 export class ListwiseLLMReranker implements Reranker {
   readonly name = 'listwise-llm';
 
-  constructor(
-    private readonly llmCall: (prompt: string) => Promise<string>,
-  ) {}
+  constructor(private readonly llmCall: (prompt: string) => Promise<string>) {}
 
   async rerank(
     query: string,

@@ -1,10 +1,13 @@
 # ADR 0005: Hybrid Search, Reciprocal Rank Fusion (RRF), and Cross-Encoder Reranking
 
 ## Status
+
 Accepted
 
 ## Context
+
 Standard RAG systems relying solely on dense vector embeddings suffer from distinct blind spots:
+
 1. **Keyword-Exact Queries:** Acronyms, product SKUs, exact error codes, function names, and legal section identifiers (e.g. "Section 4.2(b)", "CVE-2024-21626", "ERR_INVALID_AUTH") frequently produce poor cosine similarity scores because embedding models compress them into generic semantic spaces.
 2. **Dense False Positives:** Dense retrievers often retrieve passages that share broad conceptual themes with the query but lack the specific keyword or entity requested.
 3. **Sparse/Lexical Blind Spots:** Pure BM25 / PostgreSQL full-text search (`tsvector`) fails when queries use synonyms, paraphrasing, or conceptual abstractions without exact token matches.
@@ -42,6 +45,7 @@ We designed a multi-stage retrieval and verification pipeline:
 - **Bi-Encoder Only Reranking:** Rejected. Cross-encoders examine full cross-attention between query and passage tokens simultaneously, yielding significantly higher precision than bi-encoders for the top-5 selection stage.
 
 ## Consequences
+
 - High precision and recall across both factual/keyword queries and conceptual queries.
 - Zero extra latency or API costs when user questions are unanswerable from the uploaded documents.
 - Hallucinated citations are eliminated at the verification layer before reaching the user.

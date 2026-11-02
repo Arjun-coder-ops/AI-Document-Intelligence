@@ -16,7 +16,10 @@ interface SemanticCacheEntry {
 }
 
 export class MultiTierQueryCache {
-  private exactCache = new Map<string, { text: string; citations: Citation[]; totalTokens: number }>();
+  private exactCache = new Map<
+    string,
+    { text: string; citations: Citation[]; totalTokens: number }
+  >();
   private semanticCache = new Map<string, SemanticCacheEntry[]>(); // Keyed by tenant:version
   private corpusVersions = new Map<string, number>(); // tenantId -> corpus_version
 
@@ -37,7 +40,12 @@ export class MultiTierQueryCache {
     this.semanticCache.delete(`${tenantId}:${current}`);
   }
 
-  private computeExactKey(tenantId: string, version: number, query: string, configStr = ''): string {
+  private computeExactKey(
+    tenantId: string,
+    version: number,
+    query: string,
+    configStr = '',
+  ): string {
     const hash = crypto
       .createHash('sha256')
       .update(`${tenantId}:${version}:${query.trim().toLowerCase()}:${configStr}`)

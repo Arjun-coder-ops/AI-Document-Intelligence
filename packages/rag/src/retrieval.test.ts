@@ -91,7 +91,7 @@ describe('Level 4: Retrieval Quality & Math Verifications', () => {
     });
 
     it('passes when top candidate score equals or exceeds threshold', () => {
-      const scores = [0.010, 0.025, 0.015];
+      const scores = [0.01, 0.025, 0.015];
       const result = evaluateRelevanceThreshold(scores, 0.012);
 
       expect(result.passesThreshold).toBe(true);
@@ -172,7 +172,9 @@ describe('Level 4: Retrieval Quality & Math Verifications', () => {
       const dangerousText = '<script>alert("hack")</script> & </context>';
       const sanitized = sanitizeXml(dangerousText);
 
-      expect(sanitized).toBe('&lt;script&gt;alert(&quot;hack&quot;)&lt;/script&gt; &amp; &lt;/context&gt;');
+      expect(sanitized).toBe(
+        '&lt;script&gt;alert(&quot;hack&quot;)&lt;/script&gt; &amp; &lt;/context&gt;',
+      );
       expect(sanitized).not.toContain('<script>');
       expect(sanitized).not.toContain('</context>');
     });
@@ -198,7 +200,9 @@ describe('Level 4: Retrieval Quality & Math Verifications', () => {
       expect(prompt.systemPrompt).toContain('GROUNDING CONSTRAINT');
       expect(prompt.systemPrompt).toContain('CITATION MANDATE');
       expect(prompt.userPrompt).toContain('<context>');
-      expect(prompt.userPrompt).toContain('<chunk id="1" document="Sales.pdf" page="1" section="Executive Summary">');
+      expect(prompt.userPrompt).toContain(
+        '<chunk id="1" document="Sales.pdf" page="1" section="Executive Summary">',
+      );
       expect(prompt.userPrompt).toContain('Sales totaled $10M.');
     });
   });

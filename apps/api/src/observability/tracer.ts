@@ -21,7 +21,11 @@ export class RequestTracer {
     this.traceId = traceId ?? crypto.randomUUID();
   }
 
-  startSpan(name: string, attributes: Record<string, string | number | boolean> = {}, parentSpanId?: string): string {
+  startSpan(
+    name: string,
+    attributes: Record<string, string | number | boolean> = {},
+    parentSpanId?: string,
+  ): string {
     const spanId = crypto.randomUUID();
     const span: TraceSpan = {
       traceId: this.traceId,
@@ -93,7 +97,12 @@ export class RequestTracer {
                 status: { code: s.status === 'OK' ? 1 : 2, message: s.error },
                 attributes: Object.entries(s.attributes).map(([k, v]) => ({
                   key: k,
-                  value: typeof v === 'string' ? { stringValue: v } : typeof v === 'number' ? { doubleValue: v } : { boolValue: v },
+                  value:
+                    typeof v === 'string'
+                      ? { stringValue: v }
+                      : typeof v === 'number'
+                        ? { doubleValue: v }
+                        : { boolValue: v },
                 })),
               })),
             },

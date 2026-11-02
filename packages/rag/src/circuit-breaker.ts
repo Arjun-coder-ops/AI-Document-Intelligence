@@ -100,7 +100,10 @@ export async function executeWithFallback(
       degraded: false,
     };
   } catch (primaryErr) {
-    console.warn(`Primary provider [${primaryBreaker.name}] failed:`, primaryErr instanceof Error ? primaryErr.message : primaryErr);
+    console.warn(
+      `Primary provider [${primaryBreaker.name}] failed:`,
+      primaryErr instanceof Error ? primaryErr.message : primaryErr,
+    );
   }
 
   // 2. Attempt Secondary Fallback Provider
@@ -112,13 +115,17 @@ export async function executeWithFallback(
       degraded: false,
     };
   } catch (secondaryErr) {
-    console.warn(`Secondary provider [${secondaryBreaker.name}] failed:`, secondaryErr instanceof Error ? secondaryErr.message : secondaryErr);
+    console.warn(
+      `Secondary provider [${secondaryBreaker.name}] failed:`,
+      secondaryErr instanceof Error ? secondaryErr.message : secondaryErr,
+    );
   }
 
   // 3. Final Degradation: return raw retrieved passages
-  const passagesSummary = fallbackPassages.length > 0
-    ? fallbackPassages.map((p, i) => `[${i + 1}] ${p}`).join('\n\n')
-    : 'No relevant passages retrieved.';
+  const passagesSummary =
+    fallbackPassages.length > 0
+      ? fallbackPassages.map((p, i) => `[${i + 1}] ${p}`).join('\n\n')
+      : 'No relevant passages retrieved.';
 
   const degradedText = `AI synthesis unavailable (all upstream providers degraded). Here are the relevant passages from your documents:\n\n${passagesSummary}`;
 

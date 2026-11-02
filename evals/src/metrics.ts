@@ -15,10 +15,7 @@ export function calculateRecallAtK(
   return hits / goldChunkIds.length;
 }
 
-export function calculateMRR(
-  goldChunkIds: string[],
-  retrievedChunkIds: string[],
-): number {
+export function calculateMRR(goldChunkIds: string[], retrievedChunkIds: string[]): number {
   if (goldChunkIds.length === 0) return 1.0;
   const goldSet = new Set(goldChunkIds);
   for (let i = 0; i < retrievedChunkIds.length; i++) {

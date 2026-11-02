@@ -1,12 +1,15 @@
 # ADR 0008: Security Hardening, CSRF Protection, and Prompt Injection Defenses
 
 ## Status
+
 Accepted
 
 ## Context
+
 Enterprise RAG architectures are exposed to both standard web vulnerabilities (Cross-Site Request Forgery, Cross-Origin resource leaks, DoS via body flooding) and AI-specific threat vectors (Indirect Prompt Injection, Delimiter Breakout, System Prompt Exfiltration, and Jailbreaking via retrieved untrusted document chunks).
 
 Production security requirements:
+
 1. **Transport & Header Hardening:** Ensure defensive HTTP response headers (CSP, HSTS, X-Content-Type-Options, X-Frame-Options) and strict CORS origins.
 2. **CSRF Protection on Ambient Cookies:** Prevent cross-origin attackers from triggering token rotation or logout using ambient `httpOnly` refresh tokens.
 3. **LLM Untrusted Boundary Defense:** Prevent malicious text embedded in user documents or queries from hijacking model instructions, escaping delimiters, or exfiltrating the internal system prompt.
@@ -36,6 +39,7 @@ Production security requirements:
    - Built recursive log sanitization redacting password hashes, bearer tokens, client secrets, and masking email addresses.
 
 ## Consequences
+
 - Verified protection against both OWASP Top 10 web vulnerabilities and OWASP Top 10 for LLM Applications (LLM01: Prompt Injection, LLM06: Sensitive Information Disclosure).
 - Zero high/critical findings in dependency security audits.
 - Full trace of security mitigations documented in `docs/THREAT_MODEL.md`.

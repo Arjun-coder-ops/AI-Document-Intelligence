@@ -94,7 +94,9 @@ documentsRouter.post(
             writeStream.destroy();
             fs.unlink(tempFilePath, () => {});
             if (!res.headersSent) {
-              res.status(400).json({ error: 'Invalid file format: file magic bytes do not match %PDF-' });
+              res
+                .status(400)
+                .json({ error: 'Invalid file format: file magic bytes do not match %PDF-' });
             }
             return;
           }
@@ -108,7 +110,9 @@ documentsRouter.post(
           writeStream.destroy();
           fs.unlink(tempFilePath, () => {});
           if (!res.headersSent) {
-            res.status(413).json({ error: `File exceeds maximum allowed size of ${maxUploadSizeMb}MB` });
+            res
+              .status(413)
+              .json({ error: `File exceeds maximum allowed size of ${maxUploadSizeMb}MB` });
           }
           return;
         }

@@ -90,7 +90,15 @@ export function filterModelOutput(output: string): {
  * PII and Secret Scrubber for logs and traces
  */
 export function sanitizeLogData(data: Record<string, unknown>): Record<string, unknown> {
-  const SENSITIVE_KEYS = ['password', 'password_hash', 'token', 'authorization', 'cookie', 'secret', 'key'];
+  const SENSITIVE_KEYS = [
+    'password',
+    'password_hash',
+    'token',
+    'authorization',
+    'cookie',
+    'secret',
+    'key',
+  ];
   const sanitized: Record<string, unknown> = {};
 
   for (const [key, value] of Object.entries(data)) {
@@ -105,7 +113,10 @@ export function sanitizeLogData(data: Record<string, unknown>): Record<string, u
         '***@$2.$3',
       );
       // Mask bearer tokens
-      const maskedBearer = maskedEmail.replace(/Bearer\s+[A-Za-z0-9._~+/-]+=*/g, 'Bearer [REDACTED]');
+      const maskedBearer = maskedEmail.replace(
+        /Bearer\s+[A-Za-z0-9._~+/-]+=*/g,
+        'Bearer [REDACTED]',
+      );
       sanitized[key] = maskedBearer;
     } else {
       sanitized[key] = value;

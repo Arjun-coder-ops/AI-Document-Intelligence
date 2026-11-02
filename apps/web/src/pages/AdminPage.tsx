@@ -26,13 +26,28 @@ export const AdminPage: React.FC = () => {
   return (
     <div style={{ padding: '32px 40px', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
       {/* Page Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: '28px',
+        }}
+      >
         <div>
-          <h1 style={{ fontSize: '1.75rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '4px' }}>
+          <h1
+            style={{
+              fontSize: '1.75rem',
+              fontWeight: 700,
+              letterSpacing: '-0.02em',
+              marginBottom: '4px',
+            }}
+          >
             Tenant Analytics & Observability
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
-            Real-time inference costs, p95 stage latencies via PostgreSQL percentile_cont, and golden dataset feedback.
+            Real-time inference costs, p95 stage latencies via PostgreSQL percentile_cont, and
+            golden dataset feedback.
           </p>
         </div>
 
@@ -57,9 +72,24 @@ export const AdminPage: React.FC = () => {
       >
         {/* Total Cost */}
         <div className="card">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>MONTHLY INFERENCE SPEND</span>
-            <div style={{ padding: '6px', backgroundColor: 'var(--emerald-bg)', borderRadius: 'var(--radius-sm)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '12px',
+            }}
+          >
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+              MONTHLY INFERENCE SPEND
+            </span>
+            <div
+              style={{
+                padding: '6px',
+                backgroundColor: 'var(--emerald-bg)',
+                borderRadius: 'var(--radius-sm)',
+              }}
+            >
               <DollarSign size={16} color="var(--emerald)" />
             </div>
           </div>
@@ -73,9 +103,24 @@ export const AdminPage: React.FC = () => {
 
         {/* Total Messages */}
         <div className="card">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>SYNTHESIZED QUERIES</span>
-            <div style={{ padding: '6px', backgroundColor: 'var(--cyan-bg)', borderRadius: 'var(--radius-sm)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '12px',
+            }}
+          >
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+              SYNTHESIZED QUERIES
+            </span>
+            <div
+              style={{
+                padding: '6px',
+                backgroundColor: 'var(--cyan-bg)',
+                borderRadius: 'var(--radius-sm)',
+              }}
+            >
               <BarChart2 size={16} color="var(--cyan)" />
             </div>
           </div>
@@ -89,9 +134,24 @@ export const AdminPage: React.FC = () => {
 
         {/* p95 Latency */}
         <div className="card">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>p95 TOTAL LATENCY</span>
-            <div style={{ padding: '6px', backgroundColor: 'var(--accent-light)', borderRadius: 'var(--radius-sm)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '12px',
+            }}
+          >
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+              p95 TOTAL LATENCY
+            </span>
+            <div
+              style={{
+                padding: '6px',
+                backgroundColor: 'var(--accent-light)',
+                borderRadius: 'var(--radius-sm)',
+              }}
+            >
               <Clock size={16} color="var(--accent)" />
             </div>
           </div>
@@ -105,20 +165,43 @@ export const AdminPage: React.FC = () => {
 
         {/* Feedback Ratio */}
         <div className="card">
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>ACCURACY FEEDBACK</span>
-            <div style={{ padding: '6px', backgroundColor: 'var(--bg-surface)', borderRadius: 'var(--radius-sm)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '12px',
+            }}
+          >
+            <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+              ACCURACY FEEDBACK
+            </span>
+            <div
+              style={{
+                padding: '6px',
+                backgroundColor: 'var(--bg-surface)',
+                borderRadius: 'var(--radius-sm)',
+              }}
+            >
               <ThumbsUp size={16} color="var(--accent)" />
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--emerald)' }}>
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--emerald)' }}
+            >
               <ThumbsUp size={16} />
-              <span style={{ fontSize: '1.25rem', fontWeight: 700 }}>{analytics?.feedback.thumbsUp ?? 0}</span>
+              <span style={{ fontSize: '1.25rem', fontWeight: 700 }}>
+                {analytics?.feedback.thumbsUp ?? 0}
+              </span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--rose)' }}>
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--rose)' }}
+            >
               <ThumbsDown size={16} />
-              <span style={{ fontSize: '1.25rem', fontWeight: 700 }}>{analytics?.feedback.thumbsDown ?? 0}</span>
+              <span style={{ fontSize: '1.25rem', fontWeight: 700 }}>
+                {analytics?.feedback.thumbsDown ?? 0}
+              </span>
             </div>
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
@@ -137,9 +220,21 @@ export const AdminPage: React.FC = () => {
         </div>
 
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.875rem' }}>
+          <table
+            style={{
+              width: '100%',
+              borderCollapse: 'collapse',
+              textAlign: 'left',
+              fontSize: '0.875rem',
+            }}
+          >
             <thead>
-              <tr style={{ borderBottom: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
+              <tr
+                style={{
+                  borderBottom: '1px solid var(--border-subtle)',
+                  color: 'var(--text-muted)',
+                }}
+              >
                 <th style={{ padding: '10px 16px', fontWeight: 600 }}>RETRIEVAL STRATEGY</th>
                 <th style={{ padding: '10px 16px', fontWeight: 600 }}>RECALL@5</th>
                 <th style={{ padding: '10px 16px', fontWeight: 600 }}>MRR</th>
@@ -150,7 +245,9 @@ export const AdminPage: React.FC = () => {
             </thead>
             <tbody>
               <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                <td style={{ padding: '12px 16px', fontWeight: 500 }}>Baseline Dense (Vector Only)</td>
+                <td style={{ padding: '12px 16px', fontWeight: 500 }}>
+                  Baseline Dense (Vector Only)
+                </td>
                 <td style={{ padding: '12px 16px', color: 'var(--rose)' }}>0.2455</td>
                 <td style={{ padding: '12px 16px', color: 'var(--rose)' }}>0.2157</td>
                 <td style={{ padding: '12px 16px', color: 'var(--rose)' }}>0.1670</td>
@@ -158,7 +255,9 @@ export const AdminPage: React.FC = () => {
                 <td style={{ padding: '12px 16px' }}>0.00</td>
               </tr>
               <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                <td style={{ padding: '12px 16px', fontWeight: 500 }}>Lexical Only (PostgreSQL GIN)</td>
+                <td style={{ padding: '12px 16px', fontWeight: 500 }}>
+                  Lexical Only (PostgreSQL GIN)
+                </td>
                 <td style={{ padding: '12px 16px' }}>0.9545</td>
                 <td style={{ padding: '12px 16px' }}>0.8490</td>
                 <td style={{ padding: '12px 16px' }}>0.8623</td>
@@ -177,11 +276,21 @@ export const AdminPage: React.FC = () => {
                 <td style={{ padding: '12px 16px', fontWeight: 700, color: '#ffffff' }}>
                   ★ Hybrid + Rerank (Production Tier)
                 </td>
-                <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--emerald)' }}>0.9818 (+300%)</td>
-                <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--emerald)' }}>0.8833 (+309%)</td>
-                <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--emerald)' }}>0.9021 (+440%)</td>
-                <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--emerald)' }}>98.2%</td>
-                <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--emerald)' }}>1.00 (100%)</td>
+                <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--emerald)' }}>
+                  0.9818 (+300%)
+                </td>
+                <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--emerald)' }}>
+                  0.8833 (+309%)
+                </td>
+                <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--emerald)' }}>
+                  0.9021 (+440%)
+                </td>
+                <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--emerald)' }}>
+                  98.2%
+                </td>
+                <td style={{ padding: '12px 16px', fontWeight: 700, color: 'var(--emerald)' }}>
+                  1.00 (100%)
+                </td>
               </tr>
             </tbody>
           </table>
@@ -223,9 +332,18 @@ export const AdminPage: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div style={{ padding: '24px', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.875rem' }}>
+          <div
+            style={{
+              padding: '24px',
+              textAlign: 'center',
+              color: 'var(--text-muted)',
+              fontSize: '0.875rem',
+            }}
+          >
             <CheckCircle2 size={24} color="var(--emerald)" style={{ margin: '0 auto 8px' }} />
-            <div>Zero unanswered queries detected. All user queries matched verified chunk citations.</div>
+            <div>
+              Zero unanswered queries detected. All user queries matched verified chunk citations.
+            </div>
           </div>
         )}
       </div>

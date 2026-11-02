@@ -79,39 +79,50 @@ flowchart TB
 
 ## 2. Real Evaluated Results (Zero Fabricated Metrics)
 
-Every number below was generated directly by running the evaluation harness CLI against our committed 65-question golden dataset (`evals/dataset/golden.jsonl`), precomputed fixture embeddings, and k6 stress benchmarks. Raw test logs and bootstrap confidence interval distributions are versioned in [`docs/results/`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/results/).
+Every metric below was generated directly by running the evaluation harness CLI against our committed 87-question golden dataset ([`evals/dataset/golden.jsonl`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/evals/dataset/golden.jsonl)), precomputed 768-d Gemini embeddings, and k6 stress benchmarks. Raw test logs and bootstrap confidence interval distributions are versioned in [`docs/results/`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/results/). Detailed audit findings are documented in [`docs/results/EVAL_AUDIT.md`](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/results/EVAL_AUDIT.md).
 
-### 2.1 Retrieval Quality Comparison Matrix (n = 65)
+### 2.1 Retrieval Quality Comparison Matrix (Held-out Test Split, n = 67)
 
-| Metric | Dense Baseline (`baseline-dense.json`) | Lexical Only (`lexical-only.json`) | Hybrid RRF k=60 (`hybrid.json`) | Hybrid + Rerank (`hybrid-rerank.json`) | Lift vs Baseline |
-| :--- | :---: | :---: | :---: | :---: | :---: |
-| **Recall@1** | 0.0818 (95% CI [0.018, 0.164]) | 0.6545 [0.536, 0.764] | 0.2545 [0.145, 0.364] | **0.6909 [0.573, 0.791]** | **+744%** |
-| **Recall@3** | 0.1636 [0.073, 0.264] | 0.9091 [0.836, 0.973] | 0.5273 [0.400, 0.655] | **0.9545 [0.900, 1.000]** | **+483%** |
-| **Recall@5** | 0.2455 [0.136, 0.355] | 0.9545 [0.900, 1.000] | 0.6000 [0.491, 0.718] | **0.9818 [0.945, 1.000]** | **+300%** |
-| **MRR** | 0.2157 [0.152, 0.291] | 0.8490 [0.777, 0.915] | 0.4687 [0.375, 0.561] | **0.8833 [0.812, 0.946]** | **+309%** |
-| **nDCG@5** | 0.1670 [0.090, 0.247] | 0.8623 [0.797, 0.923] | 0.4502 [0.355, 0.549] | **0.9021 [0.843, 0.953]** | **+440%** |
-| **Hit Rate** | 27.27% | 96.36% | 67.27% | **98.18%** | **+260%** |
-| **Abstention Accuracy** | 0.00% (hallucinates) | 0.00% | 0.00% | **100.0% (10/10)** | **Infinite** |
-| **CI Gate Status** | ❌ FAILED | ❌ FAILED (Abstention) | ❌ FAILED | ✅ **PASSED** | — |
+| Metric                  | Dense Baseline (`baseline-dense.json`) | Lexical Only (`lexical-only.json`) | Hybrid RRF k=60 (`hybrid.json`) | Hybrid + Rerank (`hybrid-rerank.json`) |
+| :---------------------- | :------------------------------------: | :--------------------------------: | :-----------------------------: | :------------------------------------: |
+| **Recall@1**            |         0.9113 [0.863, 0.952]          |       0.4032 [0.282, 0.516]        |      0.7016 [0.597, 0.798]      |       **0.8468 [0.774, 0.911]**        |
+| **Recall@3**            |         0.9839 [0.960, 1.000]          |       0.4758 [0.347, 0.597]        |      0.9758 [0.936, 1.000]      |       **0.9919 [0.976, 1.000]**        |
+| **Recall@5**            |         1.0000 [1.000, 1.000]          |       0.5161 [0.387, 0.645]        |      0.9919 [0.976, 1.000]      |       **1.0000 [1.000, 1.000]**        |
+| **MRR**                 |         1.0000 [1.000, 1.000]          |       0.4723 [0.347, 0.590]        |      0.8876 [0.834, 0.936]      |       **0.9677 [0.936, 0.992]**        |
+| **nDCG@5**              |         0.9960 [0.990, 1.000]          |       0.4798 [0.354, 0.598]        |      0.9090 [0.868, 0.949]      |       **0.9742 [0.950, 0.994]**        |
+| **Hit Rate**            |                 100.0%                 |               51.61%               |             100.0%              |               **100.0%**               |
+| **Abstention Accuracy** |              100.0% (5/5)              |            100.0% (5/5)            |          100.0% (5/5)           |            **100.0% (5/5)**            |
+| **CI Gate Status**      |             ✅ **PASSED**              |        ❌ FAILED (Recall@5)        |          ✅ **PASSED**          |             ✅ **PASSED**              |
 
-*Bootstrap Confidence Intervals: 1,000 resamples at 95% confidence level. Confidence intervals prove statistical significance beyond random chance.*
+_Bootstrap Confidence Intervals: 1,000 resamples at 95% confidence level. Tuned relevance thresholds evaluated on held-out split: $\tau_{\text{dense}} = 0.58$, $\tau_{\text{lexical}} = 0.08$._
+
+### 2.2 Per-Question-Type Recall@5 Breakdown
+
+| Question Type                 | Baseline Dense | Lexical Only | Hybrid RRF | Hybrid + Rerank |
+| :---------------------------- | :------------: | :----------: | :--------: | :-------------: |
+| **Factual**                   |     1.0000     |    0.6500    |   1.0000   |     1.0000      |
+| **Multi-Hop**                 |     1.0000     |    0.7500    |   1.0000   |     1.0000      |
+| **Keyword-Exact**             |     1.0000     |    0.5833    |   1.0000   |     1.0000      |
+| **Paraphrased (Low-Overlap)** |     1.0000     |  **0.1667**  | **0.9444** |   **1.0000**    |
+
+_Finding:_ Lexical retrieval degrades drastically on paraphrased queries (Recall@5 = 0.1667) because queries lack exact word matches. Hybrid search bridges the gap by blending semantic vector proximity with lexical precision.
 
 ### 2.2 System Latency & Concurrency Benchmarks (k6 Stress Test)
 
 Benchmark executed at 50 concurrent virtual users (VUs) with constant arrival rate:
 
-| Metric | Measured Value (`docs/results/load-test.json`) | Production Target |
-| :--- | :---: | :---: |
-| **Concurrent Virtual Users** | 50 VUs | 50 VUs |
-| **Throughput** | **218.59 requests/sec** | > 100 req/sec |
-| **Total Requests** | 1,145 | — |
-| **HTTP Error Rate** | **0.00% (0 / 1,145)** | < 0.1% |
-| **Latency p50** | **221 ms** | < 300 ms |
-| **Latency p90** | **249 ms** | < 400 ms |
-| **Latency p95** | **250 ms** | < 500 ms |
-| **Latency p99** | **262 ms** | < 800 ms |
-| **Time-to-First-Token (TTFT p50)** | **98 ms** | < 150 ms |
-| **Time-to-First-Token (TTFT p95)** | **111 ms** | < 200 ms |
+| Metric                             | Measured Value (`docs/results/load-test.json`) | Production Target |
+| :--------------------------------- | :--------------------------------------------: | :---------------: |
+| **Concurrent Virtual Users**       |                     50 VUs                     |      50 VUs       |
+| **Throughput**                     |            **218.59 requests/sec**             |   > 100 req/sec   |
+| **Total Requests**                 |                     1,145                      |         —         |
+| **HTTP Error Rate**                |             **0.00% (0 / 1,145)**              |      < 0.1%       |
+| **Latency p50**                    |                   **221 ms**                   |     < 300 ms      |
+| **Latency p90**                    |                   **249 ms**                   |     < 400 ms      |
+| **Latency p95**                    |                   **250 ms**                   |     < 500 ms      |
+| **Latency p99**                    |                   **262 ms**                   |     < 800 ms      |
+| **Time-to-First-Token (TTFT p50)** |                   **98 ms**                    |     < 150 ms      |
+| **Time-to-First-Token (TTFT p95)** |                   **111 ms**                   |     < 200 ms      |
 
 ---
 
@@ -120,12 +131,14 @@ Benchmark executed at 50 concurrent virtual users (VUs) with constant arrival ra
 During load testing and retrieval evaluation, two critical bottlenecks were identified, profiled, and resolved:
 
 ### Bottleneck 1: HNSW Graph Latency Explosion Under Concurrency
+
 - **Symptom:** At 50 concurrent searches, p95 vector query latency surged from 18ms to 82ms.
 - **Root Cause Profiling:** The default session parameter `hnsw.ef_search = 100` performed redundant graph vertex inspections on 384-dimensional vectors.
 - **Engineered Fix:** Profiled retrieval quality across `ef_search` values {20, 40, 60, 100}. Setting `hnsw.ef_search = 40` preserved 98.18% Recall@5 while dropping p95 retrieval latency from 82ms to 18ms (**-78% latency drop**).
 - **Code Reference:** Configured in `PostgresQueryExecutor` transaction session preamble.
 
 ### Bottleneck 2: Connection Pool Exhaustion on Mixed Ingestion/Chat Workloads
+
 - **Symptom:** Simultaneous PDF streaming and chat requests resulted in 4.2% connection timeout errors (`timeout exceeded when acquiring client from pool`).
 - **Root Cause:** Drizzle Kit migrations, asynchronous workers, and short-lived HTTP transactions competed for a single default pool of 10 clients.
 - **Engineered Fix:** Decoupled migration traffic to `DATABASE_URL_DIRECT` (Neon direct endpoint), scaled pooled client connections to 25 with a strict `statement_timeout = 15000` (15s), and wrapped all tenant transactions in transaction-local `set_config('app.tenant_id', $1, true)`. Connection errors dropped to **0.00%**.
@@ -134,18 +147,18 @@ During load testing and retrieval evaluation, two critical bottlenecks were iden
 
 ## 4. Architectural Decisions & Trade-Offs (ADRs)
 
-| ADR | Decision | Considered Alternatives | Trade-Off Rationale |
-| :--- | :--- | :--- | :--- |
-| [**0001**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0001-monorepo-structure-and-stack.md) | TypeScript Monorepo (npm workspaces) | Polyglot (FastAPI + React), Turborepo, pnpm | Eliminates schema drift via `@docsage/shared` Zod contracts; zero language barrier across API and worker. |
-| [**0002**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0002-hnsw-vs-ivfflat-indexing.md) | HNSW Cosine Index (`m=16, ef_c=64`) | IVFFlat, Brute-force Flat | HNSW delivers $O(\log N)$ query latency without requiring retraining after document mutations. |
-| [**0003**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0003-neon-pooled-vs-direct-connections.md) | Pooled Connection for App, Direct for DDL | Single pooled connection, Standalone PgBouncer | PgBouncer in transaction mode does not support DDL or prepared statements; direct Neon endpoint is required for migrations. |
-| [**0004**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0004-asynchronous-ingestion-with-pg-boss.md) | `pg-boss` Job Queue | Redis BullMQ, RabbitMQ, Celery | Operates inside PostgreSQL; leverages existing transactional guarantees with zero extra infrastructure. |
-| [**0005**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0005-hybrid-retrieval-and-reciprocal-rank-fusion.md) | Hybrid SQL Search + RRF (k=60) + Cross-Encoder | Pure dense search, BM25-only, Splade | Dense search fails on acronyms and part numbers; lexical search fails on semantic phrasing. RRF unites both. |
-| [**0006**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0006-production-streaming-chat-and-cancellation.md) | Fetch-based SSE + AbortController Propagation | WebSockets, Long Polling | SSE is simple, firewall-friendly, and supports HTTP/2 multiplexing. Immediate upstream abort prevents wasted GPU tokens. |
-| [**0007**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0007-circuit-breakers-multi-tier-caching-and-rate-limiting.md) | Circuit Breaker + Multi-Tier Cache | Hard failover, Redis-only cache | Full jitter exponential backoff eliminates thundering herds; corpus version integer invalidates caches in $O(1)$. |
-| [**0008**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0008-security-hardening-and-prompt-injection-defenses.md) | Canary Sandbox + Instruction Defuser | LLM-based guardrail agents | Regex defusing and canary tokens operate in sub-millisecond time without incurring additional LLM latency or costs. |
-| [**0009**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0009-observability-architecture-and-metrics.md) | OpenTelemetry Spans + Prometheus `/metrics` | Proprietary APMs (Datadog, New Relic) | Vendor-neutral OpenTelemetry standards ensure zero lock-in and seamless compatibility with Grafana Cloud. |
-| [**0010**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0010-deployment-target-and-continuous-delivery.md) | Multi-Stage Containers on Fly.io / GHCR | Bare VPS, Kubernetes (EKS) | Docker multi-stage builds yield lightweight (<150MB) container runtimes with reproducible build layers. |
+| ADR                                                                                                                                    | Decision                                       | Considered Alternatives                        | Trade-Off Rationale                                                                                                         |
+| :------------------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------- | :--------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------- |
+| [**0001**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0001-monorepo-structure-and-stack.md)                          | TypeScript Monorepo (npm workspaces)           | Polyglot (FastAPI + React), Turborepo, pnpm    | Eliminates schema drift via `@docsage/shared` Zod contracts; zero language barrier across API and worker.                   |
+| [**0002**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0002-hnsw-vs-ivfflat-indexing.md)                              | HNSW Cosine Index (`m=16, ef_c=64`)            | IVFFlat, Brute-force Flat                      | HNSW delivers $O(\log N)$ query latency without requiring retraining after document mutations.                              |
+| [**0003**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0003-neon-pooled-vs-direct-connections.md)                     | Pooled Connection for App, Direct for DDL      | Single pooled connection, Standalone PgBouncer | PgBouncer in transaction mode does not support DDL or prepared statements; direct Neon endpoint is required for migrations. |
+| [**0004**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0004-asynchronous-ingestion-with-pg-boss.md)                   | `pg-boss` Job Queue                            | Redis BullMQ, RabbitMQ, Celery                 | Operates inside PostgreSQL; leverages existing transactional guarantees with zero extra infrastructure.                     |
+| [**0005**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0005-hybrid-retrieval-and-reciprocal-rank-fusion.md)           | Hybrid SQL Search + RRF (k=60) + Cross-Encoder | Pure dense search, BM25-only, Splade           | Dense search fails on acronyms and part numbers; lexical search fails on semantic phrasing. RRF unites both.                |
+| [**0006**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0006-production-streaming-chat-and-cancellation.md)            | Fetch-based SSE + AbortController Propagation  | WebSockets, Long Polling                       | SSE is simple, firewall-friendly, and supports HTTP/2 multiplexing. Immediate upstream abort prevents wasted GPU tokens.    |
+| [**0007**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0007-circuit-breakers-multi-tier-caching-and-rate-limiting.md) | Circuit Breaker + Multi-Tier Cache             | Hard failover, Redis-only cache                | Full jitter exponential backoff eliminates thundering herds; corpus version integer invalidates caches in $O(1)$.           |
+| [**0008**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0008-security-hardening-and-prompt-injection-defenses.md)      | Canary Sandbox + Instruction Defuser           | LLM-based guardrail agents                     | Regex defusing and canary tokens operate in sub-millisecond time without incurring additional LLM latency or costs.         |
+| [**0009**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0009-observability-architecture-and-metrics.md)                | OpenTelemetry Spans + Prometheus `/metrics`    | Proprietary APMs (Datadog, New Relic)          | Vendor-neutral OpenTelemetry standards ensure zero lock-in and seamless compatibility with Grafana Cloud.                   |
+| [**0010**](file:///c:/Users/gogua/OneDrive/Desktop/rag-chatbot/docs/adr/0010-deployment-target-and-continuous-delivery.md)             | Multi-Stage Containers on Fly.io / GHCR        | Bare VPS, Kubernetes (EKS)                     | Docker multi-stage builds yield lightweight (<150MB) container runtimes with reproducible build layers.                     |
 
 ---
 
@@ -179,13 +192,13 @@ DocSage treats multi-tenancy as a non-negotiable security invariant enforced at 
 
 ## 6. Failure Modes & Resilience Engineering
 
-| Failure Mode | Detection | System Mitigation |
-| :--- | :--- | :--- |
-| **Primary LLM Provider Outage / 429** | Opossum Circuit Breaker detects 50% failure rate over rolling 10s window | Tripped circuit switches immediately to fallback LLM (OpenAI GPT-4o-mini). If fallback also fails, returns verified retrieved context with *"AI synthesis unavailable"*. |
-| **Client Abort / Network Disconnect** | Express `req.on('close')` event fires mid-stream | AbortController propagates abort signal upstream to LLM client; stream terminates immediately, saving GPU tokens and logging partial latency. |
-| **Worker Crash Mid-Ingestion** | `pg-boss` heartbeat timeout | Job fails safely, sets `document.status = 'failed'`. Retries execute idempotently by purging partial chunk records for that document version before re-parsing. |
-| **Corrupt PDF / Malicious File** | Header magic byte check `%PDF-` on disk stream | Stream is rejected before buffering with HTTP 400; zero arbitrary file uploads allowed. |
-| **Zero Relevant Context** | RRF top-1 score < 0.015 threshold cutoff | Short-circuits LLM generation; returns immediate deterministic abstention response: *"The indexed documents do not contain information to answer this question."* (Abstention accuracy: **100%**). |
+| Failure Mode                          | Detection                                                                | System Mitigation                                                                                                                                                                                  |
+| :------------------------------------ | :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Primary LLM Provider Outage / 429** | Opossum Circuit Breaker detects 50% failure rate over rolling 10s window | Tripped circuit switches immediately to fallback LLM (OpenAI GPT-4o-mini). If fallback also fails, returns verified retrieved context with _"AI synthesis unavailable"_.                           |
+| **Client Abort / Network Disconnect** | Express `req.on('close')` event fires mid-stream                         | AbortController propagates abort signal upstream to LLM client; stream terminates immediately, saving GPU tokens and logging partial latency.                                                      |
+| **Worker Crash Mid-Ingestion**        | `pg-boss` heartbeat timeout                                              | Job fails safely, sets `document.status = 'failed'`. Retries execute idempotently by purging partial chunk records for that document version before re-parsing.                                    |
+| **Corrupt PDF / Malicious File**      | Header magic byte check `%PDF-` on disk stream                           | Stream is rejected before buffering with HTTP 400; zero arbitrary file uploads allowed.                                                                                                            |
+| **Zero Relevant Context**             | RRF top-1 score < 0.015 threshold cutoff                                 | Short-circuits LLM generation; returns immediate deterministic abstention response: _"The indexed documents do not contain information to answer this question."_ (Abstention accuracy: **100%**). |
 
 ---
 
@@ -216,11 +229,13 @@ At 100x current data scale (10,000 tenants, 100M chunks), the following architec
 ## 9. Quick Start (< 5 Minutes)
 
 ### Prerequisites
+
 - Node.js 20+
 - Docker & Docker Compose
 - (Optional) Groq or OpenAI API key for live LLM inference; mock providers work offline without keys.
 
 ### 1. Clone & Install Dependencies
+
 ```bash
 git clone https://github.com/Arjun-coder-ops/AI-Document-Intelligence.git
 cd AI-Document-Intelligence
@@ -230,34 +245,40 @@ npm ci
 ```
 
 ### 2. Configure Environment
+
 ```bash
 cp .env.example .env
 # Default .env connects to local Docker PostgreSQL instance (postgres://postgres:postgres@localhost:5432/docsage)
 ```
 
 ### 3. Spin Up Local pgvector & Database Infrastructure
+
 ```bash
 docker compose up -d postgres redis
 ```
 
 ### 4. Run Migrations & Seed Demo Data
+
 ```bash
 npm run db:migrate
 npm run db:seed
 ```
 
 ### 5. Start Full Monorepo Dev Cluster
+
 ```bash
 npm run dev
 ```
 
 The system will start:
+
 - **API Server:** `http://localhost:3000` (API Docs & SSE chat)
 - **Web App:** `http://localhost:5173`
 - **Worker:** Asynchronous `pg-boss` ingestion consumer
 - **Metrics:** `http://localhost:3000/metrics`
 
 ### Pre-Seeded Demo Tenant Credentials
+
 - **Admin User:** `admin@enterprise.com` / `AdminPassword123!` (Acme Global)
 - **Viewer User:** `viewer@enterprise.com` / `ViewerPassword123!` (Acme Global)
 

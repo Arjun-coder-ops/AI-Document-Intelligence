@@ -34,7 +34,12 @@ adminRouter.get(
           FROM messages
           WHERE tenant_id = ${user.tenantId}::uuid
         `);
-        const costRow = (costResult as unknown as Array<{ total_cost: string | number; total_messages: string | number }>)[0];
+        const costRow = (
+          costResult as unknown as Array<{
+            total_cost: string | number;
+            total_messages: string | number;
+          }>
+        )[0];
 
         // 2. p95 Latency calculation
         const latencyResult = await tx.execute(sql`
@@ -46,7 +51,9 @@ adminRouter.get(
             AND role = 'assistant'
             AND total_duration_ms IS NOT NULL
         `);
-        const latencyRow = (latencyResult as unknown as Array<{ p95_latency_ms: number; p50_latency_ms: number }>)[0];
+        const latencyRow = (
+          latencyResult as unknown as Array<{ p95_latency_ms: number; p50_latency_ms: number }>
+        )[0];
 
         // 3. Feedback counts
         const feedbackResult = await tx.execute(sql`
@@ -56,7 +63,12 @@ adminRouter.get(
           FROM feedback
           WHERE tenant_id = ${user.tenantId}::uuid
         `);
-        const feedbackRow = (feedbackResult as unknown as Array<{ thumbs_up: string | number; thumbs_down: string | number }>)[0];
+        const feedbackRow = (
+          feedbackResult as unknown as Array<{
+            thumbs_up: string | number;
+            thumbs_down: string | number;
+          }>
+        )[0];
 
         // 4. Top unanswered queries (where citations is empty or fallback triggered)
         const unanswered = await tx.query.messages.findMany({
@@ -66,7 +78,9 @@ adminRouter.get(
         });
 
         const topUnanswered = unanswered
-          .filter((m) => m.role === 'assistant' && (Array.isArray(m.citations) && m.citations.length === 0))
+          .filter(
+            (m) => m.role === 'assistant' && Array.isArray(m.citations) && m.citations.length === 0,
+          )
           .map((m) => ({
             messageId: m.id,
             contentSnippet: m.content.slice(0, 100),
@@ -108,7 +122,9 @@ adminRouter.post(
 
     const parseResult = FeedbackRequestSchema.safeParse(req.body);
     if (!parseResult.success) {
-      res.status(400).json({ error: 'Invalid feedback submission', details: parseResult.error.flatten() });
+      res
+        .status(400)
+        .json({ error: 'Invalid feedback submission', details: parseResult.error.flatten() });
       return;
     }
 

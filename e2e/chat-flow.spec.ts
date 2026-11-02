@@ -4,7 +4,7 @@ test.describe('DocSage E2E Flow: Health and Authentication Contract', () => {
   test('API liveness probe returns HTTP 200 live status', async ({ request }) => {
     const response = await request.get('/health/live');
     expect(response.status()).toBe(200);
-    const body = await response.json() as { status: string };
+    const body = (await response.json()) as { status: string };
     expect(body.status).toBe('live');
   });
 

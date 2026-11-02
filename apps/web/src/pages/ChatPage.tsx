@@ -19,12 +19,14 @@ interface ChatMessage {
   role: 'user' | 'assistant';
   content: string;
   citations?: Citation[] | undefined;
-  metrics?: {
-    latencyMs?: number | undefined;
-    ttftMs?: number | undefined;
-    totalTokens?: number | undefined;
-    estimatedCost?: number | undefined;
-  } | undefined;
+  metrics?:
+    | {
+        latencyMs?: number | undefined;
+        ttftMs?: number | undefined;
+        totalTokens?: number | undefined;
+        estimatedCost?: number | undefined;
+      }
+    | undefined;
   feedbackSubmitted?: 1 | -1 | undefined;
 }
 
@@ -207,7 +209,15 @@ export const ChatPage: React.FC = () => {
   return (
     <div style={{ display: 'flex', height: '100%', position: 'relative', overflow: 'hidden' }}>
       {/* Center Chat Timeline */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          height: '100%',
+          overflow: 'hidden',
+        }}
+      >
         {/* Timeline Header */}
         <div
           style={{
@@ -224,14 +234,31 @@ export const ChatPage: React.FC = () => {
             <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>Enterprise RAG Assistant</span>
           </div>
 
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontSize: '0.8rem',
+              color: 'var(--text-muted)',
+            }}
+          >
             <span className="badge badge-emerald">Hybrid + Rerank</span>
             <span className="badge badge-neutral">Groq Llama 3.3 70B</span>
           </div>
         </div>
 
         {/* Message Stream Scroll Area */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <div
+          style={{
+            flex: 1,
+            overflowY: 'auto',
+            padding: '24px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '20px',
+          }}
+        >
           {messages.map((msg) => (
             <div
               key={msg.id}
@@ -258,7 +285,11 @@ export const ChatPage: React.FC = () => {
                   color: '#ffffff',
                 }}
               >
-                {msg.role === 'user' ? <User size={16} /> : <Sparkles size={16} color="var(--accent)" />}
+                {msg.role === 'user' ? (
+                  <User size={16} />
+                ) : (
+                  <Sparkles size={16} color="var(--accent)" />
+                )}
               </div>
 
               {/* Message Bubble */}
@@ -298,9 +329,7 @@ export const ChatPage: React.FC = () => {
                           <Zap size={11} color="var(--accent)" /> TTFT: {msg.metrics.ttftMs}ms
                         </span>
                       )}
-                      {msg.metrics?.latencyMs && (
-                        <span>Total: {msg.metrics.latencyMs}ms</span>
-                      )}
+                      {msg.metrics?.latencyMs && <span>Total: {msg.metrics.latencyMs}ms</span>}
                       {msg.metrics?.estimatedCost !== undefined && (
                         <span style={{ display: 'inline-flex', alignItems: 'center', gap: '1px' }}>
                           <DollarSign size={11} color="var(--emerald)" />
@@ -319,7 +348,11 @@ export const ChatPage: React.FC = () => {
                             }
                           }}
                           className="btn btn-ghost"
-                          style={{ padding: '3px 8px', fontSize: '0.75rem', color: 'var(--accent)' }}
+                          style={{
+                            padding: '3px 8px',
+                            fontSize: '0.75rem',
+                            color: 'var(--accent)',
+                          }}
                         >
                           <BookOpen size={12} />
                           {msg.citations.length} Sources
@@ -334,7 +367,8 @@ export const ChatPage: React.FC = () => {
                         className="btn btn-ghost"
                         style={{
                           padding: '3px 6px',
-                          color: msg.feedbackSubmitted === 1 ? 'var(--emerald)' : 'var(--text-muted)',
+                          color:
+                            msg.feedbackSubmitted === 1 ? 'var(--emerald)' : 'var(--text-muted)',
                         }}
                         title="Accurate citation"
                       >
@@ -376,7 +410,11 @@ export const ChatPage: React.FC = () => {
                   setInput(preset);
                 }}
                 className="btn btn-secondary"
-                style={{ fontSize: '0.75rem', padding: '6px 12px', borderRadius: 'var(--radius-full)' }}
+                style={{
+                  fontSize: '0.75rem',
+                  padding: '6px 12px',
+                  borderRadius: 'var(--radius-full)',
+                }}
               >
                 {preset}
               </button>
@@ -385,7 +423,13 @@ export const ChatPage: React.FC = () => {
         )}
 
         {/* Input Bar */}
-        <div style={{ padding: '16px 24px', borderTop: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-app)' }}>
+        <div
+          style={{
+            padding: '16px 24px',
+            borderTop: '1px solid var(--border-subtle)',
+            backgroundColor: 'var(--bg-app)',
+          }}
+        >
           <form
             onSubmit={(e) => {
               void handleSend(e);
@@ -452,7 +496,15 @@ export const ChatPage: React.FC = () => {
               justifyContent: 'space-between',
             }}
           >
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, fontSize: '0.9rem' }}>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px',
+                fontWeight: 600,
+                fontSize: '0.9rem',
+              }}
+            >
               <BookOpen size={16} color="var(--accent)" />
               <span>Verified Evidence ({currentCitations.length})</span>
             </div>
@@ -467,7 +519,16 @@ export const ChatPage: React.FC = () => {
           </div>
 
           {/* Drawer Content */}
-          <div style={{ flex: 1, overflowY: 'auto', padding: '16px', display: 'flex', flexDirection: 'column', gap: '14px' }}>
+          <div
+            style={{
+              flex: 1,
+              overflowY: 'auto',
+              padding: '16px',
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '14px',
+            }}
+          >
             {currentCitations.map((cit, idx) => {
               const isSelected = selectedCitation?.chunkId === cit.chunkId;
               return (
@@ -483,7 +544,14 @@ export const ChatPage: React.FC = () => {
                     transition: 'all 0.15s ease',
                   }}
                 >
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      marginBottom: '8px',
+                    }}
+                  >
                     <span className="badge badge-emerald" style={{ fontSize: '0.7rem' }}>
                       [{idx + 1}] Score {(cit.relevanceScore * 100).toFixed(0)}%
                     </span>
@@ -492,7 +560,14 @@ export const ChatPage: React.FC = () => {
                     </span>
                   </div>
 
-                  <div style={{ fontWeight: 600, fontSize: '0.85rem', marginBottom: '6px', color: 'var(--text-primary)' }}>
+                  <div
+                    style={{
+                      fontWeight: 600,
+                      fontSize: '0.85rem',
+                      marginBottom: '6px',
+                      color: 'var(--text-primary)',
+                    }}
+                  >
                     {cit.documentTitle}
                   </div>
 

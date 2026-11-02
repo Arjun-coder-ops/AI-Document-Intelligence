@@ -15,10 +15,10 @@ export const options = {
       executor: 'ramping-vus',
       startVUs: 1,
       stages: [
-        { duration: '30s', target: 10 },  // Ramp to 10 concurrent users
-        { duration: '1m', target: 25 },   // Ramp to 25 concurrent users
-        { duration: '30s', target: 50 },  // Peak load: 50 concurrent streaming users
-        { duration: '30s', target: 0 },   // Graceful ramp-down
+        { duration: '30s', target: 10 }, // Ramp to 10 concurrent users
+        { duration: '1m', target: 25 }, // Ramp to 25 concurrent users
+        { duration: '30s', target: 50 }, // Peak load: 50 concurrent streaming users
+        { duration: '30s', target: 0 }, // Graceful ramp-down
       ],
       gracefulRampDown: '10s',
     },
@@ -32,8 +32,8 @@ export const options = {
   },
   thresholds: {
     http_req_duration: ['p(95)<1500', 'p(99)<3000'], // 95% of requests must complete under 1.5s
-    error_rate: ['rate<0.02'],                       // Error rate must stay below 2%
-    chat_time_to_first_token_ms: ['p(95)<400'],      // TTFT p95 under 400ms
+    error_rate: ['rate<0.02'], // Error rate must stay below 2%
+    chat_time_to_first_token_ms: ['p(95)<400'], // TTFT p95 under 400ms
   },
 };
 

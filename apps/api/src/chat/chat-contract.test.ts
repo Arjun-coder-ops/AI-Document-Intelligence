@@ -75,24 +75,20 @@ describe('apps/api: Chat SSE API Contract Tests', () => {
     });
 
     // Populate exact cache correctly with object
-    queryCache.set(
-      '6ba7b810-9dad-11d1-80b4-00c04fd430c8',
-      'What is Raft consensus?',
-      {
-        text: 'Raft consensus decomposes state machine replication into leader election and log ordering [1].',
-        citations: [
-          {
-            chunkId: '550e8400-e29b-41d4-a716-446655440020',
-            documentId: '550e8400-e29b-41d4-a716-446655440021',
-            documentTitle: 'Raft Paper',
-            page: 1,
-            snippet: 'Leader election algorithm',
-            relevanceScore: 0.95,
-          },
-        ],
-        totalTokens: 15,
-      },
-    );
+    queryCache.set('6ba7b810-9dad-11d1-80b4-00c04fd430c8', 'What is Raft consensus?', {
+      text: 'Raft consensus decomposes state machine replication into leader election and log ordering [1].',
+      citations: [
+        {
+          chunkId: '550e8400-e29b-41d4-a716-446655440020',
+          documentId: '550e8400-e29b-41d4-a716-446655440021',
+          documentTitle: 'Raft Paper',
+          page: 1,
+          snippet: 'Leader election algorithm',
+          relevanceScore: 0.95,
+        },
+      ],
+      totalTokens: 15,
+    });
 
     const res = await request(app)
       .post('/chat')

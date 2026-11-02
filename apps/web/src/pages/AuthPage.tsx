@@ -86,7 +86,14 @@ export const AuthPage: React.FC = () => {
           >
             <Sparkles size={24} />
           </div>
-          <h1 style={{ fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em', marginBottom: '6px' }}>
+          <h1
+            style={{
+              fontSize: '1.5rem',
+              fontWeight: 700,
+              letterSpacing: '-0.02em',
+              marginBottom: '6px',
+            }}
+          >
             {isRegister ? 'Create Workspace' : 'Welcome to DocSage'}
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
@@ -127,11 +134,27 @@ export const AuthPage: React.FC = () => {
         >
           {isRegister && (
             <div>
-              <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '6px' }}>
+              <label
+                style={{
+                  display: 'block',
+                  fontSize: '0.8rem',
+                  fontWeight: 500,
+                  color: 'var(--text-secondary)',
+                  marginBottom: '6px',
+                }}
+              >
                 Organization / Workspace Name
               </label>
               <div style={{ position: 'relative' }}>
-                <Building size={16} style={{ position: 'absolute', left: '12px', top: '13px', color: 'var(--text-muted)' }} />
+                <Building
+                  size={16}
+                  style={{
+                    position: 'absolute',
+                    left: '12px',
+                    top: '13px',
+                    color: 'var(--text-muted)',
+                  }}
+                />
                 <input
                   type="text"
                   className="input"
@@ -146,11 +169,27 @@ export const AuthPage: React.FC = () => {
           )}
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '6px' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.8rem',
+                fontWeight: 500,
+                color: 'var(--text-secondary)',
+                marginBottom: '6px',
+              }}
+            >
               Corporate Email Address
             </label>
             <div style={{ position: 'relative' }}>
-              <Mail size={16} style={{ position: 'absolute', left: '12px', top: '13px', color: 'var(--text-muted)' }} />
+              <Mail
+                size={16}
+                style={{
+                  position: 'absolute',
+                  left: '12px',
+                  top: '13px',
+                  color: 'var(--text-muted)',
+                }}
+              />
               <input
                 type="email"
                 className="input"
@@ -164,11 +203,27 @@ export const AuthPage: React.FC = () => {
           </div>
 
           <div>
-            <label style={{ display: 'block', fontSize: '0.8rem', fontWeight: 500, color: 'var(--text-secondary)', marginBottom: '6px' }}>
+            <label
+              style={{
+                display: 'block',
+                fontSize: '0.8rem',
+                fontWeight: 500,
+                color: 'var(--text-secondary)',
+                marginBottom: '6px',
+              }}
+            >
               Password
             </label>
             <div style={{ position: 'relative' }}>
-              <Lock size={16} style={{ position: 'absolute', left: '12px', top: '13px', color: 'var(--text-muted)' }} />
+              <Lock
+                size={16}
+                style={{
+                  position: 'absolute',
+                  left: '12px',
+                  top: '13px',
+                  color: 'var(--text-muted)',
+                }}
+              />
               <input
                 type="password"
                 className="input"
@@ -202,7 +257,9 @@ export const AuthPage: React.FC = () => {
         {/* Mode Toggle */}
         <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '0.875rem' }}>
           <span style={{ color: 'var(--text-muted)' }}>
-            {isRegister ? 'Already have a workspace account?' : "Don't have an enterprise workspace?"}{' '}
+            {isRegister
+              ? 'Already have a workspace account?'
+              : "Don't have an enterprise workspace?"}{' '}
           </span>
           <button
             type="button"

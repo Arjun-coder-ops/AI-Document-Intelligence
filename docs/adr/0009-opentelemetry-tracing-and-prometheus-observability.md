@@ -1,10 +1,13 @@
 # ADR 0009: OpenTelemetry Tracing, Prometheus Metrics, and Observability Architecture
 
 ## Status
+
 Accepted
 
 ## Context
+
 A production enterprise RAG pipeline comprises distinct sequential and parallel stages:
+
 1. Query embedding generation
 2. Dense HNSW vector search
 3. Lexical GIN full-text search
@@ -39,6 +42,7 @@ When end-to-end latency increases or user queries fail, traditional log statemen
    - Committed Grafana dashboard definition in `infra/grafana/docsage-overview.json`.
 
 ## Consequences
+
 - End-to-end trace breakdown enables immediate root-cause diagnosis of latency regressions.
 - Financial observability with tenant-level cost tracking ensures compliance with monthly spend quotas.
 - Real-time visibility into cache performance and client disconnection behavior.

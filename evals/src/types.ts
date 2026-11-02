@@ -1,4 +1,5 @@
-export type QuestionType = 'factual' | 'multi-hop' | 'keyword-exact' | 'unanswerable';
+export type QuestionType =
+  'factual' | 'multi-hop' | 'keyword-exact' | 'unanswerable' | 'paraphrased';
 
 export interface GoldenQuestion {
   id: string;
@@ -6,6 +7,7 @@ export interface GoldenQuestion {
   expectedAnswer: string;
   goldChunkIds: string[];
   type: QuestionType;
+  manualReviewStatus?: 'verified-human' | 'pending' | 'unverified';
 }
 
 export interface CorpusChunk {
@@ -27,6 +29,9 @@ export interface RetrievalEvalReport {
   timestamp: string;
   configName: string;
   sampleCount: number;
+  testSampleCount?: number;
+  heldOutSampleCount?: number;
+  perTypeRecallAt5?: Record<string, number>;
   metrics: {
     recallAt1: MetricConfidenceInterval;
     recallAt3: MetricConfidenceInterval;
@@ -35,6 +40,8 @@ export interface RetrievalEvalReport {
     ndcgAt5: MetricConfidenceInterval;
     hitRate: MetricConfidenceInterval;
     unanswerableAbstentionAccuracy: MetricConfidenceInterval;
+    abstentionPrecision?: number;
+    abstentionRecall?: number;
   };
   passedThresholds: boolean;
   thresholdFailures: string[];

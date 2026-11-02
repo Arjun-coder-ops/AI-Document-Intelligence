@@ -26,10 +26,7 @@ export function hashContent(content: string): string {
  * Structure-aware chunker that respects document headers, paragraphs, and table boundaries.
  * Guarantees tables are never severed mid-row and preserves parent section hierarchy.
  */
-export function chunkDocument(
-  pages: RawPageText[],
-  options: ChunkerOptions = {},
-): DocumentChunk[] {
+export function chunkDocument(pages: RawPageText[], options: ChunkerOptions = {}): DocumentChunk[] {
   const targetTokens = options.targetTokens ?? 400; // ~1600 characters
   const overlapTokens = options.overlapTokens ?? 60; // ~240 characters
   const targetChars = targetTokens * 4;
@@ -99,7 +96,9 @@ export function chunkDocument(
       if (!line) continue;
 
       // 1. Detect section headings
-      const headingMatch = line.match(/^(#{1,4}\s+[A-Za-z0-9\s-]+|[0-9]+(\.[0-9]+)*\s+[A-Za-z\s]+)$/);
+      const headingMatch = line.match(
+        /^(#{1,4}\s+[A-Za-z0-9\s-]+|[0-9]+(\.[0-9]+)*\s+[A-Za-z\s]+)$/,
+      );
       if (headingMatch) {
         flushBlock();
         currentSection = line.replace(/^#+\s*/, '').trim();

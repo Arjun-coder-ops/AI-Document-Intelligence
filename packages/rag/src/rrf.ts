@@ -14,7 +14,11 @@ export interface RankedItem {
   id: string;
 }
 
-export function computeRRFScore(denseRank: number | null, lexicalRank: number | null, k = 60): number {
+export function computeRRFScore(
+  denseRank: number | null,
+  lexicalRank: number | null,
+  k = 60,
+): number {
   let score = 0;
   if (denseRank !== null && denseRank > 0) {
     score += 1 / (k + denseRank);

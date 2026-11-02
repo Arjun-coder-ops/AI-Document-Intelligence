@@ -81,11 +81,11 @@ export class ApiClient {
     });
 
     if (!res.ok) {
-      const err = await res.json() as { error?: string };
+      const err = (await res.json()) as { error?: string };
       throw new Error(err.error ?? 'Authentication failed');
     }
 
-    const data = await res.json() as AuthResponse;
+    const data = (await res.json()) as AuthResponse;
     this.setToken(data.accessToken);
     return data;
   }
@@ -98,11 +98,11 @@ export class ApiClient {
     });
 
     if (!res.ok) {
-      const err = await res.json() as { error?: string };
+      const err = (await res.json()) as { error?: string };
       throw new Error(err.error ?? 'Registration failed');
     }
 
-    const data = await res.json() as AuthResponse;
+    const data = (await res.json()) as AuthResponse;
     this.setToken(data.accessToken);
     return data;
   }
@@ -123,7 +123,7 @@ export class ApiClient {
     if (!res.ok) {
       throw new Error('Failed to load documents');
     }
-    const data = await res.json() as { documents: DocumentRecord[] };
+    const data = (await res.json()) as { documents: DocumentRecord[] };
     return data.documents;
   }
 
@@ -138,11 +138,11 @@ export class ApiClient {
     });
 
     if (!res.ok) {
-      const err = await res.json() as { error?: string };
+      const err = (await res.json()) as { error?: string };
       throw new Error(err.error ?? 'Upload failed');
     }
 
-    return await res.json() as { documentId: string; isDuplicate?: boolean };
+    return (await res.json()) as { documentId: string; isDuplicate?: boolean };
   }
 
   async getDocumentStatus(id: string): Promise<DocumentStatusResponse> {
@@ -152,7 +152,7 @@ export class ApiClient {
     if (!res.ok) {
       throw new Error('Failed to retrieve document status');
     }
-    return await res.json() as DocumentStatusResponse;
+    return (await res.json()) as DocumentStatusResponse;
   }
 
   async deleteDocument(id: string): Promise<void> {
@@ -161,7 +161,7 @@ export class ApiClient {
       headers: this.getHeaders(),
     });
     if (!res.ok) {
-      const err = await res.json() as { error?: string };
+      const err = (await res.json()) as { error?: string };
       throw new Error(err.error ?? 'Failed to delete document');
     }
   }
@@ -190,7 +190,7 @@ export class ApiClient {
     });
 
     if (!res.ok) {
-      const err = await res.json() as { error?: string };
+      const err = (await res.json()) as { error?: string };
       throw new Error(err.error ?? 'Chat request failed');
     }
 
@@ -262,7 +262,7 @@ export class ApiClient {
     if (!res.ok) {
       throw new Error('Failed to load admin analytics');
     }
-    return await res.json() as AdminAnalyticsData;
+    return (await res.json()) as AdminAnalyticsData;
   }
 
   async submitFeedback(messageId: string, rating: 1 | -1, comment?: string): Promise<void> {

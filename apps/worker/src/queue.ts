@@ -28,18 +28,24 @@ export class JobQueueService {
     const embeddingProvider = getEmbeddingProvider();
 
     // Register Ingestion Worker
-    await this.boss.work<IngestionJobData>(QUEUE_INGESTION, async (jobs: Job<IngestionJobData>[]) => {
-      const job = jobs[0];
-      if (!job) return;
-      await processIngestion(job.data, embeddingProvider);
-    });
+    await this.boss.work<IngestionJobData>(
+      QUEUE_INGESTION,
+      async (jobs: Job<IngestionJobData>[]) => {
+        const job = jobs[0];
+        if (!job) return;
+        await processIngestion(job.data, embeddingProvider);
+      },
+    );
 
     // Register Purge Worker
-    await this.boss.work<{ documentId: string }>(QUEUE_PURGE, async (jobs: Job<{ documentId: string }>[]) => {
-      const job = jobs[0];
-      if (!job) return;
-      await processPurge(job.data.documentId);
-    });
+    await this.boss.work<{ documentId: string }>(
+      QUEUE_PURGE,
+      async (jobs: Job<{ documentId: string }>[]) => {
+        const job = jobs[0];
+        if (!job) return;
+        await processPurge(job.data.documentId);
+      },
+    );
 
     console.info('✓ JobQueueService workers registered for ingestion and purge');
   }

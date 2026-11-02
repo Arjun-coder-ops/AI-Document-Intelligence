@@ -79,7 +79,12 @@ export function createApp(): express.Express {
     let message = 'Internal Server Error';
 
     if (typeof err === 'object' && err !== null) {
-      const errObj = err as { status?: number; statusCode?: number; type?: string; message?: string };
+      const errObj = err as {
+        status?: number;
+        statusCode?: number;
+        type?: string;
+        message?: string;
+      };
       if (typeof errObj.status === 'number') {
         status = errObj.status;
       } else if (typeof errObj.statusCode === 'number') {
