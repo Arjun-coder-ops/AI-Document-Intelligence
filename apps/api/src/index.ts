@@ -106,7 +106,7 @@ export function createApp(): express.Express {
 
 const app = createApp();
 
-if (process.env['NODE_ENV'] !== 'test') {
+if (process.env['NODE_ENV'] !== 'test' || process.env['SERVE_TEST'] === 'true') {
   const port = process.env['PORT'] ?? 8000;
   const server = app.listen(port, () => {
     console.info(`DocSage API server listening on port ${port}`);

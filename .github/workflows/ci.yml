@@ -282,7 +282,8 @@ jobs:
         env:
           PORT: 3000
           PLAYWRIGHT_BASE_URL: http://localhost:3000
-          NODE_ENV: test
+          NODE_ENV: production
+          SERVE_TEST: 'true'
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/docsage_test
           DATABASE_URL_DIRECT: postgresql://postgres:postgres@localhost:5432/docsage_test
           JWT_ACCESS_SECRET: super_secure_production_grade_jwt_secret_32_chars_long
@@ -294,8 +295,7 @@ jobs:
           REDIS_URL: redis://localhost:6379
           EMBEDDING_DIM: 768
         run: |
-          npm run build --workspace=@docsage/shared
-          npm run build --workspace=@docsage/api
+          npm run build
           node apps/api/dist/index.js &
           sleep 3
           npx playwright test
