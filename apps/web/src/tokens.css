@@ -1,0 +1,73 @@
+/* DocSage "The Reading Room" Design System Tokens */
+:root {
+  --bg-app: #f6f1e7;
+  --bg-sidebar: #efe9dc;
+  --bg-card: #fffcf7;
+  --bg-surface: #ede6d8;
+  --bg-surface-hover: #e4dcd0;
+  --bg-input: #ffffff;
+  --border-subtle: #e2dacd;
+  --border-strong: #c8bfaf;
+  --border-focus: #1f5c4b;
+  --text-primary: #1b1a17;
+  --text-secondary: #5a564e;
+  --text-muted: #847e73;
+  --text-inverse: #faf7f2;
+  --accent: #1f5c4b;
+  --accent-hover: #164337;
+  --accent-light: rgba(31, 92, 75, 0.09);
+  --accent-glow: rgba(31, 92, 75, 0.25);
+  --highlight: #f2d55c;
+  --highlight-bg: rgba(242, 213, 92, 0.25);
+  --emerald: #1f5c4b;
+  --emerald-bg: rgba(31, 92, 75, 0.1);
+  --amber: #c97a16;
+  --amber-bg: rgba(201, 122, 22, 0.12);
+  --rose: #c84b31;
+  --rose-bg: rgba(200, 75, 49, 0.12);
+  --cyan: #2d728f;
+  --cyan-bg: rgba(45, 114, 143, 0.12);
+  --font-serif: 'Fraunces', Georgia, serif;
+  --font-sans: 'Instrument Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+  --radius-sm: 6px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-full: 9999px;
+  --shadow-sm: 0 1px 3px rgba(27, 26, 23, 0.05);
+  --shadow-md: 0 4px 10px -2px rgba(27, 26, 23, 0.08);
+  --shadow-lg: 0 12px 24px -4px rgba(27, 26, 23, 0.1);
+}
+
+.dark {
+  --bg-app: #141413;
+  --bg-sidebar: #171715;
+  --bg-card: #1a1a18;
+  --bg-surface: #22221f;
+  --bg-surface-hover: #2a2a27;
+  --bg-input: #161614;
+  --border-subtle: #2a2a28;
+  --border-strong: #3f3f3b;
+  --border-focus: #2d5a49;
+  --text-primary: #edeae4;
+  --text-secondary: #a9a49a;
+  --text-muted: #736e65;
+  --text-inverse: #141413;
+  --accent: #2d5a49;
+  --accent-hover: #3a6f5c;
+  --accent-light: rgba(45, 90, 73, 0.2);
+  --accent-glow: rgba(45, 90, 73, 0.35);
+  --highlight: #8a7727;
+  --highlight-bg: rgba(138, 119, 39, 0.25);
+  --emerald: #347b62;
+  --emerald-bg: rgba(52, 123, 98, 0.2);
+  --amber: #d48a2c;
+  --amber-bg: rgba(212, 138, 44, 0.2);
+  --rose: #e26d5c;
+  --rose-bg: rgba(226, 109, 92, 0.2);
+  --cyan: #4e9ab8;
+  --cyan-bg: rgba(78, 154, 184, 0.2);
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 4px 10px -2px rgba(0, 0, 0, 0.45);
+  --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.55);
+}

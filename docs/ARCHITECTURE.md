@@ -10,7 +10,7 @@ This document outlines the architectural boundaries, feature-first modular decom
 2. **Defensive Multi-Tenancy:** Row-Level Security (RLS) policies filter every SQL query at the database engine level via `current_setting('app.tenant_id', true)`. Connections operate under a non-BYPASSRLS role (`app_user`).
 3. **Fail-Fast Boundary Validation:** All network boundaries, environment secrets, and inter-package payloads are validated strictly with Zod schemas.
 4. **Deterministic Observability:** Every retrieval query, LLM token stream, and background worker job emits structured OpenTelemetry spans and Prometheus metrics.
-5. **No Blind Vendor Lock-In:** Core interfaces (`LLMProvider`, `EmbeddingProvider`, `Reranker`) abstract upstream foundation model APIs, with native Gemini 1.5 Flash fallback and zero legacy OpenAI dependencies.
+5. **No Blind Vendor Lock-In:** Core interfaces (`LLMProvider`, `EmbeddingProvider`, `Reranker`) abstract upstream foundation model APIs, with native Gemini 1.5 Flash fallback and zero legacy external dependencies.
 
 ---
 

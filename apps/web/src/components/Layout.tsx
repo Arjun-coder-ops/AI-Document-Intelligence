@@ -10,11 +10,29 @@ import {
   Layers,
   ChevronRight,
   Sparkles,
+  Sun,
+  Moon,
+  Home,
 } from 'lucide-react';
 
 export const Layout: React.FC = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [isDark, setIsDark] = React.useState(() =>
+    document.documentElement.classList.contains('dark'),
+  );
+
+  const toggleTheme = () => {
+    const nextDark = !isDark;
+    setIsDark(nextDark);
+    if (nextDark) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('docsage-theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('docsage-theme', 'light');
+    }
+  };
 
   const handleLogout = async () => {
     await logout();
@@ -22,6 +40,7 @@ export const Layout: React.FC = () => {
   };
 
   const navItems = [
+    { to: '/', label: 'Overview & Metrics', icon: Home },
     { to: '/chat', label: 'Streaming Chat', icon: MessageSquare },
     { to: '/documents', label: 'Document Library', icon: FileText },
     { to: '/admin', label: 'Admin & Analytics', icon: BarChart3, requireAdmin: true },
@@ -33,30 +52,45 @@ export const Layout: React.FC = () => {
       <aside className="sidebar" aria-label="Main Navigation">
         {/* Brand Header */}
         <div style={{ padding: '20px', borderBottom: '1px solid var(--border-subtle)' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div
-              style={{
-                width: '32px',
-                height: '32px',
-                borderRadius: 'var(--radius-md)',
-                backgroundColor: 'var(--accent)',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: '#fff',
-                boxShadow: 'var(--shadow-glow)',
-              }}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <div
+                style={{
+                  width: '32px',
+                  height: '32px',
+                  borderRadius: 'var(--radius-md)',
+                  backgroundColor: 'var(--accent)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#fff',
+                  boxShadow: 'var(--shadow-sm)',
+                }}
+              >
+                <Sparkles size={18} />
+              </div>
+              <div>
+                <div
+                  className="font-serif"
+                  style={{ fontWeight: 700, fontSize: '1.05rem', letterSpacing: '-0.02em' }}
+                >
+                  DocSage
+                </div>
+                <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
+                  The Reading Room
+                </div>
+              </div>
+            </div>
+
+            <button
+              onClick={toggleTheme}
+              aria-label="Toggle color theme"
+              title={isDark ? 'Switch to Warm Paper' : 'Switch to Dark Paper'}
+              className="btn btn-ghost"
+              style={{ padding: '6px', borderRadius: 'var(--radius-sm)' }}
             >
-              <Sparkles size={18} />
-            </div>
-            <div>
-              <div style={{ fontWeight: 700, fontSize: '1rem', letterSpacing: '-0.02em' }}>
-                DocSage
-              </div>
-              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>
-                Enterprise RAG v1.0
-              </div>
-            </div>
+              {isDark ? <Sun size={16} /> : <Moon size={16} />}
+            </button>
           </div>
 
           {/* Tenant Badge */}

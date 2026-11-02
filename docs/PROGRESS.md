@@ -528,3 +528,42 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `npm run test:coverage` -> 31 test files, 163 tests passed, coverage >= 80% (VERIFIED).
   - `npm run eval:retrieval` -> Passed CI regression gate; Recall@5 = 1.0000, MRR = 0.9677, Abstention = 1.0000 (VERIFIED).
 - **Next Up:** Phase 5 — UI Redesign via Stitch MCP (Design system, warm paper theme, Fraunces + Instrument Sans, motion landing page, product app shell).
+
+---
+
+## Phase 5: UI Redesign via Stitch MCP & Better Design
+
+- **Status:** COMPLETE (Passed: Prettier, ESLint, TypeScript typecheck, 31 test files / 163 tests green, Knip 0 dead code, jscpd 2.94% < 3.0%, Better Design comprehension check passed, 0 files > 300 lines)
+- **What Was Built:**
+  - **Design System ("The Reading Room"):**
+    - Established warm editorial paper palette (`#F6F1E7` warm paper, `#1B1A17` rich ink, `#1F5C4B` deep forest green, `#F2D55C` marker yellow, `#C84B31` terracotta alert) in `apps/web/src/tokens.css` and `apps/web/src/index.css`.
+    - Integrated typography with `@fontsource/fraunces` (editorial serif headers) and `@fontsource/instrument-sans` (humanist grotesque body).
+    - Class-based dark mode (`.dark`) synchronized with `localStorage` and system `prefers-color-scheme`.
+  - **Modular Motion Landing Page (`/`):**
+    - `HeroSection.tsx`: Editorial display typography, live verified stats ticker (Recall@5: 1.000, MRR: 0.968, P95 TTFT: 111ms, Error Rate: 0.00%).
+    - `PipelineSection.tsx`: Interactive 4-stage pipeline stepper (Ingestion -> Dual-Vector Indexing -> RRF Fusion -> Gemini Listwise Rerank).
+    - `TryItWidget.tsx`: Interactive sandbox querying technical architecture corpus with citation provenance and latency breakdowns.
+    - `ComparisonMatrix.tsx`: Empirical comparison table reading verified metrics from `docs/results/retrieval-comparison.json`.
+    - `SecuritySection.tsx`: Visual explainer of PostgreSQL Row Level Security (RLS) policies and transaction-local `set_config` scoping.
+    - `BenchmarkVisualizer.tsx`: Interactive bar chart visualizer comparing Hit Rate, MRR, nDCG@5, and TTFT latency across models.
+    - `LandingPage.tsx`: Top navbar with theme toggle and local quickstart terminal block with copy button.
+  - **Product App Shell Enhancement (`apps/web/src/components/Layout.tsx`):**
+    - Embedded dark/light mode toggle in sidebar brand header.
+    - Added overview link returning to landing page and verified active navigation styling.
+  - **Better Design MCP Integration:**
+    - Loaded UI principles (`color`, `spacing`) and UX principles (`positioning`, `navigation`).
+    - Verified against review rules and passed comprehension check (`check-comprehension`: Passed, 0 critical, 0 serious).
+  - **Strict Monorepo Line Limit:**
+    - Modularized tokens into `tokens.css` (73 lines) and `index.css` (246 lines).
+    - All landing components decomposed: 0 files exceeding 300 lines across 100% of the repository.
+- **Verification Evidence:**
+  - `git grep -in --untracked openai` -> Only matches `docs/adr/0011-*.md` (VERIFIED).
+  - Files > 300 lines -> 0 files (VERIFIED).
+  - `npm run format:check` -> All matched files use Prettier code style (VERIFIED).
+  - `npm run lint` -> Passed with 0 warnings, 0 errors (VERIFIED).
+  - `npm run typecheck` (`tsc -b`) -> Passed with 0 errors (VERIFIED).
+  - `npm run knip` -> Passed with 0 dead code/dependencies (VERIFIED).
+  - `npm run jscpd` -> Passed at 2.94% duplication (VERIFIED).
+  - `npm test` -> 31 test files, 163 tests passed (VERIFIED).
+  - `npm run eval:retrieval` -> Passed CI regression gate; Recall@5 = 1.0000, MRR = 0.9677, Abstention = 1.0000 (VERIFIED).
+- **Next Up:** Phase 6 — Final Verification & Delivery (README.md, INTERVIEW_PREP.md, RESUME_BULLETS.md citing verified JSON metrics, final CI/CD verification).

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider, useAuth } from './context/AuthContext.js';
 import { Layout } from './components/Layout.js';
+import { LandingPage } from './pages/LandingPage.js';
 import { AuthPage } from './pages/AuthPage.js';
 import { ChatPage } from './pages/ChatPage.js';
 import { DocumentsPage } from './pages/DocumentsPage.js';
@@ -59,23 +60,22 @@ export const App: React.FC = () => {
         <AuthProvider>
           <BrowserRouter>
             <Routes>
-              {/* Public Auth Route */}
+              {/* Public Marketing Landing & Auth Routes */}
+              <Route path="/" element={<LandingPage />} />
               <Route path="/auth" element={<AuthPage />} />
 
               {/* Protected App Routes inside Nav Shell */}
               <Route
-                path="/"
                 element={
                   <ProtectedRoute>
                     <Layout />
                   </ProtectedRoute>
                 }
               >
-                <Route index element={<Navigate to="/chat" replace />} />
-                <Route path="chat" element={<ChatPage />} />
-                <Route path="documents" element={<DocumentsPage />} />
+                <Route path="/chat" element={<ChatPage />} />
+                <Route path="/documents" element={<DocumentsPage />} />
                 <Route
-                  path="admin"
+                  path="/admin"
                   element={
                     <ProtectedRoute requireAdmin>
                       <AdminPage />
@@ -85,7 +85,7 @@ export const App: React.FC = () => {
               </Route>
 
               {/* Catch-all */}
-              <Route path="*" element={<Navigate to="/chat" replace />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
           </BrowserRouter>
         </AuthProvider>

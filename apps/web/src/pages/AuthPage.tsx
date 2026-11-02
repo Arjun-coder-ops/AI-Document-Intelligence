@@ -70,7 +70,7 @@ export const AuthPage: React.FC = () => {
         }}
       >
         {/* Brand Header */}
-        <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+        <div style={{ textAlign: 'center', marginBottom: '28px', position: 'relative' }}>
           <div
             style={{
               width: '48px',
@@ -82,14 +82,15 @@ export const AuthPage: React.FC = () => {
               justifyContent: 'center',
               color: '#ffffff',
               marginBottom: '16px',
-              boxShadow: 'var(--shadow-glow)',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             <Sparkles size={24} />
           </div>
           <h1
+            className="font-serif"
             style={{
-              fontSize: '1.5rem',
+              fontSize: '1.75rem',
               fontWeight: 700,
               letterSpacing: '-0.02em',
               marginBottom: '6px',

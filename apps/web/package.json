@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@docsage/shared": "*",
+    "@fontsource/fraunces": "^5.3.0",
+    "@fontsource/instrument-sans": "^5.3.0",
     "@tanstack/react-query": "^5.66.9",
     "lucide-react": "^0.475.0",
     "react": "^18.3.1",
