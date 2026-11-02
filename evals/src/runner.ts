@@ -16,6 +16,8 @@ export interface EvalConfig {
   lexicalThreshold?: number;
 }
 
+export { runAbstentionSweep } from './abstention.js';
+
 export function splitDataset(questions: GoldenQuestion[] = GOLDEN_QUESTIONS): {
   heldOut: GoldenQuestion[];
   testSet: GoldenQuestion[];
@@ -26,13 +28,13 @@ export function splitDataset(questions: GoldenQuestion[] = GOLDEN_QUESTIONS): {
   const keyword = questions.filter((q) => q.type === 'keyword-exact');
   const paraphrased = questions.filter((q) => q.type === 'paraphrased');
 
-  // 20 held-out questions for threshold tuning (not in test set)
+  // 45 held-out questions for threshold tuning (>= 40 required by C3)
   const heldOut = [
-    ...unanswerable.slice(0, 5),
-    ...factual.slice(0, 5),
-    ...multiHop.slice(0, 3),
-    ...keyword.slice(0, 3),
-    ...paraphrased.slice(0, 4),
+    ...unanswerable.slice(0, 15),
+    ...factual.slice(0, 10),
+    ...multiHop.slice(0, 10),
+    ...keyword.slice(0, 4),
+    ...paraphrased.slice(0, 6),
   ];
   const heldOutIds = new Set(heldOut.map((q) => q.id));
   const testSet = questions.filter((q) => !heldOutIds.has(q.id));

@@ -7,6 +7,7 @@ import {
   bootstrapConfidenceInterval,
 } from './metrics.js';
 import { GOLDEN_QUESTIONS, CORPUS } from './generate-dataset.js';
+import { splitDataset } from './runner.js';
 
 describe('Level 6: Evaluation Harness & Metrics Verification', () => {
   // ── 1. Information Retrieval Metrics Math ─────────────────────────────────
@@ -68,20 +69,32 @@ describe('Level 6: Evaluation Harness & Metrics Verification', () => {
 
   // ── 3. Golden Dataset Integrity Checks ────────────────────────────────────
   describe('Golden Dataset Compliance', () => {
-    it('contains at least 60 total questions and at least 10 unanswerables', () => {
+    it('contains at least 60 total questions and at least 20 unanswerables', () => {
       expect(GOLDEN_QUESTIONS.length).toBeGreaterThanOrEqual(60);
 
       const unanswerables = GOLDEN_QUESTIONS.filter((q) => q.type === 'unanswerable');
-      expect(unanswerables.length).toBeGreaterThanOrEqual(10);
+      expect(unanswerables.length).toBeGreaterThanOrEqual(20);
 
       const factual = GOLDEN_QUESTIONS.filter((q) => q.type === 'factual');
       expect(factual.length).toBeGreaterThanOrEqual(20);
 
       const multiHop = GOLDEN_QUESTIONS.filter((q) => q.type === 'multi-hop');
-      expect(multiHop.length).toBeGreaterThanOrEqual(10);
+      expect(multiHop.length).toBeGreaterThanOrEqual(30);
 
       const keyword = GOLDEN_QUESTIONS.filter((q) => q.type === 'keyword-exact');
       expect(keyword.length).toBeGreaterThanOrEqual(10);
+    });
+
+    it('creates a held-out split of at least 40 questions with disjoint test set', () => {
+      const { heldOut, testSet } = splitDataset(GOLDEN_QUESTIONS);
+
+      expect(heldOut.length).toBeGreaterThanOrEqual(40);
+      expect(testSet.length).toBeGreaterThanOrEqual(50);
+
+      const heldOutIds = new Set(heldOut.map((q) => q.id));
+      for (const t of testSet) {
+        expect(heldOutIds.has(t.id)).toBe(false);
+      }
     });
 
     it('ensures all answerable questions reference valid corpus chunk IDs', () => {

@@ -1,12 +1,13 @@
 import fs from 'fs';
 import path from 'path';
-import { runRetrievalEvaluation, type EvalConfig } from './runner.js';
-import { writeDatasets } from './generate-dataset.js';
+import { runRetrievalEvaluation, splitDataset, runAbstentionSweep, type EvalConfig } from './runner.js';
+import { CORPUS, writeDatasets } from './generate-dataset.js';
 import type { RetrievalEvalReport } from './types.js';
 
 export * from './types.js';
 export * from './metrics.js';
 export * from './runner.js';
+export * from './abstention.js';
 
 export async function runCLI(): Promise<void> {
   const evalsDir = path.resolve(import.meta.dirname, '..');
@@ -22,17 +23,29 @@ export async function runCLI(): Promise<void> {
   console.info('      DocSage RAG Evaluation Harness & Experiment Matrix       ');
   console.info('===============================================================');
 
+  // 1. Calibrate abstention thresholds on held-out split (>= 40 questions)
+  const rawFixtures = fs.readFileSync(path.join(evalsDir, 'fixtures', 'embeddings.json'), 'utf-8');
+  const embeddingFixtures = JSON.parse(rawFixtures) as Record<string, number[]>;
+  const { heldOut } = splitDataset();
+  console.info(`Calibrating abstention thresholds on ${heldOut.length} held-out questions...`);
+  const sweepReport = runAbstentionSweep(heldOut, CORPUS, embeddingFixtures, resultsDir);
+  const tunedDense = sweepReport.optimalThresholds.denseThreshold;
+  const tunedLexical = sweepReport.optimalThresholds.lexicalThreshold;
+  console.info(
+    `✓ Optimal Thresholds: dense=${tunedDense}, lexical=${tunedLexical} (False Abstention: ${(sweepReport.optimalThresholds.falseAbstentionRate * 100).toFixed(1)}%, True Abstention: ${(sweepReport.optimalThresholds.trueAbstentionRate * 100).toFixed(1)}%)\n`,
+  );
+
   const configs: EvalConfig[] = [
-    { name: 'baseline-dense', mode: 'baseline-dense', denseThreshold: 0.58 },
-    { name: 'lexical-only', mode: 'lexical-only', lexicalThreshold: 0.08 },
-    { name: 'hybrid', mode: 'hybrid', k: 60, denseThreshold: 0.58, lexicalThreshold: 0.08 },
+    { name: 'baseline-dense', mode: 'baseline-dense', denseThreshold: tunedDense },
+    { name: 'lexical-only', mode: 'lexical-only', lexicalThreshold: tunedLexical },
+    { name: 'hybrid', mode: 'hybrid', k: 60, denseThreshold: tunedDense, lexicalThreshold: tunedLexical },
     {
       name: 'hybrid-rerank',
       mode: 'hybrid-rerank',
       k: 60,
       rerankTopK: 5,
-      denseThreshold: 0.58,
-      lexicalThreshold: 0.08,
+      denseThreshold: tunedDense,
+      lexicalThreshold: tunedLexical,
     },
   ];
 
