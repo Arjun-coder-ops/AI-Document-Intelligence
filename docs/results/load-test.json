@@ -1,23 +1,23 @@
 {
-  "timestamp": "2026-11-01T19:48:22.628Z",
+  "timestamp": "2026-11-02T16:20:34.152Z",
   "concurrentUsers": 50,
-  "totalRequests": 1145,
-  "successfulRequests": 1145,
+  "totalRequests": 1154,
+  "successfulRequests": 1154,
   "failedRequests": 0,
   "errorRate": 0,
-  "throughputReqPerSec": 218.59,
+  "throughputReqPerSec": 219.18,
   "latenciesMs": {
-    "p50": 221,
+    "p50": 219,
     "p90": 249,
-    "p95": 250,
-    "p99": 262,
-    "min": 181,
-    "max": 265
+    "p95": 251,
+    "p99": 260,
+    "min": 182,
+    "max": 264
   },
   "ttftMs": {
     "p50": 98,
     "p95": 111,
-    "p99": 114
+    "p99": 115
   },
   "bottlenecksFoundAndFixed": [
     {
