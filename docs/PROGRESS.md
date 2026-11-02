@@ -409,4 +409,24 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - `docs/results/load-test.json` -> 50 VUs, 218.59 req/sec, 250ms p95 latency recorded
 - **Project Rebuild Status:** 100% COMPLETE.
 
+---
+
+## Phase 0: Push Existing Rebuild & Initial Verification
+
+- **Status:** COMPLETE (Passed: secret scan, lint, typecheck, tests, push to remote)
+- **What Was Done:**
+  - Audited repository status, commit history, and remotes. Remote `origin/main` was verified to hold legacy Python history (`51181b1`).
+  - Audited `.gitignore` (covers `.env*`, `!.env.example`, `node_modules`, `dist`, `coverage`, `uploads`, `*.log`).
+  - Audited full git commit history for secrets (`git log --all --full-history -- "**/.env"`, regex pattern scan for API keys `gsk-`, `sk-`, `AKIA`, `AIza`); confirmed zero secrets tracked in history.
+  - Verified full test suite: `npm run lint` (0 warnings), `npm run typecheck` (0 errors), `npm test` (29 test files, 142 tests green).
+  - Pushed all rebuild commits cleanly to remote tracking branch `origin/rebuild/pern-ts` without force pushing, preserving legacy history on `main` and generating PR link.
+- **Verification Evidence:**
+  - `git status` -> On branch `rebuild/pern-ts`, clean working tree.
+  - `npm run lint` -> Passed (0 warnings, 0 errors).
+  - `npm run typecheck` -> Passed (0 errors).
+  - `npm test` -> 29 passed, 142 passed, 0 failed.
+  - `git push -u origin HEAD:rebuild/pern-ts` -> Successfully pushed to remote `origin/rebuild/pern-ts`.
+- **Next Up:** Phase 1 — Verify the evaluation results (honesty audit).
+
+
 
