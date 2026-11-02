@@ -32,7 +32,7 @@ const refreshCookieOptions = {
 
 async function sendAuthSuccessResponse(
   res: Response,
-  user: { id: string; tenantId: string; email: string; role: 'admin' | 'member' | 'viewer' },
+  user: { id: string; tenantId: string; email: string; role: 'admin' | 'viewer' | 'editor' },
   statusCode = 200,
 ): Promise<void> {
   const accessToken = createAccessToken({
