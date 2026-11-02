@@ -20,6 +20,7 @@
     "eval": "npm --workspace=@docsage/evals run eval",
     "eval:retrieval": "npm --workspace=@docsage/evals run eval:retrieval",
     "test:load": "npm --workspace=@docsage/evals run test:load",
+    "db:setup-roles": "npm --workspace=@docsage/db run db:setup-roles",
     "knip": "knip",
     "jscpd": "jscpd packages apps evals",
     "screens:capture": "tsx scripts/capture-screens.ts",

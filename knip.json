@@ -1,6 +1,7 @@
 {
   "$schema": "https://unpkg.com/knip@5/schema.json",
   "ignoreDependencies": ["@commitlint/cli", "lint-staged", "drizzle-kit"],
+  "ignoreBinaries": ["tsx"],
   "workspaces": {
     ".": {
       "entry": ["e2e/**/*.ts", "drizzle.config.ts", "scripts/**/*.ts"],
@@ -28,6 +29,7 @@
       "entry": [
         "src/check.ts",
         "src/migrate.ts",
+        "src/setup-roles.ts",
         "src/reembed.ts",
         "src/seed.ts",
         "src/**/*.test.ts"

@@ -1,0 +1,18 @@
+title = "DocSage Gitleaks Configuration"
+
+[extend]
+useDefault = true
+
+[[rules]]
+id = "sql-hardcoded-role-password"
+description = "Hardcoded password literal detected in SQL role statement"
+regex = '''(?i)(?:CREATE|ALTER)\s+ROLE\s+[a-zA-Z0-9_]+\s+.*PASSWORD\s+'[^']+' '''
+path = '''(?i)\.(sql)$'''
+tags = ["security", "sql", "credentials"]
+
+[[rules]]
+id = "sql-password-assignment"
+description = "Hardcoded password assignment detected in SQL"
+regex = '''(?i)password\s*=\s*'[^']{3,}' '''
+path = '''(?i)\.(sql)$'''
+tags = ["security", "sql", "credentials"]

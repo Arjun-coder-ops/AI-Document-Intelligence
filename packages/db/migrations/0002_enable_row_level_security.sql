@@ -4,7 +4,7 @@
 DO $$
 BEGIN
   IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'app_user') THEN
-    CREATE ROLE app_user WITH LOGIN PASSWORD 'app_user_secure_password';
+    CREATE ROLE app_user WITH LOGIN NOBYPASSRLS NOSUPERUSER;
   END IF;
 END
 $$;

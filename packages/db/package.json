@@ -23,6 +23,7 @@
     "db:generate": "drizzle-kit generate",
     "db:migrate": "node dist/migrate.js",
     "db:check": "node dist/check.js",
+    "db:setup-roles": "node dist/setup-roles.js",
     "db:reembed": "node dist/reembed.js",
     "db:seed": "node dist/seed.js"
   },
