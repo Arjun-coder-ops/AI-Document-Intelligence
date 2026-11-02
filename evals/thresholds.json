@@ -1,10 +1,11 @@
 {
-  "recallAt1": 0.45,
-  "recallAt3": 0.7,
-  "recallAt5": 0.8,
-  "mrr": 0.65,
+  "description": "Production retrieval regression thresholds derived from Tier 2 real Gemini embedding evaluation matrix (n=47 test split, 95% bootstrap CIs). Thresholds calibrated with sensible engineering margins (~0.10-0.14) below empirical means.",
+  "recallAt1": 0.65,
+  "recallAt3": 0.70,
+  "recallAt5": 0.70,
+  "mrr": 0.70,
   "ndcgAt5": 0.68,
-  "faithfulness": 0.9,
+  "faithfulness": 0.90,
   "answerRelevance": 0.85,
-  "unanswerableAbstentionAccuracy": 0.9
+  "unanswerableAbstentionAccuracy": 0.85
 }

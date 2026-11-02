@@ -1,0 +1,11 @@
+{
+  "description": "Pipeline regression gates (synthetic hash-derived vectors). Validates pipeline wiring and RRF mathematics only, not model retrieval quality.",
+  "recallAt1": 0.45,
+  "recallAt3": 0.70,
+  "recallAt5": 0.80,
+  "mrr": 0.65,
+  "ndcgAt5": 0.68,
+  "faithfulness": 0.90,
+  "answerRelevance": 0.85,
+  "unanswerableAbstentionAccuracy": 0.90
+}

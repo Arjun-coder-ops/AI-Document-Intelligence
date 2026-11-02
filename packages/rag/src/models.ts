@@ -2,9 +2,9 @@
  * Centralized typed model configuration module with verified production defaults.
  * Model names and provider defaults are strongly typed here in code, not in .env.
  * Verified against Google AI for Developers (ai.google.dev) specification:
- * - Generation / Fallback: gemini-1.5-flash (1M context, low-latency)
- * - Embeddings: gemini-embedding-001 / text-embedding-004 (768-dimensional normalized vectors)
- * - Listwise Reranking: gemini-1.5-flash
+ * - Generation / Fallback: gemini-3.8-flash (latest high-efficiency multimodal model)
+ * - Embeddings: gemini-embedding-001 / gemini-embedding-2 (768-dimensional normalized vectors)
+ * - Listwise Reranking: gemini-3.8-flash
  */
 
 export const MODEL_CONFIG = {
@@ -16,7 +16,7 @@ export const MODEL_CONFIG = {
   },
   fallbackLLM: {
     provider: 'gemini' as const,
-    modelName: 'gemini-1.5-flash',
+    modelName: 'gemini-3.8-flash',
     temperature: 0.1,
     maxTokens: 1024,
   },
@@ -28,7 +28,7 @@ export const MODEL_CONFIG = {
   },
   reranker: {
     provider: 'gemini-listwise' as const,
-    modelName: 'gemini-1.5-flash',
+    modelName: 'gemini-3.8-flash',
   },
 } as const;
 

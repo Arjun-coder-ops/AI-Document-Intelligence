@@ -1,0 +1,230 @@
+{
+  "baseline-dense": {
+    "timestamp": "2026-11-02T17:48:06.943Z",
+    "configName": "baseline-dense",
+    "sampleCount": 985,
+    "testSampleCount": 47,
+    "metrics": {
+      "recallAt1": {
+        "mean": 0.7766,
+        "ciLower": 0.6596,
+        "ciUpper": 0.8723
+      },
+      "recallAt3": {
+        "mean": 0.8085,
+        "ciLower": 0.7021,
+        "ciUpper": 0.9043
+      },
+      "recallAt5": {
+        "mean": 0.8085,
+        "ciLower": 0.7021,
+        "ciUpper": 0.9043
+      },
+      "mrr": {
+        "mean": 0.8369,
+        "ciLower": 0.7234,
+        "ciUpper": 0.9362
+      },
+      "ndcgAt5": {
+        "mean": 0.8075,
+        "ciLower": 0.6963,
+        "ciUpper": 0.9008
+      },
+      "hitRate": {
+        "mean": 0.8511,
+        "ciLower": 0.7447,
+        "ciUpper": 0.9362
+      },
+      "unanswerableAbstentionAccuracy": {
+        "mean": 0,
+        "ciLower": 0,
+        "ciUpper": 0
+      }
+    },
+    "perTypeRecallAt5": {
+      "factual": 0.8667,
+      "multi-hop": 0.6,
+      "keyword-exact": 0.9091,
+      "paraphrased": 0.75
+    },
+    "latencyMs": {
+      "p50": 7.8,
+      "p95": 10.25,
+      "mean": 8.2
+    },
+    "costPer1kQueries": 0.001,
+    "passedThresholds": true,
+    "thresholdFailures": []
+  },
+  "lexical-only": {
+    "timestamp": "2026-11-02T17:48:07.346Z",
+    "configName": "lexical-only",
+    "sampleCount": 985,
+    "testSampleCount": 47,
+    "metrics": {
+      "recallAt1": {
+        "mean": 0.1809,
+        "ciLower": 0.0851,
+        "ciUpper": 0.2979
+      },
+      "recallAt3": {
+        "mean": 0.1809,
+        "ciLower": 0.0851,
+        "ciUpper": 0.2979
+      },
+      "recallAt5": {
+        "mean": 0.1809,
+        "ciLower": 0.0851,
+        "ciUpper": 0.2979
+      },
+      "mrr": {
+        "mean": 0.1915,
+        "ciLower": 0.0851,
+        "ciUpper": 0.2979
+      },
+      "ndcgAt5": {
+        "mean": 0.1833,
+        "ciLower": 0.0851,
+        "ciUpper": 0.2979
+      },
+      "hitRate": {
+        "mean": 0.1915,
+        "ciLower": 0.0851,
+        "ciUpper": 0.2979
+      },
+      "unanswerableAbstentionAccuracy": {
+        "mean": 0,
+        "ciLower": 0,
+        "ciUpper": 0
+      }
+    },
+    "perTypeRecallAt5": {
+      "factual": 0.3333,
+      "multi-hop": 0.3,
+      "keyword-exact": 0.1818,
+      "paraphrased": 0
+    },
+    "latencyMs": {
+      "p50": 8.24,
+      "p95": 9.95,
+      "mean": 8.2
+    },
+    "costPer1kQueries": 0,
+    "passedThresholds": true,
+    "thresholdFailures": []
+  },
+  "hybrid": {
+    "timestamp": "2026-11-02T17:48:07.753Z",
+    "configName": "hybrid",
+    "sampleCount": 985,
+    "testSampleCount": 47,
+    "metrics": {
+      "recallAt1": {
+        "mean": 0.5426,
+        "ciLower": 0.4149,
+        "ciUpper": 0.6702
+      },
+      "recallAt3": {
+        "mean": 0.7553,
+        "ciLower": 0.6277,
+        "ciUpper": 0.8617
+      },
+      "recallAt5": {
+        "mean": 0.7553,
+        "ciLower": 0.6277,
+        "ciUpper": 0.8617
+      },
+      "mrr": {
+        "mean": 0.6879,
+        "ciLower": 0.5709,
+        "ciUpper": 0.8014
+      },
+      "ndcgAt5": {
+        "mean": 0.6874,
+        "ciLower": 0.5799,
+        "ciUpper": 0.7975
+      },
+      "hitRate": {
+        "mean": 0.7872,
+        "ciLower": 0.6596,
+        "ciUpper": 0.8936
+      },
+      "unanswerableAbstentionAccuracy": {
+        "mean": 0,
+        "ciLower": 0,
+        "ciUpper": 0
+      }
+    },
+    "perTypeRecallAt5": {
+      "factual": 0.9333,
+      "multi-hop": 0.6,
+      "keyword-exact": 0.8182,
+      "paraphrased": 0.5938
+    },
+    "latencyMs": {
+      "p50": 8.1,
+      "p95": 9.6,
+      "mean": 8.28
+    },
+    "costPer1kQueries": 0.001,
+    "passedThresholds": true,
+    "thresholdFailures": []
+  },
+  "hybrid-rerank": {
+    "timestamp": "2026-11-02T17:48:08.179Z",
+    "configName": "hybrid-rerank",
+    "sampleCount": 985,
+    "testSampleCount": 47,
+    "metrics": {
+      "recallAt1": {
+        "mean": 0.5426,
+        "ciLower": 0.4149,
+        "ciUpper": 0.6702
+      },
+      "recallAt3": {
+        "mean": 0.7553,
+        "ciLower": 0.6277,
+        "ciUpper": 0.8617
+      },
+      "recallAt5": {
+        "mean": 0.7553,
+        "ciLower": 0.6277,
+        "ciUpper": 0.8617
+      },
+      "mrr": {
+        "mean": 0.6879,
+        "ciLower": 0.5709,
+        "ciUpper": 0.8014
+      },
+      "ndcgAt5": {
+        "mean": 0.6874,
+        "ciLower": 0.5799,
+        "ciUpper": 0.7975
+      },
+      "hitRate": {
+        "mean": 0.7872,
+        "ciLower": 0.6596,
+        "ciUpper": 0.8936
+      },
+      "unanswerableAbstentionAccuracy": {
+        "mean": 0,
+        "ciLower": 0,
+        "ciUpper": 0
+      }
+    },
+    "perTypeRecallAt5": {
+      "factual": 0.9333,
+      "multi-hop": 0.6,
+      "keyword-exact": 0.8182,
+      "paraphrased": 0.5938
+    },
+    "latencyMs": {
+      "p50": 8.01,
+      "p95": 15.66,
+      "mean": 8.85
+    },
+    "costPer1kQueries": 0.04,
+    "passedThresholds": true,
+    "thresholdFailures": []
+  }
+}

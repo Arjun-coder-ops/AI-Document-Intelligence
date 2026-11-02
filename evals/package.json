@@ -8,6 +8,8 @@
     "build": "tsc",
     "typecheck": "tsc --noEmit",
     "eval": "node dist/index.js",
+    "eval:synthetic": "node dist/index.js",
+    "eval:real": "node --dns-result-order=ipv4first dist/real-runner.js",
     "eval:retrieval": "node dist/index.js",
     "test:load": "tsc && node dist/load-bench.js"
   },

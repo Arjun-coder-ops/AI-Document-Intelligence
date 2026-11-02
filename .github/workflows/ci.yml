@@ -121,9 +121,9 @@ jobs:
           path: coverage/
           retention-days: 7
 
-  # ─── 3. Offline Retrieval Regression Gate ───────────────────────────────────
-  retrieval-eval:
-    name: Retrieval Eval & Regression Guard
+  # ─── 3. Pipeline Regression Gate (Synthetic) ────────────────────────────────
+  pipeline-regression-synthetic:
+    name: Pipeline Regression Guard (Synthetic)
     needs: test
     runs-on: ubuntu-latest
     steps:
@@ -145,10 +145,10 @@ jobs:
           npm run build --workspace=@docsage/rag
           npm run build --workspace=@docsage/evals
 
-      - name: Run Deterministic Offline Retrieval Evaluation
+      - name: Run Pipeline Regression (Synthetic Hash Fixtures)
         id: eval_run
         run: |
-          npm run eval:retrieval > eval_output.txt 2>&1 || (cat eval_output.txt && exit 1)
+          npm run eval:synthetic > eval_output.txt 2>&1 || (cat eval_output.txt && exit 1)
           cat eval_output.txt
 
       - name: Post Eval Results to Pull Request

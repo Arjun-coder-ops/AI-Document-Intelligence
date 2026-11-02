@@ -157,10 +157,13 @@ export async function runRetrievalEvaluation(
         candidateIds = fused.slice(0, 5).map((c) => c.id);
       }
     } else if (config.mode === 'hybrid-rerank') {
-      // Hybrid RRF with listwise consensus reranker
+      // LOCAL HEURISTIC RERANKER — no external LLM/cross-encoder call.
+      // Applies a listwise consensus score: rewards candidates appearing in both
+      // dense top-10 and lexical top-10. This is a deterministic formula, NOT a
+      // Gemini/GPT reranker call. See C6.1 analysis for why hybrid == hybrid-rerank
+      // when most RRF top-5 already satisfy the dual-consensus criterion.
       if (topDenseScore >= denseThreshold || topLexicalScore >= lexicalThreshold) {
         const fused = fuseRRF(denseRanked.slice(0, 25), lexicalRanked.slice(0, 25), config.k ?? 60);
-        // Listwise consensus scoring: preserves RRF ranking and rewards dual-retrieval consensus
         const reranked = fused
           .slice(0, 20)
           .map((f, idx) => {
@@ -229,5 +232,6 @@ export async function runRetrievalEvaluation(
     allQuestions.length,
     questions.length,
     heldOut.length,
+    'thresholds.synthetic.json',
   );
 }

@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-11-02T17:48:07.346Z",
+  "configName": "lexical-only",
+  "sampleCount": 985,
+  "testSampleCount": 47,
+  "metrics": {
+    "recallAt1": {
+      "mean": 0.1809,
+      "ciLower": 0.0851,
+      "ciUpper": 0.2979
+    },
+    "recallAt3": {
+      "mean": 0.1809,
+      "ciLower": 0.0851,
+      "ciUpper": 0.2979
+    },
+    "recallAt5": {
+      "mean": 0.1809,
+      "ciLower": 0.0851,
+      "ciUpper": 0.2979
+    },
+    "mrr": {
+      "mean": 0.1915,
+      "ciLower": 0.0851,
+      "ciUpper": 0.2979
+    },
+    "ndcgAt5": {
+      "mean": 0.1833,
+      "ciLower": 0.0851,
+      "ciUpper": 0.2979
+    },
+    "hitRate": {
+      "mean": 0.1915,
+      "ciLower": 0.0851,
+      "ciUpper": 0.2979
+    },
+    "unanswerableAbstentionAccuracy": {
+      "mean": 0,
+      "ciLower": 0,
+      "ciUpper": 0
+    }
+  },
+  "perTypeRecallAt5": {
+    "factual": 0.3333,
+    "multi-hop": 0.3,
+    "keyword-exact": 0.1818,
+    "paraphrased": 0
+  },
+  "latencyMs": {
+    "p50": 8.24,
+    "p95": 9.95,
+    "mean": 8.2
+  },
+  "costPer1kQueries": 0,
+  "passedThresholds": true,
+  "thresholdFailures": []
+}

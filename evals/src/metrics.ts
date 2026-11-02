@@ -74,6 +74,72 @@ export function calculateHitRate(
 /**
  * Bootstrap 95% Confidence Interval Resampling (B = 1000)
  */
+export interface PairedDifferenceCI {
+  meanDifference: number;
+  ciLower: number;
+  ciUpper: number;
+  significant: boolean; // true if 0 is outside the CI
+}
+
+/**
+ * Paired bootstrap CI on the difference (valuesA[i] - valuesB[i]).
+ * Returns whether the difference is statistically significant at the given confidence level.
+ */
+export function bootstrapPairedDifferenceCI(
+  valuesA: number[],
+  valuesB: number[],
+  iterations = 1000,
+  confidenceLevel = 0.95,
+): PairedDifferenceCI {
+  const n = Math.min(valuesA.length, valuesB.length);
+  if (n === 0) {
+    return { meanDifference: 0, ciLower: 0, ciUpper: 0, significant: false };
+  }
+
+  const diffs = Array.from({ length: n }, (_, i) => (valuesA[i] ?? 0) - (valuesB[i] ?? 0));
+  const meanDifference = diffs.reduce((s, v) => s + v, 0) / n;
+
+  if (n === 1) {
+    return { meanDifference, ciLower: meanDifference, ciUpper: meanDifference, significant: meanDifference !== 0 };
+  }
+
+  // Deterministic PRNG for reproducibility
+  let seed = 73;
+  const pseudoRandom = () => {
+    seed = (seed * 1664525 + 1013904223) % 4294967296;
+    return seed / 4294967296;
+  };
+
+  const bootstrapMeans: number[] = [];
+  for (let b = 0; b < iterations; b++) {
+    let sum = 0;
+    for (let i = 0; i < n; i++) {
+      const idx = Math.floor(pseudoRandom() * n);
+      sum += diffs[idx] ?? 0;
+    }
+    bootstrapMeans.push(sum / n);
+  }
+
+  bootstrapMeans.sort((a, b) => a - b);
+
+  const alpha = 1 - confidenceLevel;
+  const lowerIdx = Math.floor((alpha / 2) * iterations);
+  const upperIdx = Math.floor((1 - alpha / 2) * iterations);
+
+  const ciLower = bootstrapMeans[lowerIdx] ?? meanDifference;
+  const ciUpper = bootstrapMeans[upperIdx] ?? meanDifference;
+
+  // Significant if 0 is outside the CI
+  const significant = ciLower > 0 || ciUpper < 0;
+
+  return {
+    meanDifference: Number(meanDifference.toFixed(4)),
+    ciLower: Number(ciLower.toFixed(4)),
+    ciUpper: Number(ciUpper.toFixed(4)),
+    significant,
+  };
+}
+
 export function bootstrapConfidenceInterval(
   values: number[],
   iterations = 1000,

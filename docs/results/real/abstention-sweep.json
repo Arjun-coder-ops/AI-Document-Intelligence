@@ -1,0 +1,295 @@
+{
+  "timestamp": "2026-11-02T17:48:06.552Z",
+  "heldOutCount": 40,
+  "unanswerableCount": 10,
+  "answerableCount": 30,
+  "optimalThresholds": {
+    "denseThreshold": 0.7,
+    "lexicalThreshold": 0.12,
+    "falseAbstentionRate": 0,
+    "trueAbstentionRate": 1,
+    "f1Score": 1
+  },
+  "gridResults": [
+    {
+      "denseThreshold": 0.45,
+      "lexicalThreshold": 0.03,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 0,
+      "f1Score": 0
+    },
+    {
+      "denseThreshold": 0.45,
+      "lexicalThreshold": 0.05,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 0,
+      "f1Score": 0
+    },
+    {
+      "denseThreshold": 0.45,
+      "lexicalThreshold": 0.08,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 0,
+      "f1Score": 0
+    },
+    {
+      "denseThreshold": 0.45,
+      "lexicalThreshold": 0.1,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 0,
+      "f1Score": 0
+    },
+    {
+      "denseThreshold": 0.45,
+      "lexicalThreshold": 0.12,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 0,
+      "f1Score": 0
+    },
+    {
+      "denseThreshold": 0.5,
+      "lexicalThreshold": 0.03,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 0.6,
+      "f1Score": 0.75
+    },
+    {
+      "denseThreshold": 0.5,
+      "lexicalThreshold": 0.05,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 0.6,
+      "f1Score": 0.75
+    },
+    {
+      "denseThreshold": 0.5,
+      "lexicalThreshold": 0.08,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 0.6,
+      "f1Score": 0.75
+    },
+    {
+      "denseThreshold": 0.5,
+      "lexicalThreshold": 0.1,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 0.6,
+      "f1Score": 0.75
+    },
+    {
+      "denseThreshold": 0.5,
+      "lexicalThreshold": 0.12,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 0.6,
+      "f1Score": 0.75
+    },
+    {
+      "denseThreshold": 0.55,
+      "lexicalThreshold": 0.03,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.55,
+      "lexicalThreshold": 0.05,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.55,
+      "lexicalThreshold": 0.08,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.55,
+      "lexicalThreshold": 0.1,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.55,
+      "lexicalThreshold": 0.12,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.6,
+      "lexicalThreshold": 0.03,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.6,
+      "lexicalThreshold": 0.05,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.6,
+      "lexicalThreshold": 0.08,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.6,
+      "lexicalThreshold": 0.1,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.6,
+      "lexicalThreshold": 0.12,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.62,
+      "lexicalThreshold": 0.03,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.62,
+      "lexicalThreshold": 0.05,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.62,
+      "lexicalThreshold": 0.08,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.62,
+      "lexicalThreshold": 0.1,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.62,
+      "lexicalThreshold": 0.12,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.65,
+      "lexicalThreshold": 0.03,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.65,
+      "lexicalThreshold": 0.05,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.65,
+      "lexicalThreshold": 0.08,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.65,
+      "lexicalThreshold": 0.1,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.65,
+      "lexicalThreshold": 0.12,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.68,
+      "lexicalThreshold": 0.03,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.68,
+      "lexicalThreshold": 0.05,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.68,
+      "lexicalThreshold": 0.08,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.68,
+      "lexicalThreshold": 0.1,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.68,
+      "lexicalThreshold": 0.12,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.7,
+      "lexicalThreshold": 0.03,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.7,
+      "lexicalThreshold": 0.05,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.7,
+      "lexicalThreshold": 0.08,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.7,
+      "lexicalThreshold": 0.1,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    },
+    {
+      "denseThreshold": 0.7,
+      "lexicalThreshold": 0.12,
+      "falseAbstentionRate": 0,
+      "trueAbstentionRate": 1,
+      "f1Score": 1
+    }
+  ]
+}

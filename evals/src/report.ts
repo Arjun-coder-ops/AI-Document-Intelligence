@@ -26,6 +26,7 @@ export function compileExperimentResult(
   allQuestionCount: number,
   testQuestionCount: number,
   heldOutCount: number,
+  thresholdsFile: string = 'thresholds.json',
 ): RetrievalEvalReport {
   const {
     recall1Values,
@@ -41,7 +42,7 @@ export function compileExperimentResult(
     perTypeRecall,
   } = collector;
 
-  const thresholdsPath = path.join(baseDir, 'thresholds.json');
+  const thresholdsPath = path.join(baseDir, thresholdsFile);
   interface ThresholdsJson {
     recallAt1?: number;
     recallAt3?: number;

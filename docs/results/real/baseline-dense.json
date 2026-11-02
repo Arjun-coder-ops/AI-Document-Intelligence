@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-11-02T17:48:06.943Z",
+  "configName": "baseline-dense",
+  "sampleCount": 985,
+  "testSampleCount": 47,
+  "metrics": {
+    "recallAt1": {
+      "mean": 0.7766,
+      "ciLower": 0.6596,
+      "ciUpper": 0.8723
+    },
+    "recallAt3": {
+      "mean": 0.8085,
+      "ciLower": 0.7021,
+      "ciUpper": 0.9043
+    },
+    "recallAt5": {
+      "mean": 0.8085,
+      "ciLower": 0.7021,
+      "ciUpper": 0.9043
+    },
+    "mrr": {
+      "mean": 0.8369,
+      "ciLower": 0.7234,
+      "ciUpper": 0.9362
+    },
+    "ndcgAt5": {
+      "mean": 0.8075,
+      "ciLower": 0.6963,
+      "ciUpper": 0.9008
+    },
+    "hitRate": {
+      "mean": 0.8511,
+      "ciLower": 0.7447,
+      "ciUpper": 0.9362
+    },
+    "unanswerableAbstentionAccuracy": {
+      "mean": 0,
+      "ciLower": 0,
+      "ciUpper": 0
+    }
+  },
+  "perTypeRecallAt5": {
+    "factual": 0.8667,
+    "multi-hop": 0.6,
+    "keyword-exact": 0.9091,
+    "paraphrased": 0.75
+  },
+  "latencyMs": {
+    "p50": 7.8,
+    "p95": 10.25,
+    "mean": 8.2
+  },
+  "costPer1kQueries": 0.001,
+  "passedThresholds": true,
+  "thresholdFailures": []
+}

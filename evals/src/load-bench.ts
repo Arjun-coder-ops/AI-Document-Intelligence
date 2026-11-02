@@ -3,6 +3,8 @@ import path from 'path';
 
 interface LoadTestMetrics {
   timestamp: string;
+  providerMode: 'stub' | 'real-provider';
+  providerNote: string;
   concurrentUsers: number;
   totalRequests: number;
   successfulRequests: number;
@@ -18,6 +20,7 @@ interface LoadTestMetrics {
     max: number;
   };
   ttftMs: {
+    label: string;
     p50: number;
     p95: number;
     p99: number;
@@ -46,7 +49,9 @@ export async function runLoadBenchmark(
     while (Date.now() < endTime) {
       const reqStart = Date.now();
       try {
-        // Simulate end-to-end processing: retrieval (15-25ms) + TTFT (40-80ms) + token stream (150-300ms)
+        // STUB PROVIDER: simulated delays, NOT real Gemini/Groq API calls.
+        // Measures framework overhead, event loop concurrency, and connection pooling under load.
+        // TTFT here is stub-provider-overhead, not real model first-token latency.
         const embedTime = 12 + Math.random() * 8;
         const retrievalTime = 18 + Math.random() * 12;
         const ttft = embedTime + retrievalTime + (45 + Math.random() * 25);
@@ -85,6 +90,9 @@ export async function runLoadBenchmark(
 
   const result: LoadTestMetrics = {
     timestamp: new Date().toISOString(),
+    providerMode: 'stub',
+    providerNote:
+      'All latencies measured with simulated delays (Math.random timers), not real Gemini/Groq API calls. TTFT represents stub provider overhead only. For real-provider TTFT, run with REAL_PROVIDER=1 (n<=50).',
     concurrentUsers,
     totalRequests: total,
     successfulRequests: successful,
@@ -100,6 +108,7 @@ export async function runLoadBenchmark(
       max: latencies[latencies.length - 1] ?? 0,
     },
     ttftMs: {
+      label: 'stub-provider-overhead (not real model TTFT)',
       p50: percentile(ttfts, 50),
       p95: percentile(ttfts, 95),
       p99: percentile(ttfts, 99),
