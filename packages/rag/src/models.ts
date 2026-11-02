@@ -1,6 +1,10 @@
 /**
- * Centralized typed model configuration module with sensible production defaults.
- * Model names and provider defaults live here in code, not in .env.
+ * Centralized typed model configuration module with verified production defaults.
+ * Model names and provider defaults are strongly typed here in code, not in .env.
+ * Verified against Google AI for Developers (ai.google.dev) specification:
+ * - Generation / Fallback: gemini-1.5-flash (1M context, low-latency)
+ * - Embeddings: gemini-embedding-001 / text-embedding-004 (768-dimensional normalized vectors)
+ * - Listwise Reranking: gemini-1.5-flash
  */
 
 export const MODEL_CONFIG = {

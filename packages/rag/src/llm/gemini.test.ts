@@ -13,7 +13,7 @@ describe('GeminiLLMProvider', () => {
   });
 
   it('throws an error if apiKey is empty', async () => {
-    const provider = new GeminiLLMProvider('gemini-2.5-flash', '');
+    const provider = new GeminiLLMProvider('gemini-1.5-flash', '');
     await expect(provider.generateText('hello')).rejects.toThrow('GEMINI_API_KEY');
     await expect(provider.streamText('hello', {})).rejects.toThrow('GEMINI_API_KEY');
   });
@@ -27,7 +27,7 @@ describe('GeminiLLMProvider', () => {
     };
     global.fetch = vi.fn().mockResolvedValue(mockResponse);
 
-    const provider = new GeminiLLMProvider('gemini-2.5-flash', 'test-key');
+    const provider = new GeminiLLMProvider('gemini-1.5-flash', 'test-key');
     const result = await provider.generateText('test query');
 
     expect(result).toBe('Generated answer');
@@ -42,7 +42,7 @@ describe('GeminiLLMProvider', () => {
     };
     global.fetch = vi.fn().mockResolvedValue(mockResponse);
 
-    const provider = new GeminiLLMProvider('gemini-2.5-flash', 'test-key');
+    const provider = new GeminiLLMProvider('gemini-1.5-flash', 'test-key');
     await expect(provider.generateText('test')).rejects.toThrow('Gemini API error 403');
   });
 

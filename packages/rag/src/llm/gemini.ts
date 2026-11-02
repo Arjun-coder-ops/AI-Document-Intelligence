@@ -16,8 +16,9 @@ export class GeminiLLMProvider implements LLMProvider {
       throw new Error('GEMINI_API_KEY environment variable is not configured');
     }
 
+    const cleanModel = this.modelName.replace(/^models\//, '');
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${this.modelName}:generateContent?key=${this.apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${cleanModel}:generateContent?key=${this.apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -52,8 +53,9 @@ export class GeminiLLMProvider implements LLMProvider {
       throw new Error('GEMINI_API_KEY environment variable is not configured');
     }
 
+    const cleanModel = this.modelName.replace(/^models\//, '');
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/${this.modelName}:streamGenerateContent?alt=sse&key=${this.apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/models/${cleanModel}:streamGenerateContent?alt=sse&key=${this.apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -107,13 +109,17 @@ export class GeminiEmbeddingProvider implements EmbeddingProvider {
       throw new Error('GEMINI_API_KEY environment variable is not configured');
     }
 
+    const modelPath = this.modelName.startsWith('models/')
+      ? this.modelName
+      : `models/${this.modelName}`;
+
     const res = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/${this.modelName}:embedContent?key=${this.apiKey}`,
+      `https://generativelanguage.googleapis.com/v1beta/${modelPath}:embedContent?key=${this.apiKey}`,
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          model: this.modelName,
+          model: modelPath,
           content: { parts: [{ text }] },
           taskType,
           outputDimensionality: this.dimension,
