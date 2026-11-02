@@ -1,27 +1,46 @@
-# Environment
-.env
-backend/.env
-.venv/
-venv/
-env/
-
 # Dependencies
 node_modules/
-frontend/node_modules/
-__pycache__/
-*.pyc
+.pnp
+.pnp.js
 
-# Data & Uploads
-uploads/
-backend/uploads/
-vectorstore/
-backend/vectorstore/
-
-# Build
+# Build outputs
 dist/
-frontend/dist/
 build/
-.DS_Store
+*.tsbuildinfo
 
-# Logs
-backend/logs/
+# Environment and secrets
+.env
+.env.local
+.env.*.local
+.env.production
+.env.development
+!.env.example
+
+# Testing and coverage
+coverage/
+*.lcov
+.nyc_output
+
+# Local storage and caches
+uploads/
+logs/
+*.log
+data/
+.cache/
+.temp/
+
+# IDE and OS
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+.DS_Store
+Thumbs.db
+
+# Docker local data mounts
+infra/data/

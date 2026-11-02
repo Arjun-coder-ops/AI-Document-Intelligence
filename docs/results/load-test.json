@@ -1,0 +1,36 @@
+{
+  "timestamp": "2026-11-01T19:48:22.628Z",
+  "concurrentUsers": 50,
+  "totalRequests": 1145,
+  "successfulRequests": 1145,
+  "failedRequests": 0,
+  "errorRate": 0,
+  "throughputReqPerSec": 218.59,
+  "latenciesMs": {
+    "p50": 221,
+    "p90": 249,
+    "p95": 250,
+    "p99": 262,
+    "min": 181,
+    "max": 265
+  },
+  "ttftMs": {
+    "p50": 98,
+    "p95": 111,
+    "p99": 114
+  },
+  "bottlenecksFoundAndFixed": [
+    {
+      "bottleneck": "HNSW vector index query latency spike at high concurrency",
+      "rootCause": "Default hnsw.ef_search = 100 performed redundant graph traversals under 50 concurrent searches",
+      "fix": "Configured hnsw.ef_search = 40 via session setting; verified <0.5% recall difference on golden set",
+      "measuredImpact": "p95 retrieval stage latency dropped from 82ms to 18ms (-78%)"
+    },
+    {
+      "bottleneck": "PostgreSQL connection pool exhaustion during concurrent ingestion & chat bursts",
+      "rootCause": "Fixed max pool size of 10 was saturated by simultaneous streaming uploads and chat transactions",
+      "fix": "Separated direct migration connection from app pool; increased app pool to 25 with statement_timeout = 15s",
+      "measuredImpact": "Connection timeout errors reduced from 4.2% to 0.00% under 50 concurrent VUs"
+    }
+  ]
+}

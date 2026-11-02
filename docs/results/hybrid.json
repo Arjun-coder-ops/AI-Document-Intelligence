@@ -1,0 +1,48 @@
+{
+  "timestamp": "2026-11-01T20:34:36.904Z",
+  "configName": "hybrid",
+  "sampleCount": 65,
+  "metrics": {
+    "recallAt1": {
+      "mean": 0.2545,
+      "ciLower": 0.1455,
+      "ciUpper": 0.3636
+    },
+    "recallAt3": {
+      "mean": 0.5273,
+      "ciLower": 0.4,
+      "ciUpper": 0.6545
+    },
+    "recallAt5": {
+      "mean": 0.6,
+      "ciLower": 0.4909,
+      "ciUpper": 0.7182
+    },
+    "mrr": {
+      "mean": 0.4687,
+      "ciLower": 0.3752,
+      "ciUpper": 0.5608
+    },
+    "ndcgAt5": {
+      "mean": 0.4502,
+      "ciLower": 0.3554,
+      "ciUpper": 0.5492
+    },
+    "hitRate": {
+      "mean": 0.6727,
+      "ciLower": 0.5455,
+      "ciUpper": 0.8
+    },
+    "unanswerableAbstentionAccuracy": {
+      "mean": 0,
+      "ciLower": 0,
+      "ciUpper": 0
+    }
+  },
+  "passedThresholds": false,
+  "thresholdFailures": [
+    "Recall@5 (0.6) < required (0.85)",
+    "MRR (0.4687) < required (0.7)",
+    "Abstention accuracy (0) < required (0.95)"
+  ]
+}

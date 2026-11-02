@@ -1,0 +1,16 @@
+# Global repository codeowners
+* @Arjun-coder-ops
+
+# Backend API, Database & Queue Core
+/apps/api/ @Arjun-coder-ops
+/apps/worker/ @Arjun-coder-ops
+/packages/db/ @Arjun-coder-ops
+
+# Pure RAG Architecture & Evaluation Harness
+/packages/rag/ @Arjun-coder-ops
+/evals/ @Arjun-coder-ops
+
+# Security, Threat Model, and ADRs
+/docs/THREAT_MODEL.md @Arjun-coder-ops
+/docs/adr/ @Arjun-coder-ops
+/.github/workflows/ @Arjun-coder-ops
