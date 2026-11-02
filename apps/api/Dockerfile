@@ -44,7 +44,7 @@ RUN apk add --no-cache curl
 
 # Copy runtime node_modules and compiled distributions
 COPY --chown=node:node package*.json ./
-COPY --chown=node:node node_modules ./node_modules
+COPY --chown=node:node --from=builder /app/node_modules ./node_modules
 COPY --chown=node:node --from=builder /app/packages/shared/dist ./packages/shared/dist
 COPY --chown=node:node --from=builder /app/packages/shared/package.json ./packages/shared/package.json
 COPY --chown=node:node --from=builder /app/packages/db/dist ./packages/db/dist

@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import request from 'supertest';
+import * as dbModule from '@docsage/db';
 import { createApp } from '../index.js';
 import { RequestTracer } from './tracer.js';
 import { createAccessToken } from '../auth/service.js';
@@ -109,25 +110,37 @@ describe('Level 9: Observability, Metrics, Tracing & Analytics', () => {
     });
 
     it('returns structured analytics for administrators', async () => {
+      vi.spyOn(dbModule, 'withTenant').mockImplementation(async (_tenantId, fn) => {
+        const mockTx = {
+          execute: vi
+            .fn()
+            .mockResolvedValueOnce([{ total_cost: '14.825000', total_messages: '120' }])
+            .mockResolvedValueOnce([{ p95_latency_ms: 240, p50_latency_ms: 110 }])
+            .mockResolvedValueOnce([{ thumbs_up: '45', thumbs_down: '3' }]),
+          query: {
+            messages: {
+              findMany: vi.fn().mockResolvedValue([]),
+            },
+          },
+        };
+        return fn(mockTx as unknown as Parameters<typeof fn>[0]);
+      });
+
       const res = await request(app)
         .get('/admin/analytics')
         .set('Authorization', `Bearer ${adminToken}`);
 
-      // If database is not connected in unit test mode, either 200 or 500 error is handled safely
-      if (res.status === 200) {
-        const body = res.body as {
-          totalCost: number;
-          p95LatencyMs: number;
-          feedback: { thumbsUp: number; thumbsDown: number };
-          topUnanswered: unknown[];
-        };
-        expect(typeof body.totalCost).toBe('number');
-        expect(typeof body.p95LatencyMs).toBe('number');
-        expect(body.feedback).toBeDefined();
-        expect(Array.isArray(body.topUnanswered)).toBe(true);
-      } else {
-        expect(res.status).toBe(500);
-      }
+      expect(res.status).toBe(200);
+      const body = res.body as {
+        totalCost: number;
+        p95LatencyMs: number;
+        feedback: { thumbsUp: number; thumbsDown: number };
+        topUnanswered: unknown[];
+      };
+      expect(typeof body.totalCost).toBe('number');
+      expect(typeof body.p95LatencyMs).toBe('number');
+      expect(body.feedback).toBeDefined();
+      expect(Array.isArray(body.topUnanswered)).toBe(true);
     });
   });
 });

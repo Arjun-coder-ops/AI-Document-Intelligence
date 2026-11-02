@@ -97,12 +97,17 @@ jobs:
 
       - name: Execute Vitest with >= 80% Coverage Gate
         env:
+          NODE_ENV: test
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/docsage_test
           DATABASE_URL_DIRECT: postgresql://postgres:postgres@localhost:5432/docsage_test
           JWT_ACCESS_SECRET: super_secure_production_grade_jwt_secret_32_chars_long
           JWT_REFRESH_SECRET: super_secure_refresh_secret_at_least_32_characters_long
           JWT_SECRET: super_secure_production_grade_jwt_secret_32_chars_long
           REFRESH_SECRET: super_secure_refresh_secret_at_least_32_characters_long
+          GROQ_API_KEY: gsk_mock_test_key_for_offline_ci
+          GEMINI_API_KEY: AIza_mock_test_key_for_offline_ci
+          REDIS_URL: redis://localhost:6379
+          EMBEDDING_DIM: 768
         run: npm run test:coverage
 
       - name: Upload Coverage Artifacts
@@ -196,6 +201,9 @@ jobs:
     name: Build Monorepo & Container Images
     needs: quality
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      actions: write
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -270,10 +278,17 @@ jobs:
         env:
           PORT: 3000
           PLAYWRIGHT_BASE_URL: http://localhost:3000
+          NODE_ENV: test
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/docsage_test
+          DATABASE_URL_DIRECT: postgresql://postgres:postgres@localhost:5432/docsage_test
           JWT_ACCESS_SECRET: super_secure_production_grade_jwt_secret_32_chars_long
           JWT_REFRESH_SECRET: super_secure_refresh_secret_at_least_32_characters_long
           JWT_SECRET: super_secure_production_grade_jwt_secret_32_chars_long
           REFRESH_SECRET: super_secure_refresh_secret_at_least_32_characters_long
+          GROQ_API_KEY: gsk_mock_test_key_for_offline_ci
+          GEMINI_API_KEY: AIza_mock_test_key_for_offline_ci
+          REDIS_URL: redis://localhost:6379
+          EMBEDDING_DIM: 768
         run: |
           npm run build --workspace=@docsage/shared
           npm run build --workspace=@docsage/api
