@@ -56,7 +56,7 @@ jobs:
 
       - name: Post Neon Database URL to PR
         if: github.event.action != 'closed' && steps.create-branch.outputs.db_url != ''
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             github.rest.issues.createComment({
