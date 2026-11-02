@@ -29,7 +29,7 @@ describe('apps/api: Auth API Contract Tests', () => {
     it('validates request payload and rejects invalid email', async () => {
       const res = await request(app).post('/auth/register').send({
         email: 'invalid-email-format',
-        password: 'Password123!',
+        password: 'TestSecP@ssw0rd-2026',
       });
 
       expect(res.status).toBe(400);
@@ -50,7 +50,7 @@ describe('apps/api: Auth API Contract Tests', () => {
 
       const res = await request(app).post('/auth/register').send({
         email: 'exists@enterprise.com',
-        password: 'ValidPassword123!',
+        password: 'TestSecP@ssw0rd-2026',
         tenantName: 'Acme Corp',
       });
 
@@ -79,7 +79,7 @@ describe('apps/api: Auth API Contract Tests', () => {
 
       const res = await request(app).post('/auth/register').send({
         email: 'newadmin@enterprise.com',
-        password: 'ValidPassword123!',
+        password: 'TestSecP@ssw0rd-2026',
         tenantName: 'Acme Corp',
       });
 
@@ -102,7 +102,7 @@ describe('apps/api: Auth API Contract Tests', () => {
 
       const res = await request(app).post('/auth/login').send({
         email: 'notfound@enterprise.com',
-        password: 'Password123!',
+        password: 'TestSecP@ssw0rd-2026',
       });
 
       expect(res.status).toBe(401);
@@ -137,12 +137,28 @@ describe('apps/api: Auth API Contract Tests', () => {
 
       const res = await request(app).post('/auth/login').send({
         email: 'user@enterprise.com',
-        password: 'ValidPassword123!',
+        password: 'TestSecP@ssw0rd-2026',
       });
 
       expect(res.status).toBe(200);
       expect(res.body).toHaveProperty('accessToken');
       expect((res.body as { user: { role: string } }).user.role).toBe('editor');
+    });
+
+    it('rate limits rapid login attempts with HTTP 429 when enabled', async () => {
+      vi.spyOn(dbModule.db.query.users, 'findFirst').mockResolvedValue(undefined);
+
+      const attempts = Array.from({ length: 15 }, () =>
+        request(app)
+          .post('/auth/login')
+          .set('x-test-rate-limit', 'true')
+          .send({ email: 'user@enterprise.com', password: 'WrongPassword!' }),
+      );
+
+      const results = await Promise.all(attempts);
+      const rateLimited = results.filter((r) => r.status === 429);
+      expect(rateLimited.length).toBeGreaterThan(0);
+      expect(rateLimited[0]?.body).toHaveProperty('error');
     });
   });
 

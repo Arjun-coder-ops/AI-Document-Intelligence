@@ -596,7 +596,7 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
       4. `04-admin-page.png` (Tenant telemetry, cost, latency, error metrics)
       5. `05-landing-dark.png` (Dark mode landing page with high-contrast paper ink palette)
   - **Demo Workspace & Argon2id Seed:**
-    - Updated `packages/db/src/seed.ts` with valid Argon2id hash for demo administrator `admin@docsage.io` (`Password123!`) and 768-dimensional embedding vectors.
+    - Updated `packages/db/src/seed.ts` with dynamic Argon2id hashing for read-only demo viewer `demo@docsage.io` (via `DEMO_PASSWORD` secret) and 768-dimensional embedding vectors.
   - **Code Quality & Architectural Cleanliness:**
     - 0 files exceeding 300 lines across 100% of repository.
     - Copy-paste duplication rate: **2.94%** (under 3.0% threshold).

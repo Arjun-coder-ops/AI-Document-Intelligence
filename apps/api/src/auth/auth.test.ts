@@ -12,7 +12,7 @@ import { requireRole, type AuthenticatedRequest } from './middleware.js';
 
 describe('Auth Service (Argon2id & JWT)', () => {
   it('hashes and verifies passwords accurately with argon2id', async () => {
-    const raw = 'SecureSecretPassword123!';
+    const raw = 'TestArgon2idSecretHash-2026';
     const hashed = await hashPassword(raw);
 
     expect(hashed).toContain('$argon2id$');

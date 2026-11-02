@@ -121,3 +121,6 @@ export const MinimalEnvSchema = z.object({
   EMBEDDING_DIM: z.coerce.number().int().default(768),
 });
 export type MinimalEnv = z.infer<typeof MinimalEnvSchema>;
+
+// Deterministic Demo Workspace Identifier (enforces read-only restrictions)
+export const DEMO_TENANT_ID = '00000000-0000-4000-8000-000000000001';

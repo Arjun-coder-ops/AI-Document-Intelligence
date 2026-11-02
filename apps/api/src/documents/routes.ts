@@ -1,6 +1,7 @@
 import { Router, type Response } from 'express';
 import { documents, chunks, withTenant } from '@docsage/db';
 import { eq, and, isNull } from 'drizzle-orm';
+import { DEMO_TENANT_ID } from '@docsage/shared';
 import { authenticate, requireRole, type AuthenticatedRequest } from '../auth/middleware.js';
 import { logAuditEvent } from '../audit/service.js';
 import { createRateLimiterMiddleware } from '../reliability/rate-limiter.js';
@@ -22,6 +23,10 @@ documentsRouter.post(
   requireRole('editor'),
   uploadRateLimiter,
   (req: AuthenticatedRequest, res: Response): void => {
+    if (req.user?.tenantId === DEMO_TENANT_ID) {
+      res.status(403).json({ error: 'Demo tenant is read-only. Document upload is prohibited.' });
+      return;
+    }
     handlePdfUpload(req, res);
   },
 );
@@ -196,6 +201,11 @@ documentsRouter.delete(
     const user = req.user;
     if (!user) {
       res.status(401).json({ error: 'Authentication required' });
+      return;
+    }
+
+    if (user.tenantId === DEMO_TENANT_ID) {
+      res.status(403).json({ error: 'Demo tenant is read-only. Document deletion is prohibited.' });
       return;
     }
 

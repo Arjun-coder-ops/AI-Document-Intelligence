@@ -10,9 +10,15 @@ import {
   hashToken,
 } from './service.js';
 import { logAuditEvent } from '../audit/service.js';
+import { createIpRateLimiterMiddleware } from '../reliability/rate-limiter.js';
 import type { AuthenticatedRequest } from './middleware.js';
 
 export const authRouter: Router = Router();
+
+const loginRateLimiter = createIpRateLimiterMiddleware({
+  capacity: 10,
+  refillPerMinute: 10,
+});
 
 // Cookie configuration
 const isProd = process.env['NODE_ENV'] === 'production';
@@ -115,70 +121,74 @@ authRouter.post('/register', async (req: AuthenticatedRequest, res: Response): P
 });
 
 // ─── POST /auth/login ─────────────────────────────────────────────────────────
-authRouter.post('/login', async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const parseResult = LoginRequestSchema.safeParse(req.body);
-  if (!parseResult.success) {
-    res.status(400).json({ error: 'Validation failed', details: parseResult.error.format() });
-    return;
-  }
+authRouter.post(
+  '/login',
+  loginRateLimiter,
+  async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+    const parseResult = LoginRequestSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      res.status(400).json({ error: 'Validation failed', details: parseResult.error.format() });
+      return;
+    }
 
-  const { email, password } = parseResult.data;
+    const { email, password } = parseResult.data;
 
-  const user = await db.query.users.findFirst({
-    where: eq(users.email, email.toLowerCase()),
-  });
-
-  if (!user) {
-    res.status(401).json({ error: 'Invalid email or password' });
-    return;
-  }
-
-  const validPassword = await verifyPassword(user.passwordHash, password);
-  if (!validPassword) {
-    res.status(401).json({ error: 'Invalid email or password' });
-    return;
-  }
-
-  // Record audit log within tenant context
-  await withTenant(user.tenantId, async (tx) => {
-    await logAuditEvent(tx, {
-      tenantId: user.tenantId,
-      actorId: user.id,
-      action: 'login',
-      entity: 'user',
-      entityId: user.id,
+    const user = await db.query.users.findFirst({
+      where: eq(users.email, email.toLowerCase()),
     });
-  });
 
-  const accessToken = createAccessToken({
-    sub: user.id,
-    tenantId: user.tenantId,
-    email: user.email,
-    role: user.role,
-  });
+    if (!user) {
+      res.status(401).json({ error: 'Invalid email or password' });
+      return;
+    }
 
-  const { token: rawRefreshToken, tokenHash, expiresAt } = generateRefreshToken();
+    const validPassword = await verifyPassword(user.passwordHash, password);
+    if (!validPassword) {
+      res.status(401).json({ error: 'Invalid email or password' });
+      return;
+    }
 
-  await db.insert(refreshTokens).values({
-    userId: user.id,
-    tokenHash,
-    expiresAt,
-  });
+    // Record audit log within tenant context
+    await withTenant(user.tenantId, async (tx) => {
+      await logAuditEvent(tx, {
+        tenantId: user.tenantId,
+        actorId: user.id,
+        action: 'login',
+        entity: 'user',
+        entityId: user.id,
+      });
+    });
 
-  res.cookie('refreshToken', rawRefreshToken, refreshCookieOptions);
-
-  const response: AuthResponse = {
-    accessToken,
-    user: {
-      id: user.id,
+    const accessToken = createAccessToken({
+      sub: user.id,
       tenantId: user.tenantId,
       email: user.email,
       role: user.role,
-    },
-  };
+    });
 
-  res.status(200).json(response);
-});
+    const { token: rawRefreshToken, tokenHash, expiresAt } = generateRefreshToken();
+
+    await db.insert(refreshTokens).values({
+      userId: user.id,
+      tokenHash,
+      expiresAt,
+    });
+
+    res.cookie('refreshToken', rawRefreshToken, refreshCookieOptions);
+
+    const response: AuthResponse = {
+      accessToken,
+      user: {
+        id: user.id,
+        tenantId: user.tenantId,
+        email: user.email,
+        role: user.role,
+      },
+    };
+
+    res.status(200).json(response);
+  },
+);
 
 // ─── POST /auth/refresh ───────────────────────────────────────────────────────
 authRouter.post('/refresh', async (req: AuthenticatedRequest, res: Response): Promise<void> => {

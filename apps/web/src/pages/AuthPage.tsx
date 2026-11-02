@@ -35,17 +35,11 @@ export const AuthPage: React.FC = () => {
     }
   };
 
-  const handleDemoFill = (role: 'admin' | 'viewer') => {
+  const handleDemoFill = () => {
     setError(null);
-    if (role === 'admin') {
-      setEmail('admin@enterprise.com');
-      setPassword('AdminPassword123!');
-      setTenantName('Acme Global');
-    } else {
-      setEmail('viewer@enterprise.com');
-      setPassword('ViewerPassword123!');
-      setTenantName('Acme Global');
-    }
+    setIsRegister(false);
+    setEmail('demo@docsage.io');
+    setPassword('');
   };
 
   return (
@@ -218,25 +212,25 @@ export const AuthPage: React.FC = () => {
           }}
         >
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '10px' }}>
-            DEMO PRESET CREDENTIALS (CLICK TO PREFILL)
+            DEMO PRESET (READ-ONLY VIEWER)
           </div>
-          <div style={{ display: 'flex', gap: '8px', justifyContent: 'center' }}>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              style={{ fontSize: '0.75rem', padding: '6px 10px' }}
-              onClick={() => handleDemoFill('admin')}
-            >
-              Prefill Demo Admin
-            </button>
-            <button
-              type="button"
-              className="btn btn-secondary"
-              style={{ fontSize: '0.75rem', padding: '6px 10px' }}
-              onClick={() => handleDemoFill('viewer')}
-            >
-              Prefill Demo Viewer
-            </button>
+          <button
+            type="button"
+            className="btn btn-secondary"
+            style={{ fontSize: '0.75rem', padding: '6px 14px' }}
+            onClick={handleDemoFill}
+          >
+            Prefill Demo Viewer (demo@docsage.io)
+          </button>
+          <div
+            style={{
+              fontSize: '0.75rem',
+              color: 'var(--text-muted)',
+              marginTop: '8px',
+              lineHeight: 1.4,
+            }}
+          >
+            Requires DEMO_PASSWORD configured in your environment or repository secrets.
           </div>
         </div>
       </div>

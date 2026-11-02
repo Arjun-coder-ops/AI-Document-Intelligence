@@ -34,23 +34,24 @@ Navigate to **Settings -> Secrets and variables -> Actions** and configure the f
 
 ### Secrets (`Repository Secrets` or `Environment: production`)
 
-| Secret Name                 | Required By                 | Description                                                          | Example / Format                                                        |
-| :-------------------------- | :-------------------------- | :------------------------------------------------------------------- | :---------------------------------------------------------------------- |
-| `DATABASE_URL`              | CI (`test`), Apps           | Neon pooled connection string (connecting as app_user)               | `postgresql://app_user:pass@ep-pooler.neon.tech/neondb?sslmode=require` |
-| `DATABASE_URL_DIRECT`       | CI (`test`), CD (`migrate`) | Neon direct connection string (session-mode for Drizzle migrations)  | `postgresql://user:pass@ep-direct.neon.tech/neondb?sslmode=require`     |
-| `JWT_ACCESS_SECRET`         | Apps, CI, CD                | Minimum 32-character HMAC secret for access token signing            | `b8e7...64-char-hex-or-base64...`                                       |
-| `JWT_REFRESH_SECRET`        | Apps, CI, CD                | Minimum 32-character secret for rotating refresh token hashing       | `a1d4...64-char-hex-or-base64...`                                       |
-| `GROQ_API_KEY`              | Apps, Nightly Eval          | Primary LLM inference API key (Groq Llama 3.3 70B)                   | `gsk_...`                                                               |
-| `GEMINI_API_KEY`            | Apps, Nightly Eval, Evals   | Fallback LLM, embeddings, and listwise reranking key (Google Gemini) | `AIza...`                                                               |
-| `REDIS_URL`                 | Apps, CI                    | Multi-tier cache & rate limiting Redis connection string             | `redis://localhost:6379` or `rediss://...`                              |
-| `NEON_API_KEY`              | Neon Preview Workflow       | Neon platform API key for ephemeral branching                        | `nkey_...`                                                              |
-| `NEON_PROJECT_ID`           | Neon Preview Workflow       | Neon project identifier                                              | `ep-sparkling-water-123456`                                             |
-| `RENDER_API_DEPLOY_HOOK`    | CD (`deploy-backend`)       | Render deploy hook URL for `docsage-api` service                     | `https://api.render.com/deploy/srv-xxx?key=yyy`                         |
-| `RENDER_WORKER_DEPLOY_HOOK` | CD (`deploy-backend`)       | Render deploy hook URL for `docsage-worker` service                  | `https://api.render.com/deploy/srv-aaa?key=bbb`                         |
-| `VERCEL_TOKEN`              | CD (`deploy-frontend`)      | Vercel Personal Access Token for deployments                         | `...`                                                                   |
-| `VERCEL_ORG_ID`             | CD (`deploy-frontend`)      | Vercel team/org identifier                                           | `team_...`                                                              |
-| `VERCEL_PROJECT_ID`         | CD (`deploy-frontend`)      | Vercel project identifier                                            | `prj_...`                                                               |
-| `PRODUCTION_API_URL`        | CD (`smoke-test`)           | Public HTTPS endpoint of deployed production API                     | `https://api.docsage.io`                                                |
+| Secret Name                 | Required By                 | Description                                                           | Example / Format                                                        |
+| :-------------------------- | :-------------------------- | :-------------------------------------------------------------------- | :---------------------------------------------------------------------- |
+| `DATABASE_URL`              | CI (`test`), Apps           | Neon pooled connection string (connecting as app_user)                | `postgresql://app_user:pass@ep-pooler.neon.tech/neondb?sslmode=require` |
+| `DATABASE_URL_DIRECT`       | CI (`test`), CD (`migrate`) | Neon direct connection string (session-mode for Drizzle migrations)   | `postgresql://user:pass@ep-direct.neon.tech/neondb?sslmode=require`     |
+| `JWT_ACCESS_SECRET`         | Apps, CI, CD                | Minimum 32-character HMAC secret for access token signing             | `b8e7...64-char-hex-or-base64...`                                       |
+| `JWT_REFRESH_SECRET`        | Apps, CI, CD                | Minimum 32-character secret for rotating refresh token hashing        | `a1d4...64-char-hex-or-base64...`                                       |
+| `GROQ_API_KEY`              | Apps, Nightly Eval          | Primary LLM inference API key (Groq Llama 3.3 70B)                    | `gsk_...`                                                               |
+| `GEMINI_API_KEY`            | Apps, Nightly Eval, Evals   | Fallback LLM, embeddings, and listwise reranking key (Google Gemini)  | `AIza...`                                                               |
+| `REDIS_URL`                 | Apps, CI                    | Multi-tier cache & rate limiting Redis connection string              | `redis://localhost:6379` or `rediss://...`                              |
+| `NEON_API_KEY`              | Neon Preview Workflow       | Neon platform API key for ephemeral branching                         | `nkey_...`                                                              |
+| `NEON_PROJECT_ID`           | Neon Preview Workflow       | Neon project identifier                                               | `ep-sparkling-water-123456`                                             |
+| `RENDER_API_DEPLOY_HOOK`    | CD (`deploy-backend`)       | Render deploy hook URL for `docsage-api` service                      | `https://api.render.com/deploy/srv-xxx?key=yyy`                         |
+| `RENDER_WORKER_DEPLOY_HOOK` | CD (`deploy-backend`)       | Render deploy hook URL for `docsage-worker` service                   | `https://api.render.com/deploy/srv-aaa?key=bbb`                         |
+| `VERCEL_TOKEN`              | CD (`deploy-frontend`)      | Vercel Personal Access Token for deployments                          | `...`                                                                   |
+| `VERCEL_ORG_ID`             | CD (`deploy-frontend`)      | Vercel team/org identifier                                            | `team_...`                                                              |
+| `VERCEL_PROJECT_ID`         | CD (`deploy-frontend`)      | Vercel project identifier                                             | `prj_...`                                                               |
+| `PRODUCTION_API_URL`        | CD (`smoke-test`)           | Public HTTPS endpoint of deployed production API                      | `https://api.docsage.io`                                                |
+| `DEMO_PASSWORD`             | Database Seeding            | Secret for read-only viewer (`demo@docsage.io`). Never stored in repo | `d3m0_V13w3r_Secr3t!`                                                   |
 
 ### Variables (`Repository Variables`)
 

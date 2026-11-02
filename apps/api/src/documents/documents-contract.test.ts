@@ -3,6 +3,7 @@ import request from 'supertest';
 import { createApp } from '../index.js';
 import { createAccessToken } from '../auth/service.js';
 import * as dbModule from '@docsage/db';
+import { DEMO_TENANT_ID } from '@docsage/shared';
 
 describe('apps/api: Documents API Contract Tests', () => {
   const app = createApp();
@@ -21,6 +22,13 @@ describe('apps/api: Documents API Contract Tests', () => {
     role: 'viewer',
   });
 
+  const demoEditorToken = createAccessToken({
+    sub: '550e8400-e29b-41d4-a716-446655440099',
+    tenantId: DEMO_TENANT_ID,
+    email: 'demo-editor@docsage.io',
+    role: 'editor',
+  });
+
   describe('POST /documents (Upload)', () => {
     it('requires authentication and rejects with HTTP 401 when token missing', async () => {
       const res = await request(app).post('/documents');
@@ -34,6 +42,16 @@ describe('apps/api: Documents API Contract Tests', () => {
 
       expect(res.status).toBe(403);
       expect((res.body as { error: string }).error).toContain('Forbidden');
+    });
+
+    it('rejects uploads from the demo tenant with HTTP 403 Forbidden even with editor token', async () => {
+      const res = await request(app)
+        .post('/documents')
+        .set('Authorization', `Bearer ${demoEditorToken}`)
+        .send({});
+
+      expect(res.status).toBe(403);
+      expect((res.body as { error: string }).error).toContain('Demo tenant is read-only');
     });
 
     it('rejects upload with no multipart file payload', async () => {
@@ -188,6 +206,15 @@ describe('apps/api: Documents API Contract Tests', () => {
 
       expect(res.status).toBe(403);
       expect((res.body as { error: string }).error).toContain('Forbidden');
+    });
+
+    it('rejects document deletion from the demo tenant with HTTP 403 Forbidden even with editor token', async () => {
+      const res = await request(app)
+        .delete('/documents/550e8400-e29b-41d4-a716-446655440000')
+        .set('Authorization', `Bearer ${demoEditorToken}`);
+
+      expect(res.status).toBe(403);
+      expect((res.body as { error: string }).error).toContain('Demo tenant is read-only');
     });
 
     it('returns 404 when document to delete is not found', async () => {

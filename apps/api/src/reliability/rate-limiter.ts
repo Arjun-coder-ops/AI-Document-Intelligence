@@ -1,4 +1,4 @@
-import type { Response, NextFunction } from 'express';
+import type { Request, Response, NextFunction } from 'express';
 import type { AuthenticatedRequest } from '../auth/middleware.js';
 
 interface BucketState {
@@ -79,6 +79,35 @@ export function createRateLimiterMiddleware(options: {
       res.status(429).json({
         error: 'Too Many Requests: Tenant rate limit exceeded',
         retryAfterSeconds: tenantResult.retryAfterSeconds,
+      });
+      return;
+    }
+
+    next();
+  };
+}
+
+export function createIpRateLimiterMiddleware(options: {
+  capacity: number;
+  refillPerMinute: number;
+}) {
+  const refillPerSec = options.refillPerMinute / 60;
+  const ipLimiter = new TokenBucketLimiter(options.capacity, refillPerSec);
+
+  return (req: Request, res: Response, next: NextFunction): void => {
+    // In test environment, bypass unless test explicitly tests rate limiting
+    if (process.env['NODE_ENV'] === 'test' && !req.headers['x-test-rate-limit']) {
+      next();
+      return;
+    }
+
+    const ip = req.ip || req.socket.remoteAddress || 'unknown-ip';
+    const result = ipLimiter.consume(`ip:${ip}`);
+    if (!result.allowed) {
+      res.setHeader('Retry-After', String(result.retryAfterSeconds));
+      res.status(429).json({
+        error: 'Too Many Requests: Rate limit exceeded for login attempts',
+        retryAfterSeconds: result.retryAfterSeconds,
       });
       return;
     }

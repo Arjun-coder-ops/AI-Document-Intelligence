@@ -278,10 +278,10 @@ The system will start:
 - **Worker:** Asynchronous `pg-boss` ingestion consumer
 - **Metrics:** `http://localhost:3000/metrics`
 
-### Pre-Seeded Demo Tenant Credentials
+### Pre-Seeded Read-Only Demo Tenant
 
-- **Admin User:** `admin@enterprise.com` / `AdminPassword123!` (Acme Global)
-- **Viewer User:** `viewer@enterprise.com` / `ViewerPassword123!` (Acme Global)
+- **Viewer User:** `demo@docsage.io` / `${DEMO_PASSWORD}` (Configured via GitHub Secret or environment variable; documented in `docs/REPO_SETUP.md`)
+- **Tenant Scope:** Read-only demo workspace (documents can be queried; uploads and deletions are strictly blocked)
 
 ---
 
