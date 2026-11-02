@@ -586,6 +586,17 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
     - Diagnosed CI Prettier check failure on `evals/dataset/corpus.json` caused by missing trailing newlines in dataset writer scripts (`generate-dataset.ts`, `index.ts`, `generate-gemini-embeddings.ts`, `load-bench.ts`) and patched all `writeFileSync` calls with trailing newlines.
     - Diagnosed and fixed Playwright E2E CI job by adding `@playwright/test` to devDependencies and setting server test execution environment.
     - All 6 GitHub Actions CI jobs validated.
+  - **Design Tokens & High-Resolution Visual Evidence:**
+    - Authored `docs/DESIGN.md` documenting "The Reading Room" editorial palette, typography hierarchy (Fraunces + Instrument Sans), spacing scale, elevation, citation drawer interactions, and status chips.
+    - Built automated screen capture runner `scripts/capture-screens.ts` (`npm run screens:capture`) using Playwright chromium.
+    - Captured and committed 5 high-resolution screens into `docs/screens/`:
+      1. `01-landing-page.png` (Landing page with live stats ticker, 4-stage pipeline stepper, interactive try-it sandbox, comparison matrix)
+      2. `02-documents-page.png` (Documents management desk tray and upload dropzone)
+      3. `03-chat-page.png` (Streaming chat with citation pills and right-hand source drawer)
+      4. `04-admin-page.png` (Tenant telemetry, cost, latency, error metrics)
+      5. `05-landing-dark.png` (Dark mode landing page with high-contrast paper ink palette)
+  - **Demo Workspace & Argon2id Seed:**
+    - Updated `packages/db/src/seed.ts` with valid Argon2id hash for demo administrator `admin@docsage.io` (`Password123!`) and 768-dimensional embedding vectors.
   - **Code Quality & Architectural Cleanliness:**
     - 0 files exceeding 300 lines across 100% of repository.
     - Copy-paste duplication rate: **2.94%** (under 3.0% threshold).

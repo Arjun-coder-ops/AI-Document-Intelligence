@@ -3,7 +3,7 @@
   "ignoreDependencies": ["@commitlint/cli", "lint-staged", "drizzle-kit"],
   "workspaces": {
     ".": {
-      "entry": ["e2e/**/*.ts", "drizzle.config.ts"],
+      "entry": ["e2e/**/*.ts", "drizzle.config.ts", "scripts/**/*.ts"],
       "ignore": ["infra/**"]
     },
     "apps/api": {

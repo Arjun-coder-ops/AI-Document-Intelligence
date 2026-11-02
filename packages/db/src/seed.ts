@@ -15,8 +15,9 @@ export async function seedDatabase(): Promise<{ tenantId: string; adminUserId: s
   if (!tenant) throw new Error('Failed to insert demo tenant');
 
   // 2. Create Users (admin, editor, viewer)
-  // Password hash for demo 'Password123!' (argon2 or placeholder)
-  const passwordHash = '$argon2id$v=19$m=65536,t=3,p=4$dummyhashfordemopassword123';
+  // Password hash for demo 'Password123!' (argon2id)
+  const passwordHash =
+    '$argon2id$v=19$m=19456,t=2,p=1$J+45JXl3ypQognQgRQ/CoA$Shhd5zppQrfoI9gDu6Z8NeyC0z1YqUUXV86r5udoR0k';
 
   const [adminUser] = await db
     .insert(users)
@@ -64,8 +65,8 @@ export async function seedDatabase(): Promise<{ tenantId: string; adminUserId: s
 
   if (!doc) throw new Error('Failed to insert sample document');
 
-  // 4. Create Sample Chunk with 384-dim dummy vector
-  const embeddingDim = Number(process.env['EMBEDDING_DIM'] ?? 384);
+  // 4. Create Sample Chunk with 768-dim vector
+  const embeddingDim = Number(process.env['EMBEDDING_DIM'] ?? 768);
   const sampleVector = Array.from({ length: embeddingDim }, (_, i) =>
     Number((Math.sin(i) * 0.1).toFixed(4)),
   );

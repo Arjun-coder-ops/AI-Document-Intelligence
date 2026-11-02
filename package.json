@@ -22,6 +22,7 @@
     "test:load": "npm --workspace=@docsage/evals run test:load",
     "knip": "knip",
     "jscpd": "jscpd packages apps evals",
+    "screens:capture": "tsx scripts/capture-screens.ts",
     "prepare": "husky"
   },
   "devDependencies": {
