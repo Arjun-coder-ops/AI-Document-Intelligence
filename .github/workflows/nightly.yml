@@ -32,7 +32,7 @@ jobs:
       - name: Run Full Generation Evaluation (Faithfulness & Relevance)
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
-          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
         run: |
           echo "Executing generation evaluation harness with live LLM judges..."
           npm run eval || true

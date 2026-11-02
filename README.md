@@ -55,7 +55,7 @@ flowchart TB
     subgraph Providers["Inference & Cache Layer"]
         Breaker["Circuit Breaker (Opossum + Jitter Backoff)"]
         Groq["Primary LLM (Groq Llama 3.3 70B)"]
-        OpenAI["Fallback LLM (OpenAI GPT-4o-mini)"]
+        Gemini["Fallback LLM (Gemini 1.5 Flash)"]
         Redis["Multi-Tier Cache (Exact Query + Semantic)"]
     end
 
@@ -71,7 +71,7 @@ flowchart TB
     Gate -->|Passed| PromptSec --> Breaker
     Gate -->|Below Threshold| UI
     Breaker --> Groq
-    Breaker -.->|Failover on 429/5xx| OpenAI
+    Breaker -.->|Failover on 429/5xx| Gemini
     Breaker --> CitationVer --> SSEParser
 ```
 
@@ -194,7 +194,7 @@ DocSage treats multi-tenancy as a non-negotiable security invariant enforced at 
 
 | Failure Mode                          | Detection                                                                | System Mitigation                                                                                                                                                                                  |
 | :------------------------------------ | :----------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Primary LLM Provider Outage / 429** | Opossum Circuit Breaker detects 50% failure rate over rolling 10s window | Tripped circuit switches immediately to fallback LLM (OpenAI GPT-4o-mini). If fallback also fails, returns verified retrieved context with _"AI synthesis unavailable"_.                           |
+| **Primary LLM Provider Outage / 429** | Opossum Circuit Breaker detects 50% failure rate over rolling 10s window | Tripped circuit switches immediately to fallback LLM (Gemini 1.5 Flash). If fallback also fails, returns verified retrieved context with _"AI synthesis unavailable"_.                             |
 | **Client Abort / Network Disconnect** | Express `req.on('close')` event fires mid-stream                         | AbortController propagates abort signal upstream to LLM client; stream terminates immediately, saving GPU tokens and logging partial latency.                                                      |
 | **Worker Crash Mid-Ingestion**        | `pg-boss` heartbeat timeout                                              | Job fails safely, sets `document.status = 'failed'`. Retries execute idempotently by purging partial chunk records for that document version before re-parsing.                                    |
 | **Corrupt PDF / Malicious File**      | Header magic byte check `%PDF-` on disk stream                           | Stream is rejected before buffering with HTTP 400; zero arbitrary file uploads allowed.                                                                                                            |
@@ -232,7 +232,7 @@ At 100x current data scale (10,000 tenants, 100M chunks), the following architec
 
 - Node.js 20+
 - Docker & Docker Compose
-- (Optional) Groq or OpenAI API key for live LLM inference; mock providers work offline without keys.
+- (Optional) Groq or Gemini API key for live LLM inference; mock providers work offline without keys.
 
 ### 1. Clone & Install Dependencies
 

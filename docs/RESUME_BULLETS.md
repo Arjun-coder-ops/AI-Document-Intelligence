@@ -24,7 +24,7 @@
 
 ### Bullet 4: Resilient Streaming Infrastructure & Circuit Breaking
 
-- **Implemented an end-to-end SSE streaming pipeline with real-time upstream cancellation** via `AbortController`, eliminating wasted GPU token spend on client disconnects; built an Opossum circuit breaker with full-jitter exponential backoff facilitating seamless automated failover from Groq (Llama 3.3 70B) to OpenAI (GPT-4o-mini) and graceful fallback to raw retrieved passages.
+- **Implemented an end-to-end SSE streaming pipeline with real-time upstream cancellation** via `AbortController`, eliminating wasted GPU token spend on client disconnects; built an Opossum circuit breaker with full-jitter exponential backoff facilitating seamless automated failover from Groq (Llama 3.3 70B) to Gemini (1.5 Flash) and graceful fallback to raw retrieved passages.
 
 ---
 

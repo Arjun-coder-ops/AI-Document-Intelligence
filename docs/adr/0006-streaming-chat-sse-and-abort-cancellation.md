@@ -6,7 +6,7 @@ Accepted
 
 ## Context
 
-Document Q&A interactions require streaming output tokens from the upstream LLM (Groq / Gemini / OpenAI) to the browser in real time to minimize perceived latency (Time To First Token, TTFT).
+Document Q&A interactions require streaming output tokens from the upstream LLM (Groq / Gemini) to the browser in real time to minimize perceived latency (Time To First Token, TTFT).
 Key production requirements:
 
 1. **Unidirectional Transport:** Generative chat responses stream tokens downstream from server to client over a single HTTP connection.

@@ -6,7 +6,7 @@ Accepted
 
 ## Context
 
-High-reliability RAG applications depend on external LLM and embedding APIs (Groq, OpenAI, Gemini, Cohere) that are subject to rate limiting (HTTP 429), intermittent outages (503/504), and variable latency spikes. Furthermore, uncontrolled user queries can rapidly exhaust tenant token budgets and compromise multi-tenant system stability.
+High-reliability RAG applications depend on external LLM and embedding APIs (Groq, Gemini) that are subject to rate limiting (HTTP 429), intermittent outages (503/504), and variable latency spikes. Furthermore, uncontrolled user queries can rapidly exhaust tenant token budgets and compromise multi-tenant system stability.
 
 Key production requirements:
 
@@ -24,7 +24,7 @@ Key production requirements:
 
 2. **Hierarchical Multi-Provider Fallback Chain:**
    - Primary Provider: Groq (ultra-low latency LLaMA 3.3).
-   - Secondary Provider: Gemini / OpenAI (high availability fallback).
+   - Secondary Provider: Gemini 1.5 Flash (high availability fallback and 768-d embeddings).
    - Final Degradation: If all synthesis providers are degraded, return formatted retrieved passages with an explicit banner: _"AI synthesis unavailable (all upstream providers degraded). Here are the relevant passages from your documents"_.
 
 3. **Multi-Tier Query & Semantic Caching:**

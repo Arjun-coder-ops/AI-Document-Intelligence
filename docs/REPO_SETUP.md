@@ -41,8 +41,7 @@ Navigate to **Settings -> Secrets and variables -> Actions** and configure the f
 | `JWT_SECRET`                | Apps, CI, CD                | Minimum 32-character HMAC secret for access token signing           | `b8e7...64-char-hex-or-base64...`                                   |
 | `REFRESH_SECRET`            | Apps, CI, CD                | Minimum 32-character secret for rotating refresh token hashing      | `a1d4...64-char-hex-or-base64...`                                   |
 | `GROQ_API_KEY`              | Apps, Nightly Eval          | Primary LLM inference API key                                       | `gsk_...`                                                           |
-| `OPENAI_API_KEY`            | Apps, Nightly Eval          | Secondary fallback LLM inference key                                | `sk-...`                                                            |
-| `COHERE_API_KEY`            | Apps, Nightly Eval          | Cohere Reranker API key                                             | `...`                                                               |
+| `GEMINI_API_KEY`            | Apps, Nightly Eval, Evals   | Fallback LLM, embeddings, and listwise reranking key                | `AIza...`                                                           |
 | `NEON_API_KEY`              | Neon Preview Workflow       | Neon platform API key for ephemeral branching                       | `nkey_...`                                                          |
 | `NEON_PROJECT_ID`           | Neon Preview Workflow       | Neon project identifier                                             | `ep-sparkling-water-123456`                                         |
 | `RENDER_API_DEPLOY_HOOK`    | CD (`deploy-backend`)       | Render deploy hook URL for `docsage-api` service                    | `https://api.render.com/deploy/srv-xxx?key=yyy`                     |

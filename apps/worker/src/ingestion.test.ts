@@ -4,7 +4,7 @@ import { hashContent } from '@docsage/rag';
 
 describe('Async Ingestion Pipeline Logic', () => {
   it('correctly reuses cached embeddings matching chunk SHA-256 hash', async () => {
-    const provider = new MockEmbeddingProvider(384);
+    const provider = new MockEmbeddingProvider(768);
     const embedBatchSpy = vi.spyOn(provider, 'embedBatch');
 
     const content1 = 'First unique chunk content.';
@@ -18,7 +18,7 @@ describe('Async Ingestion Pipeline Logic', () => {
     // Initial embed
     const [vec1] = await provider.embedBatch([content1]);
     expect(vec1).toBeDefined();
-    expect(vec1?.length).toBe(384);
+    expect(vec1?.length).toBe(768);
     expect(embedBatchSpy).toHaveBeenCalledTimes(1);
 
     // Simulated cache lookup hit
@@ -31,12 +31,12 @@ describe('Async Ingestion Pipeline Logic', () => {
   });
 
   it('guarantees deterministic offline embeddings via MockEmbeddingProvider', async () => {
-    const provider = new MockEmbeddingProvider(384);
+    const provider = new MockEmbeddingProvider(768);
     const vecA = await provider.embedText('Sample text');
     const vecB = await provider.embedText('Sample text');
 
     expect(vecA).toEqual(vecB);
-    expect(vecA.length).toBe(384);
+    expect(vecA.length).toBe(768);
   });
 
   it('verifies PDF magic bytes %PDF- to reject corrupt/invalid files', () => {
