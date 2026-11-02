@@ -29,4 +29,16 @@ describe('Database Schema & Type Definitions', () => {
   it('handles empty vector string edge case', () => {
     expect(deserializeVector('[]')).toEqual([]);
   });
+
+  it('defines the 6 required tenant isolation tables', async () => {
+    const { TENANT_TABLES } = await import('./check.js');
+    expect(TENANT_TABLES).toEqual([
+      'documents',
+      'chunks',
+      'conversations',
+      'messages',
+      'audit_log',
+      'feedback',
+    ]);
+  });
 });

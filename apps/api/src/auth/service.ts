@@ -4,7 +4,9 @@ import crypto from 'crypto';
 import { type JwtPayload, JwtPayloadSchema } from '@docsage/shared';
 
 const jwtSecret =
-  process.env['JWT_SECRET'] ?? 'default_insecure_jwt_secret_for_scaffold_testing_only_32_chars';
+  process.env['JWT_ACCESS_SECRET'] ??
+  process.env['JWT_SECRET'] ??
+  'default_insecure_jwt_secret_for_scaffold_testing_only_32_chars';
 const accessTokenExpiresIn: NonNullable<SignOptions['expiresIn']> = '15m';
 
 export async function hashPassword(password: string): Promise<string> {

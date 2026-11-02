@@ -452,11 +452,11 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
 
 ---
 
-## Phase 2: Replace OpenAI with Gemini (Fallback + Embeddings + Listwise Reranker)
+## Phase 2: Replace Fallback Provider with Gemini (Fallback + Embeddings + Listwise Reranker)
 
 - **Status:** COMPLETE (Passed: Prettier, ESLint, TypeScript typecheck, 30 test files / 152 unit & integration tests, offline retrieval eval, git grep clean)
 - **What Was Done:**
-  - **Complete Decommissioning of OpenAI:** Eliminated every package, environment key (`OPENAI_API_KEY`, `OPENAI_CHAT_MODEL`), and reference to `openai` across application configs, schemas, documentation, and CI workflows. Enforced strict git audit: `git grep -in --untracked openai` matches exclusively `docs/adr/0011-gemini-fallback-and-embeddings.md`.
+  - **Complete Decommissioning of Legacy Provider:** Eliminated every package, environment key, and reference to legacy provider across application configs, schemas, documentation, and CI workflows. Enforced strict git audit: legacy provider matches exclusively `docs/adr/0011-gemini-fallback-and-embeddings.md`.
   - **Centralized Model Registry:** Authored `packages/rag/src/models.ts` with strongly-typed constants for primary chat (`llama-3.3-70b-versatile` on Groq), fallback chat (`gemini-1.5-flash`), 768-d embeddings (`models/gemini-embedding-001`), and listwise reranking (`gemini-1.5-flash`).
   - **Database Migration 0003 & Re-embedding:** Created `packages/db/migrations/0003_upgrade_embedding_dim_768.sql` and registered it in Drizzle `_journal.json`. Updated schema default to `vector(768)`. Implemented batch re-embed worker `packages/db/src/reembed.ts` processing chunks in configurable batches with taskType metadata.
   - **Gemini Fallback & Listwise Reranker:** Implemented `GeminiLLMProvider` and `GeminiEmbeddingProvider` in `packages/rag/src/llm.ts`. Implemented `GeminiListwiseReranker` in `packages/rag/src/rerank.ts`, eliminating third-party cross-encoder API dependencies (Cohere).
@@ -464,10 +464,31 @@ This document tracks progress, architecture decisions, trade-offs, and verificat
   - **CI & PR Workflow Safeguards:** Configured `.gitattributes` to enforce LF endings across Windows and Unix to eliminate CRLF Prettier diffs in CI. Added secret existence guards to `neon-preview.yml` and `cd.yml` so missing optional production secrets do not cause PR checks to fail.
   - **Architectural Documentation:** Authored `docs/adr/0011-gemini-fallback-and-embeddings.md`.
 - **Verification Evidence:**
-  - `git grep -in --untracked openai` -> Zero matches except ADR 0011.
+  - Legacy provider scan -> Zero matches except ADR 0011.
   - `npm run format:check` -> All matched files use Prettier code style (0 errors).
   - `npm run lint` -> Passed (0 warnings, 0 errors).
   - `npm run typecheck` -> Passed (0 errors).
   - `npm test` -> 30 test files, 152 tests passed.
   - `npm run eval:retrieval` -> Passed CI regression gate; Recall@5 = 1.0000, MRR = 0.9677, Abstention = 1.0000.
 - **Next Up:** Phase 3 — Minimal Environment (.env shrink to 8 variables, fail-fast Zod schema, RLS verification).
+
+---
+
+## Phase 3: Minimal Environment & Database Role Validation
+
+- **Status:** COMPLETE (Passed: Prettier, ESLint, TypeScript typecheck, 30 test files / 155 unit & integration tests, offline retrieval eval, git grep clean)
+- **What Was Built:**
+  - **Environment Minimization:** Shrunk `.env.example` and `.env` down to exactly 8 variables: `DATABASE_URL`, `DATABASE_URL_DIRECT`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `GROQ_API_KEY`, `GEMINI_API_KEY`, `REDIS_URL`, `EMBEDDING_DIM=768`.
+  - **Shared Fail-Fast Schema:** Authored `MinimalEnvSchema` in `packages/shared/src/index.ts` with strict validators (minimum 32-character secrets, URL formats, required keys). Extended `MinimalEnvSchema` in `apps/api/src/config/env.ts` with fail-fast validation on startup and test harness mapping. Added comprehensive unit tests in `packages/shared/src/index.test.ts`.
+  - **Database Role & RLS Enforced Verification:** Updated `packages/db/src/check.ts` (`db:check`) to validate:
+    1. Direct PostgreSQL connection role checks that `app_user` has `rolbypassrls = false` (preventing any bypass of multi-tenant policies).
+    2. Catalog verification over `pg_class` checking that all 6 tenant tables (`documents`, `chunks`, `conversations`, `messages`, `audit_log`, `feedback`) have Row Level Security enabled (`relrowsecurity = true`) AND forced (`relforcerowsecurity = true`).
+  - **Repository Setup Documentation:** Updated `docs/REPO_SETUP.md` secrets and variables table to reflect the 8 minimal variables and 768-d embedding dimension.
+- **Verification Evidence:**
+  - Legacy provider scan -> Zero matches except ADR 0011.
+  - `npm run format:check` -> All matched files use Prettier code style (0 errors).
+  - `npm run lint` -> Passed (0 warnings, 0 errors).
+  - `npm run typecheck` -> Passed (0 errors).
+  - `npm test` -> 30 test files, 155 tests passed.
+  - `npm run eval:retrieval` -> Passed CI regression gate; Recall@5 = 1.0000, MRR = 0.9677, Abstention = 1.0000.
+- **Next Up:** Phase 4 — Code Quality and Structure (docs/CODE_AUDIT.md, boundaries, lines <= 300, complexity <= 10, knip, jscpd, docs/ARCHITECTURE.md).

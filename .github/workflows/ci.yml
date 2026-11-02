@@ -99,6 +99,8 @@ jobs:
         env:
           DATABASE_URL: postgresql://postgres:postgres@localhost:5432/docsage_test
           DATABASE_URL_DIRECT: postgresql://postgres:postgres@localhost:5432/docsage_test
+          JWT_ACCESS_SECRET: super_secure_production_grade_jwt_secret_32_chars_long
+          JWT_REFRESH_SECRET: super_secure_refresh_secret_at_least_32_characters_long
           JWT_SECRET: super_secure_production_grade_jwt_secret_32_chars_long
           REFRESH_SECRET: super_secure_refresh_secret_at_least_32_characters_long
         run: npm run test:coverage
@@ -268,6 +270,8 @@ jobs:
         env:
           PORT: 3000
           PLAYWRIGHT_BASE_URL: http://localhost:3000
+          JWT_ACCESS_SECRET: super_secure_production_grade_jwt_secret_32_chars_long
+          JWT_REFRESH_SECRET: super_secure_refresh_secret_at_least_32_characters_long
           JWT_SECRET: super_secure_production_grade_jwt_secret_32_chars_long
           REFRESH_SECRET: super_secure_refresh_secret_at_least_32_characters_long
         run: |
