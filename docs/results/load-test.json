@@ -1,26 +1,26 @@
 {
-  "timestamp": "2026-11-07T08:03:55.342Z",
+  "timestamp": "2026-11-08T08:22:52.013Z",
   "providerMode": "stub",
   "providerNote": "All latencies measured with simulated delays (Math.random timers), not real Gemini/Groq API calls. TTFT represents stub provider overhead only. For real-provider TTFT, run with REAL_PROVIDER=1 (n<=50).",
   "concurrentUsers": 50,
-  "totalRequests": 1189,
-  "successfulRequests": 1189,
+  "totalRequests": 1182,
+  "successfulRequests": 1182,
   "failedRequests": 0,
   "errorRate": 0,
-  "throughputReqPerSec": 227.47,
+  "throughputReqPerSec": 227.31,
   "latenciesMs": {
-    "p50": 215,
-    "p90": 242,
+    "p50": 217,
+    "p90": 243,
     "p95": 246,
     "p99": 249,
     "min": 179,
-    "max": 250
+    "max": 251
   },
   "ttftMs": {
     "label": "stub-provider-overhead (not real model TTFT)",
     "p50": 98,
     "p95": 111,
-    "p99": 115
+    "p99": 114
   },
   "bottlenecksFoundAndFixed": [
     {
