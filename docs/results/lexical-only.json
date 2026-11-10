@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-09T08:53:54.404Z",
+  "timestamp": "2026-11-10T09:00:06.998Z",
   "configName": "lexical-only",
   "sampleCount": 122,
   "testSampleCount": 77,
@@ -50,9 +50,9 @@
     "abstentionRecall": 1
   },
   "latencyMs": {
-    "p50": 17.34,
-    "p95": 19.34,
-    "mean": 17.6
+    "p50": 14.04,
+    "p95": 15.41,
+    "mean": 14.14
   },
   "costPer1kQueries": 0,
   "passedThresholds": false,
