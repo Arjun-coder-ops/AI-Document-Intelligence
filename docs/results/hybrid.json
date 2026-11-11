@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-10T09:00:08.177Z",
+  "timestamp": "2026-11-11T08:40:55.128Z",
   "configName": "hybrid",
   "sampleCount": 122,
   "testSampleCount": 77,
@@ -50,9 +50,9 @@
     "abstentionRecall": 0.9
   },
   "latencyMs": {
-    "p50": 13.84,
-    "p95": 18.4,
-    "mean": 14.45
+    "p50": 23.18,
+    "p95": 27.09,
+    "mean": 23.78
   },
   "costPer1kQueries": 0.02,
   "passedThresholds": true,
