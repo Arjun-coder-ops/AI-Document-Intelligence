@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-13T08:56:29.454Z",
+  "timestamp": "2026-11-14T08:21:50.394Z",
   "configName": "hybrid-rerank",
   "sampleCount": 122,
   "testSampleCount": 77,
@@ -51,8 +51,8 @@
   },
   "latencyMs": {
     "p50": 23.18,
-    "p95": 27.17,
-    "mean": 23.55
+    "p95": 26.32,
+    "mean": 23.59
   },
   "costPer1kQueries": 0.13,
   "passedThresholds": true,
