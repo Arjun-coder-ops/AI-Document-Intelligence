@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-11-14T08:21:44.793Z",
+  "timestamp": "2026-11-15T08:40:21.623Z",
   "configName": "baseline-dense",
   "sampleCount": 122,
   "testSampleCount": 77,
@@ -50,9 +50,9 @@
     "abstentionRecall": 0.9
   },
   "latencyMs": {
-    "p50": 22.32,
-    "p95": 27.98,
-    "mean": 23.01
+    "p50": 22.3,
+    "p95": 25.55,
+    "mean": 22.86
   },
   "costPer1kQueries": 0.02,
   "passedThresholds": false,
