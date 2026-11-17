@@ -1,6 +1,6 @@
 {
   "baseline-dense": {
-    "timestamp": "2026-11-16T08:48:11.912Z",
+    "timestamp": "2026-11-17T09:55:55.537Z",
     "configName": "baseline-dense",
     "sampleCount": 122,
     "testSampleCount": 77,
@@ -51,9 +51,9 @@
       "abstentionRecall": 0.9
     },
     "latencyMs": {
-      "p50": 14.3,
-      "p95": 16.61,
-      "mean": 14.65
+      "p50": 17.32,
+      "p95": 19.99,
+      "mean": 17.73
     },
     "costPer1kQueries": 0.02,
     "passedThresholds": false,
@@ -62,7 +62,7 @@
     ]
   },
   "lexical-only": {
-    "timestamp": "2026-11-16T08:48:13.072Z",
+    "timestamp": "2026-11-17T09:55:56.944Z",
     "configName": "lexical-only",
     "sampleCount": 122,
     "testSampleCount": 77,
@@ -113,9 +113,9 @@
       "abstentionRecall": 1
     },
     "latencyMs": {
-      "p50": 14.22,
-      "p95": 15.87,
-      "mean": 14.42
+      "p50": 17.21,
+      "p95": 19.82,
+      "mean": 17.54
     },
     "costPer1kQueries": 0,
     "passedThresholds": false,
@@ -125,7 +125,7 @@
     ]
   },
   "hybrid": {
-    "timestamp": "2026-11-16T08:48:14.260Z",
+    "timestamp": "2026-11-17T09:55:58.390Z",
     "configName": "hybrid",
     "sampleCount": 122,
     "testSampleCount": 77,
@@ -176,16 +176,16 @@
       "abstentionRecall": 0.9
     },
     "latencyMs": {
-      "p50": 14.45,
-      "p95": 16.4,
-      "mean": 14.63
+      "p50": 17.62,
+      "p95": 19.87,
+      "mean": 17.9
     },
     "costPer1kQueries": 0.02,
     "passedThresholds": true,
     "thresholdFailures": []
   },
   "hybrid-rerank": {
-    "timestamp": "2026-11-16T08:48:15.462Z",
+    "timestamp": "2026-11-17T09:55:59.834Z",
     "configName": "hybrid-rerank",
     "sampleCount": 122,
     "testSampleCount": 77,
@@ -236,9 +236,9 @@
       "abstentionRecall": 0.9
     },
     "latencyMs": {
-      "p50": 14.7,
-      "p95": 16.4,
-      "mean": 14.85
+      "p50": 17.79,
+      "p95": 19.99,
+      "mean": 17.89
     },
     "costPer1kQueries": 0.13,
     "passedThresholds": true,
